@@ -577,7 +577,7 @@ function SubjectSettings() {
     useEffect(() => {
         const getProfile = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/profile", {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
                     withCredentials: true,
                 });
                 setProfile(res.data.userData || res.data);
@@ -590,7 +590,7 @@ function SubjectSettings() {
 
         const getSubjectData = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/subject/id/${subjectId}`, {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/subject/id/${subjectId}`, {
                     withCredentials: true,
                 });
                 setSubjectData(res.data.subject);
@@ -604,7 +604,7 @@ function SubjectSettings() {
 
         const getClassData = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/class/${classId}`, {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class/${classId}`, {
                     withCredentials: true,
                 });
                 setClassData(res.data);
@@ -617,7 +617,7 @@ function SubjectSettings() {
 
         const getAllMembers = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/members", {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
                     withCredentials: true,
                 });
                 setAllMembers(res.data.members || []);
@@ -655,7 +655,7 @@ function SubjectSettings() {
         e.preventDefault();
         try {
             const response = await axios.put(
-                `http://localhost:5000/api/subject/${subjectId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/subject/${subjectId}`,
                 { subjectName: newSubjectName },
                 { withCredentials: true }
             );
@@ -706,7 +706,7 @@ function SubjectSettings() {
             );
 
             const response = await axios.put(
-                `http://localhost:5000/api/subject/id/${subjectId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/subject/id/${subjectId}`,
                 { addStudents, addFaculty },
                 { withCredentials: true }
             );
@@ -768,7 +768,7 @@ function SubjectSettings() {
             );
 
             const response = await axios.put(
-                `http://localhost:5000/api/subject/id/${subjectId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/subject/id/${subjectId}`,
                 { removeStudents, removeFaculty },
                 { withCredentials: true }
             );
@@ -806,7 +806,7 @@ function SubjectSettings() {
     const deleteSubjectGroup = async () => {
         try {
             const response = await axios.delete(
-                `http://localhost:5000/api/subject/id/${subjectId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/subject/id/${subjectId}`,
                 { withCredentials: true }
             );
             if (response.data.success) {

@@ -9,7 +9,7 @@ function VerifyOtpMiddle() {
     useEffect(()=>{
         const postOtp =async()=>{
             try{
-                const postData = await axios.post("http://localhost:5000/api/author/send-verify-otp",{}, { withCredentials: true })
+                const postData = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/send-verify-otp`,{}, { withCredentials: true })
                 // console.log("Signup successful:", postData.data);
                 console.log(postData.status)
                 if (postData.status === 200) {

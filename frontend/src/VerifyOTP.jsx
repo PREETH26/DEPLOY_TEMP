@@ -44,7 +44,7 @@ function VerifyOTP() {
       e.preventDefault();
       const otpArray = inputRef.current.map(e=>e.value)
       const otp = otpArray.join("")
-      const data = await axios.post("http://localhost:5000/api/author/verify-account",{otp}, { withCredentials: true })
+      const data = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/verify-account`,{otp}, { withCredentials: true })
       if(data.status === 200){
         toast.success("User Verified Successfully!")
         
@@ -69,7 +69,7 @@ function VerifyOTP() {
       setResendMessage("");
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/author/send-verify-otp",
+        `${import.meta.env.VITE_BACKEND_URL}/api/author/send-verify-otp`,
         {},
         { withCredentials: true }
       );

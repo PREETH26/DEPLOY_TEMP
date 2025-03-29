@@ -641,7 +641,7 @@ function Profile() {
     useEffect(() => {
         const getProfile = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/profile", {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
                     withCredentials: true,
                 });
                 const userData = res.data.userData || res.data;
@@ -660,7 +660,7 @@ function Profile() {
 
         const getAll = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/members", {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
                     withCredentials: true,
                 });
                 setAll(res.data.members || []);
@@ -695,7 +695,7 @@ function Profile() {
         e.preventDefault();
         try {
             const res = await axios.post(
-                "http://localhost:5000/api/class/create",
+                `${import.meta.env.VITE_BACKEND_URL}/api/class/create`,
                 { className: group, students: students, faculty: faculty, createdBy: profile._id },
                 { withCredentials: true }
             );
@@ -721,7 +721,7 @@ function Profile() {
         e.preventDefault();
         try {
             const response = await axios.put(
-                "http://localhost:5000/api/user/update-institution",
+                `${import.meta.env.VITE_BACKEND_URL}/api/user/update-institution`,
                 { institute: institution },
                 { withCredentials: true }
             );
@@ -766,7 +766,7 @@ function Profile() {
 
         try {
             const response = await axios.put(
-                "http://localhost:5000/api/visual/update-profile-pic",
+                `${import.meta.env.VITE_BACKEND_URL}/api/visual/update-profile-pic`,
                 formData,
                 {
                     withCredentials: true,
@@ -911,7 +911,7 @@ function Profile() {
 
     const deleteAccount = async () => {
         try {
-            const response = await axios.delete("http://localhost:5000/api/user/delete", {
+            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete`, {
                 withCredentials: true,
             });
             localStorage.clear();
@@ -931,7 +931,7 @@ function Profile() {
         e.preventDefault();
         try {
             const response = await axios.put(
-                "http://localhost:5000/api/user/update-name",
+                `${import.meta.env.VITE_BACKEND_URL}api/user/update-name`,
                 { name: name },
                 { withCredentials: true }
             );

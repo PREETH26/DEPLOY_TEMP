@@ -36,7 +36,7 @@ function Signup() {
   useEffect(()=>{
     const res = async()=>{
       try {
-        const data = await axios.get("http://localhost:5000/api/user/institute")
+        const data = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/institute`)
         console.log(data.data.institute)
         setInstitutes(data.data.institute); 
       } catch (error) {
@@ -84,7 +84,7 @@ function Signup() {
     e.preventDefault();
     setErrorMessage("");
     try{
-      const postData = await axios.post("http://localhost:5000/api/author/signup",{name,email,password},{ withCredentials: true })
+      const postData = await axios.post(`${import.meta.env.VITE_BACKEND_URL}api/author/signup`,{name,email,password},{ withCredentials: true })
       console.log("Signup successful:", postData.data);
       console.log(postData.status)
       if (postData.status === 201) {
@@ -107,7 +107,7 @@ function Signup() {
   }
 
   const googleMove = ()=>{
-    window.location.href = "http://localhost:5000/api/auth/google";
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
   }
 
 

@@ -30,7 +30,7 @@ function Login() {
   const onSubmit = async(e)=>{
     e.preventDefault();
     try {
-      const data = await axios.post("http://localhost:5000/api/author/login",{email,password},{ withCredentials: true });
+      const data = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/login`,{email,password},{ withCredentials: true });
       if(data.status===200){
         toast.success("Logged in Successfully!")
         if (rememberMe) {

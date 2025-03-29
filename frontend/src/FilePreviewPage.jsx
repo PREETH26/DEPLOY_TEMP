@@ -82,7 +82,7 @@ function FilePreviewPage() {
   useEffect(() => {
     if (fileUrl) {
       const encodedUrl = encodeURIComponent(fileUrl);
-      setProxyUrl(`http://localhost:5000/api/files/proxy-file?url=${encodedUrl}`);
+      setProxyUrl(`${import.meta.env.VITE_BACKEND_URL}/api/files/proxy-file?url=${encodedUrl}`);
     }
   }, [fileUrl]);
 

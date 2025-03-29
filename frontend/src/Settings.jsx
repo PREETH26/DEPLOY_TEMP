@@ -624,7 +624,7 @@ function ClassSettings() {
     useEffect(() => {
         const getProfile = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/profile", {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
                     withCredentials: true,
                 });
                 // console.log("Profile data:", res.data);
@@ -638,7 +638,7 @@ function ClassSettings() {
 
         const getClassData = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/class/${classId}`, {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class/${classId}`, {
                     withCredentials: true,
                 });
                 // console.log("Class data:", res.data);
@@ -653,7 +653,7 @@ function ClassSettings() {
 
         const getAllMembers = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/members", {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
                     withCredentials: true,
                 });
                 // console.log("All members:", res.data.members);
@@ -704,7 +704,7 @@ function ClassSettings() {
         e.preventDefault();
         try {
             const response = await axios.put(
-                `http://localhost:5000/api/class/${classId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/class/${classId}`,
                 { className: newClassName },
                 { withCredentials: true }
             );
@@ -752,7 +752,7 @@ function ClassSettings() {
             );
 
             const response = await axios.put(
-                `http://localhost:5000/api/class/${classId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/class/${classId}`,
                 { studentsToAdd, facultyToAdd },
                 { withCredentials: true }
             );
@@ -813,7 +813,7 @@ function ClassSettings() {
             );
 
             const response = await axios.put(
-                `http://localhost:5000/api/class/${classId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/class/${classId}`,
                 { studentsToRemove, facultyToRemove },
                 { withCredentials: true }
             );
@@ -932,7 +932,7 @@ function ClassSettings() {
             );
     
             const response = await axios.post(
-                `http://localhost:5000/api/subject/${classId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/subject/${classId}`,
                 {
                     subjectName: subjectGroupName,
                     faculty: faculty,
@@ -966,7 +966,7 @@ function ClassSettings() {
     const deleteClassGroup = async () => {
         try {
             const response = await axios.delete(
-                `http://localhost:5000/api/class/${classId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/class/${classId}`,
                 { withCredentials: true }
             );
             if (response.data.success) {
