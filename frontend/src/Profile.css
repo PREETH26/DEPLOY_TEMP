@@ -1,0 +1,201 @@
+body{
+    background-color: #EDEDED;
+}
+
+.box{
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    padding: 10px;
+    border: 3px solid black;
+}
+
+button{
+    cursor: pointer;
+}
+
+
+
+/* Phones (≤ 640px) */
+@media (max-width: 640px) {
+    /* Adjust the container padding */
+    .p-4 {
+        padding: 1rem;
+    }
+
+    /* Center the profile picture and related elements */
+    .flex-col.items-center {
+        align-items: center;
+    }
+
+    /* Remove large margins for the profile section */
+    .ml-10 {
+        margin-left: 0;
+    }
+
+    .ml-\[150px\] {
+        margin-left: 0;
+    }
+
+    /* Adjust the box on the right side */
+    .box.w-full {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Remove negative margins that cause layout issues */
+    .-mx-48 {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .-ml-5 {
+        margin-left: 0;
+    }
+
+    /* Reduce font sizes for headings */
+    .font-bold.text-xl {
+        font-size: 1.25rem; /* 20px */
+    }
+
+    .font-semibold.text-2xl {
+        font-size: 1.5rem; /* 24px */
+    }
+
+    /* Adjust the navigation box (Profile, Chats, Account) */
+    .box.bg-amber-500 {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Adjust the list of members */
+    .max-h-40 {
+        max-height: 8rem; /* 128px */
+    }
+
+    /* Adjust the form inputs */
+    .border.p-2.rounded {
+        padding: 0.5rem;
+        font-size: 0.875rem; /* 14px */
+    }
+
+    /* Adjust the create group form */
+    .flex.justify-between {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .flex.justify-between input {
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .ml-5.mt-5 {
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    /* Adjust the delete confirmation form */
+    .border-2.w-full.flex-col {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    /* Adjust the Log Out button margin */
+    .mt-4 {
+        margin-top: 1rem;
+    }
+
+    .-my-\[15px\] {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Tablets (641px to 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+    /* Adjust the container padding */
+    .p-6 {
+        padding: 1.5rem;
+    }
+
+    /* Adjust the grid gap */
+    .gap-6 {
+        gap: 1.5rem;
+    }
+
+    /* Remove large margins for the profile section */
+    .ml-10 {
+        margin-left: 1rem;
+    }
+
+    .ml-\[150px\] {
+        margin-left: 2rem;
+    }
+
+    /* Adjust the box on the right side */
+    .box.w-\[780px\] {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Remove negative margins */
+    .-mx-48 {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .-ml-5 {
+        margin-left: 0;
+    }
+
+    /* Adjust the navigation box (Profile, Chats, Account) */
+    .box.bg-amber-500 {
+        width: 90%;
+    }
+
+    /* Adjust font sizes for headings */
+    .font-bold.text-xl {
+        font-size: 1.5rem; /* 24px */
+    }
+
+    .font-semibold.text-2xl {
+        font-size: 1.75rem; /* 28px */
+    }
+
+    /* Adjust the list of members */
+    .max-h-40 {
+        max-height: 10rem; /* 160px */
+    }
+
+    /* Adjust the form inputs */
+    .border.p-2.rounded {
+        padding: 0.75rem;
+        font-size: 1rem; /* 16px */
+    }
+
+    /* Adjust the create group form */
+    .flex.justify-between {
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .ml-5.mt-5 {
+        margin-left: 1rem;
+        margin-top: 0;
+    }
+
+    /* Adjust the delete confirmation form */
+    .border-2.w-\[30\%\] {
+        width: 50%;
+        padding: 1.5rem;
+    }
+
+    /* Adjust the Log Out button margin */
+    .-my-\[15px\] {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
