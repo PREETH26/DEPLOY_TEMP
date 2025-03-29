@@ -14866,7 +14866,10 @@ import "./Chat.css";
 
 // Connect to the Socket.IO server
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
-  transports: ["websocket"],
+    transports: ["websocket", "polling"], // Fallback to polling if WebSocket fails
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
   withCredentials: true,
 });
 
@@ -15008,6 +15011,7 @@ function Chat() {
     const getAll = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
+            
           withCredentials: true,
         });
         setAll(res.data.members || []);

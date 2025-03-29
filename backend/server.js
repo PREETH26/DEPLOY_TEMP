@@ -43,11 +43,8 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
         credentials: true 
     },
-    transports: ["websocket"]
+    
 });
-
-
-
 singleMessage(io);
 groupMessage(io);
 
