@@ -6,7 +6,7 @@ import User from "../Models/UserSchema.js";
 
 
 const AuthMiddle = async(req,res,next)=>{
-    const {token} = req.cookies;
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];    console.log(token)
     if(!token){
         return res.json({success:false,message:"Not Authorized, Login Again"})
     }
@@ -14,7 +14,7 @@ const AuthMiddle = async(req,res,next)=>{
         const decodedToken = jwt.verify(token,process.env.JWT_SECRET);
         if(decodedToken.id){
             req.body.userId = decodedToken.id;
-            res.header("Access-Control-Allow-Credentials", "true");
+            
         }else{
             return res.json({success:false,message:"Not Authorized, Login Again"})
         }
