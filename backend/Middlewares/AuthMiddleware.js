@@ -17,7 +17,7 @@ const AuthMiddle = async(req,res,next)=>{
             req.body.userId = decodedToken.id;
             
         }else{
-            return res.json({success:false,message:"Not Authorized, Login Again"})
+            return res.status(401).json({ success: false, message: "Not Authorized, Login Again" });
         }
 
         next();
