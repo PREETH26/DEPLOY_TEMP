@@ -6,6 +6,7 @@ import User from "../Models/UserSchema.js";
 
 
 const AuthMiddle = async(req,res,next)=>{
+    console.log("Cookies:", req.cookies);
     const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];   
     console.log(token)
     if(!token){
@@ -13,6 +14,7 @@ const AuthMiddle = async(req,res,next)=>{
     }
     try {
         const decodedToken = jwt.verify(token,process.env.JWT_SECRET);
+        console.log("Decoded Token:", decodedToken);
         if(decodedToken.id){
             req.body.userId = decodedToken.id;
             
