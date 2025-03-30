@@ -14870,7 +14870,7 @@ const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
-  withCredentials: true,
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
 });
 
 function Chat() {
@@ -14996,9 +14996,11 @@ function Chat() {
   useEffect(() => {
     const getProfile = async () => {
       try {
+        // console.log(import.meta.env.VITE_BACKEND_URL)
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
           withCredentials: true,
         });
+        console.log(res)
         const userData = res.data.userData || res.data;
         setProfile(userData);
       } catch (error) {
