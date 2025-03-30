@@ -30,6 +30,7 @@ cloudinary.config({
 });
 const PORT = process.env.PORT || 5000
 app.use(express.json())
+app.use(cookieParser())
 
 app.use(cors({ 
     origin: process.env.FRONTEND_URL, 
@@ -48,7 +49,7 @@ const io = new Server(server, {
 singleMessage(io);
 groupMessage(io);
 
-app.use(cookieParser())
+
 app.use("/api/author",authR)
 app.use("/api/user",userRouter)
 app.use("/api/class",classRouter)

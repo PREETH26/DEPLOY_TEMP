@@ -6,7 +6,8 @@ import User from "../Models/UserSchema.js";
 
 
 const AuthMiddle = async(req,res,next)=>{
-    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];    console.log(token)
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];   
+    console.log(token)
     if(!token){
         return res.json({success:false,message:"Not Authorized, Login Again"})
     }
