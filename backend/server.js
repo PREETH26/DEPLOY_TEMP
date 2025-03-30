@@ -31,13 +31,21 @@ cloudinary.config({
 const PORT = process.env.PORT || 5000
 app.use(express.json())
 app.use(cookieParser())
-
 app.use(cors({ 
     origin: process.env.FRONTEND_URL, 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization","Accept"]
+    allowedHeaders: ["Content-Type", "Authorization","Accept", "Cookie"]
 }));
+app.use(session({
+    secret: process.env.SESSION_SECRET || "some_secret",
+    resave: false,
+    saveUninitialized: false
+  }));
+  
+app.use(passport.initialize());
+app.use(passport.session());
+
 const io = new Server(server, {
     cors: {
         origin: process.env.FRONTEND_URL, 
@@ -57,14 +65,7 @@ app.use("/api/subject",subjectRouter)
 app.use("/api/visual",VisualRouter)
 app.use("/api/files", fileRoutes)
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || "some_secret",
-    resave: false,
-    saveUninitialized: false
-  }));
-  
-app.use(passport.initialize());
-app.use(passport.session());
+
 app.use("/api/auth", authGoogle);
 
 
