@@ -14890,7 +14890,7 @@ function Chat() {
   const [isUploading, setIsUploading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem("activeSection") || "single";
+    return localStorage.getItem("activeSection") || "group";
   });
   // Added: State to track sidebar visibility
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
