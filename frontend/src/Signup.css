@@ -21,7 +21,18 @@ input{
   background: white;
 }
 
+input[type="checkbox"] {
+    appearance: none;  /* Remove default styles */
+    background-color: white;  /* Set initial white background */
+    border: 1px solid black;  /* Optional: Add a border */
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
 
+input[type="checkbox"]:checked {
+    appearance: auto; /* Revert to the default checkbox style */
+}
 
 .form{
   padding: 20px;
