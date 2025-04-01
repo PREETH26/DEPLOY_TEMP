@@ -84,7 +84,7 @@ function Signup() {
     e.preventDefault();
     setErrorMessage("");
     try{
-      const postData = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/signup`,{name,email,password},{ withCredentials: true })
+      const postData = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/signup`,{name,email,password,institute, role},{ withCredentials: true })
       console.log("Signup successful:", postData.data);
       console.log(postData.status)
       if (postData.status === 201) {
