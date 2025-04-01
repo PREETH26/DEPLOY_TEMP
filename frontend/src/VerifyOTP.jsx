@@ -48,7 +48,7 @@ function VerifyOTP() {
       if(data.status === 200){
         toast.success("User Verified Successfully!")
         
-        navigate("/");
+        navigate("/chat");
       }
     }catch(error){
       if (error.response && error.response.status === 400) {
