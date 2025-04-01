@@ -14870,6 +14870,8 @@ const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
+    withCredentials: true,
+
 });
 
 function Chat() {
