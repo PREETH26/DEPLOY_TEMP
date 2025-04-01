@@ -30,6 +30,12 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
+input[type="checkbox"]:checked {
+    background-color: white;
+    border: 2px solid black;
+    position: relative;
+}
+
 .form{
   padding: 20px;
   max-width: 500px;
