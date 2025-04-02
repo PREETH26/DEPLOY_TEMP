@@ -6,10 +6,12 @@ body{
     color: #000;
     align-self: flex-start;
     border-radius: 10px 10px 10px 0;
+    margin-top: 2px;
 }
 
 .sent {
     border-radius: 10px 10px 0 10px;
+    margin-top: 2px;
 }
 
 /* Tail for Received Message */
