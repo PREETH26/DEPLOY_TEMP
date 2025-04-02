@@ -869,7 +869,7 @@ function MobileChat() {
               )}
             </div>
           )}
-          <div className="flex p-2 bg-white border-t">
+{/*           <div className="flex p-2 bg-white border-t">
             <div className="flex-1 flex flex-col">
               {file && getFileType(file) !== "image" && getFileType(file) !== "video" && (
                 <div className="bg-gray-200 p-2 rounded-md mb-2 flex items-center justify-between">
@@ -941,6 +941,81 @@ function MobileChat() {
             </button>
           </div>
           {message && <p className="p-2 text-red-500 text-sm">{message}</p>}
+        </div>
+      )} */}
+          <div className="flex items-center">
+              <div className="flex-1 flex flex-col">
+                {file && getFileType(file) !== "image" && getFileType(file) !== "video" && (
+                  <div className="bg-gray-200 p-2 rounded-md mb-2 flex items-center justify-between">
+                    <div className="flex items-center">
+                      {getFileIcon(getFileType(file), file.name)}
+                      <span className="text-xs text-gray-800">{file.name}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setFile(null);
+                        setFilePreview(null);
+                        setIsPreviewOpen(false);
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+                      className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+                <textarea
+                  className="border border-gray-400 p-2 rounded-l-md resize-none overflow-y-auto text-sm w-full"
+                  placeholder="Type a message..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  rows="1" // Start with fewer rows, expand as needed
+                  style={{ minHeight: "38px", maxHeight: "120px", lineHeight: "12px", paddingTop: "12px" }}
+                />
+              </div>
+              <div className="flex items-center ml-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const selectedFile = e.target.files[0];
+                    setFile(selectedFile);
+                    if (selectedFile) {
+                      const fileType = getFileType(selectedFile);
+                      if (fileType === "image" || fileType === "video") {
+                        const previewUrl = URL.createObjectURL(selectedFile);
+                        setFilePreview(previewUrl);
+                        setIsPreviewOpen(true);
+                      } else {
+                        setFilePreview(null);
+                        setIsPreviewOpen(false);
+                      }
+                    } else {
+                      setFilePreview(null);
+                      setIsPreviewOpen(false);
+                    }
+                  }}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.mov,.txt,.pptx"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`${isDarkMode ? "bg-black" : "bg-white"} border border-black text-black p-2 rounded`}
+                >
+                  <GiSafetyPin className="text-cyan-500 text-xl" />
+                </button>
+              </div>
+              <button
+                className="bg-cyan-500 text-white p-2 rounded-r-md ml-2 text-sm"
+                onClick={sendMessage}
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Send"}
+              </button>
+            </div>
+          {message && <p className="p-2 text-red-500 text-sm">{message}</p>}
+        </div>
         </div>
       )}
     </div>
