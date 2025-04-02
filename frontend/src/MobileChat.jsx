@@ -943,7 +943,7 @@ function MobileChat() {
           {message && <p className="p-2 text-red-500 text-sm">{message}</p>}
         </div>
       )} */}
-          <div className="flex items-center">
+      <div className="flex items-center">
               <div className="flex-1 flex flex-col">
                 {file && getFileType(file) !== "image" && getFileType(file) !== "video" && (
                   <div className="bg-gray-200 p-2 rounded-md mb-2 flex items-center justify-between">
@@ -1016,7 +1016,7 @@ function MobileChat() {
             </div>
           {message && <p className="p-2 text-red-500 text-sm">{message}</p>}
         </div>
-        </div>
+        
       )}
     </div>
   );
