@@ -10,7 +10,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import Logo from "./assets/Logo.png";
 // import "./Chat.css";
 
-const socket = io("http://localhost:5000", {
+const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
 });
 
@@ -115,7 +115,7 @@ function MobileChat() {
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/user/profile", {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
           withCredentials: true,
         });
         const userData = res.data.userData || res.data;
@@ -129,7 +129,7 @@ function MobileChat() {
 
     const getAll = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/user/members", {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
           withCredentials: true,
         });
         setAll(res.data.members || []);
@@ -141,7 +141,7 @@ function MobileChat() {
 
     const getGroupChats = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/class", {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, {
           withCredentials: true,
         });
         const classes = res.data.classes || res.data || [];
@@ -151,7 +151,7 @@ function MobileChat() {
         for (const group of classes) {
           try {
             const subjectRes = await axios.get(
-              `http://localhost:5000/api/subject/${group._id}`,
+              `${import.meta.env.VITE_BACKEND_URL}/api/subject/${group._id}`,
               { withCredentials: true }
             );
             subjectGroupsData[group._id] = subjectRes.data.subjects || [];
@@ -176,7 +176,7 @@ function MobileChat() {
     const fetchFiles = async () => {
       if (!selectedChat) return;
       try {
-        let url = "http://localhost:5000/api/files?";
+        let url = `${import.meta.env.VITE_BACKEND_URL}api/files?`;
         const params = new URLSearchParams();
         params.append("chatType", selectedChat.type);
         if (selectedChat.type === "group") {
@@ -443,7 +443,7 @@ function MobileChat() {
       }
 
       try {
-        const res = await axios.post("http://localhost:5000/api/files/upload", formData, {
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/files/upload`, formData, {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         });
