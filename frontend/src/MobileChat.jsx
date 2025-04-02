@@ -929,7 +929,7 @@ function MobileChat() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`${isDarkMode ? "bg-black" : "bg-white"} border border-black text-black p-2 rounded`}
               >
-                <GiSafetyPin className="text-cyan-500 text-xl" />
+                <GiSafetyPin className="text-cyan-500 text-2xl" />
               </button>
             </div>
             <button
