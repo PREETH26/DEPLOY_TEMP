@@ -670,7 +670,7 @@ function MobileChat() {
               </button>
             )}
           </div>
-          <div className="flex flex-col overflow-y-auto h-[90vh] bg-gray-100 p-4 mt-16 pt-2 justify-end  ">
+          <div className="flex flex-col overflow-y-auto h-[90vh] bg-gray-100 p-4 mt-16 pt-2  ">
             {combinedMessages.map((item, index) => {
               if (item.type === "message") {
                 const msg = item.data;
