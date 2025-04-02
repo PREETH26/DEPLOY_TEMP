@@ -130,6 +130,48 @@ export const getClassById = async(req,res)=>{
     
 }
 
+// export const updateClass = async(req,res)=>{
+//     const { id } = req.params;
+//     const {className, studentsToAdd, studentsToRemove, facultyToAdd, facultyToRemove, subjects } = req.body;
+//     try {
+//         const updateFields = {};
+
+//         if (className) {
+//             updateFields.className = className;
+//         }
+       
+
+//         if (studentsToAdd && studentsToAdd.length>0) {
+//             updateFields.$addToSet = { students: { $each: studentsToAdd } };
+//         }
+//         if (facultyToAdd && facultyToAdd.length>0) {
+//             updateFields.$addToSet = updateFields.$addToSet || {};
+//             updateFields.$addToSet.faculty = { $each: facultyToAdd };
+//         }
+
+//         if (studentsToRemove && studentsToRemove.length>0) {
+//             updateFields.$pull = { students: { $in: studentsToRemove } };
+//         }
+//         if (facultyToRemove && facultyToRemove.length>0) {
+//             updateFields.$pull = updateFields.$pull || {};
+//             updateFields.$pull.faculty = { $in: facultyToRemove };
+//         }
+
+//         const classes = await ClassGroup.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
+
+//         if (!classes) {
+//             return res.status(404).json({ success: false, message: "Class group not found" });
+//         }
+
+      
+//         return res.json({ success:true,message: "Class group updated successfully", classes });
+        
+//     } catch (error) {
+//         console.log(error.message)
+//         return res.status(500).json({ success:false,message: "Server Error" });   
+//     }
+// }
+
 export const updateClass = async(req,res)=>{
     const { id } = req.params;
     const {className, studentsToAdd, studentsToRemove, facultyToAdd, facultyToRemove, subjects } = req.body;
@@ -158,8 +200,13 @@ export const updateClass = async(req,res)=>{
         }
 
         const classes = await ClassGroup.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
+        console.log(classes);
+        const chat = await Chat.findById(classes.chat._id);
+        console.log(chat);
+        const users = [...new Set([classes.createdBy, ...classes.students, ...classes.faculty])];
+        const completed = await Chat.findByIdAndUpdate(classes.chat._id, { $set: { users: users } },{ new: true, runValidators: true })
 
-        if (!classes) {
+        if (!classes || !completed) {
             return res.status(404).json({ success: false, message: "Class group not found" });
         }
 
