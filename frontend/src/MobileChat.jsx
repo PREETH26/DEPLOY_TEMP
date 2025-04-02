@@ -670,7 +670,7 @@ function MobileChat() {
               </button>
             )}
           </div>
-          <div className="flex flex-col overflow-y-auto h-[90vh] bg-gray-100 p-4 mt-16 pt-2  ">
+          <div ref={newMessage} className="flex flex-col-reverse overflow-y-auto h-[88vh] bg-gray-100 p-4 mt-16 pt-2  ">
             {combinedMessages.map((item, index) => {
               if (item.type === "message") {
                 const msg = item.data;
@@ -685,8 +685,8 @@ function MobileChat() {
                       key={index}
                       className={`p-2 my-2 rounded-md w-fit max-w-[80%]  break-words ${
                         msg.senderId === profile._id
-                          ? "bg-cyan-500 text-white self-end ml-auto"
-                          : "bg-white text-black"
+                          ? "sent bg-blue-500 text-white self-end ml-auto"
+                          : "received bg-white text-black"
                       }`}
                     >
                       {msg.content.split("\n").map((line, i) => (
@@ -706,8 +706,8 @@ function MobileChat() {
                       key={index}
                       className={`p-2 my-2 rounded-md w-fit max-w-[80%] break-words ${
                         msg.senderId === profile._id
-                          ? "bg-cyan-500 text-white self-end ml-auto"
-                          : "bg-white text-black"
+                          ? "sent bg-blue-500 text-white self-end ml-auto"
+                          : "received bg-white text-black"
                       }`}
                       style={
                         msg.senderId !== profile._id
@@ -743,8 +743,8 @@ function MobileChat() {
                     key={index}
                     className={`p-2 my-2 rounded-md w-fit max-w-[80%] break-words ${
                       file.uploadedBy._id === profile._id
-                        ? "bg-cyan-500 text-white self-end ml-auto"
-                        : "bg-white text-black"
+                        ? "sent bg-blue-500 text-white self-end ml-auto"
+                        : "received bg-white text-black"
                     }`}
                     style={
                       file.uploadedBy._id !== profile._id
