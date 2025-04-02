@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter,Routes, Route } from 'react-router-dom'
+import { useMediaQuery } from "react-responsive";
 import Signup from './Signup'
 import Login from './Login'
 import Profile from './Profile'
@@ -16,7 +17,8 @@ import LandingPage from './LandingPage'
 
 
 function App() {
-  
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   return (
     <div>
       <ToastContainer/>
@@ -26,7 +28,7 @@ function App() {
         <Route path='/verify-otp' element={<VerifyOTP/>}></Route>
         <Route path='/verify-otp-middle' element={<VerifyOtpMiddle/>}></Route>
         <Route path='/profile' element={<Profile/>}></Route>
-        <Route path='/chat' element={<Chat/>}></Route>
+        <Route path="/chat" element={isMobile ? <MobileChat /> : <Chat />} />
         <Route path="/subjectSettings" element={<SubjectSettings/>}></Route>        
         <Route path='/settings' element={<Settings/>}></Route>
         <Route path='/preview' element={<FilePreviewPage/>}></Route>
