@@ -660,7 +660,7 @@ function MobileChat() {
                       state:
                         selectedChat.type === "group"
                           ? { classId: selectedChat.data._id }
-                          : { subjectId: selectedChat.data._id, classId: selectedChat.data.classId },
+                          : { subjectId: selectedChat.data._id, classId: selectedChat.data.classGroup },
                     }
                   )
                 }
