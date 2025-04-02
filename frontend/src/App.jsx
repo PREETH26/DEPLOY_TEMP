@@ -12,6 +12,7 @@ import Settings from './Settings'
 import SubjectSettings from './subjectSettings'
 import FilePreviewPage from './FilePreviewPage'
 import LandingPage from './LandingPage'
+import MobileChat from './MobileChat'
 
 
 
