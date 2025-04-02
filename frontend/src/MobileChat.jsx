@@ -176,7 +176,7 @@ function MobileChat() {
     const fetchFiles = async () => {
       if (!selectedChat) return;
       try {
-        let url = `${import.meta.env.VITE_BACKEND_URL}api/files?`;
+        let url = `${import.meta.env.VITE_BACKEND_URL}/api/files?`;
         const params = new URLSearchParams();
         params.append("chatType", selectedChat.type);
         if (selectedChat.type === "group") {
