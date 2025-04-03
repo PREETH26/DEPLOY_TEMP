@@ -6,7 +6,7 @@ import { GiSafetyPin } from "react-icons/gi";
 import { FaFilePdf, FaFileWord, FaFileExcel, FaFile, FaFilePowerpoint, FaFileAlt } from "react-icons/fa";
 import DarkMode from "./DarkMode";
 import { IoSettings } from "react-icons/io5";
-import { IoMdArrowBack } from "react-icons/io";
+import { IoMdArrowBack, IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
 const [previewImageUrl, setPreviewImageUrl] = useState(null); 
 const [previewFileName, setPreviewFileName] = useState(null); 
