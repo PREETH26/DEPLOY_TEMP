@@ -2232,6 +2232,7 @@ function Chat() {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
                       rows="3"
+                      ref={messageRef}
                       style={{ minHeight: "40px", maxHeight: "40px", lineHeight: "12px", paddingTop: "12px" }}
                     />
                   </div>
