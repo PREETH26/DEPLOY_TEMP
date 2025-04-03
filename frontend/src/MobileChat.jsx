@@ -1058,7 +1058,7 @@ import DarkMode from "./DarkMode";
 import { IoSettings } from "react-icons/io5";
 import { IoMdArrowBack, IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
-import { useSwipeable } from "react-swipeable"; // Import swipeable
+import { useSwipeable } from "react-swipeable"; 
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -1172,16 +1172,7 @@ function MobileChat() {
     setZoom(false); // Reset zoom when opening preview
   };
 
-  // Swipe handlers
-  const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (selectedChat) {
-        handleBack(); // Only trigger back if in chat view
-      }
-    },
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true, // Allow mouse swiping for testing
-  });
+
 
   // Data fetching (unchanged)
   useEffect(() => {
@@ -1488,6 +1479,17 @@ function MobileChat() {
       localStorage.setItem("selectedChatType", "subject");
     }
   };
+
+    // Swipe handlers
+    const handlers = useSwipeable({
+      onSwipedLeft: () => {
+        if (selectedChat) {
+          handleBack(); // Only trigger back if in chat view
+        }
+      },
+      preventDefaultTouchmoveEvent: true,
+      trackMouse: true, // Allow mouse swiping for testing
+    });
 
   const handleBack = () => {
     setSelectedChat(null);
