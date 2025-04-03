@@ -203,7 +203,8 @@ export const updateClass = async(req,res)=>{
         console.log(classes);
         const chat = await Chat.findById(classes.chat._id);
         console.log(chat);
-        const users = [...new Set([classes.createdBy, ...classes.students, ...classes.faculty])];
+        let users = [...new Set([classes.createdBy, ...classes.students, ...classes.faculty])];
+        users = users.filter(x=>x!==undefined)
         const completed = await Chat.findByIdAndUpdate(classes.chat._id, { $set: { users: users } },{ new: true, runValidators: true })
 
         if (!classes || !completed) {
