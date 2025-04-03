@@ -1543,6 +1543,7 @@ function Chat() {
 
   useEffect(() => {
     localStorage.setItem("activeSection", activeSection);
+    messageRef.current.focus();
   }, [activeSection]);
 
   const handleDragStart = (e, index) => {
