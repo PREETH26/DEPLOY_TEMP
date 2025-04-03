@@ -359,7 +359,6 @@ function MobileChat() {
   useEffect(() => {
     if (newMessage.current) {
       newMessage.current.scrollIntoView({ behavior: "auto" });
-      messageRef.current.focus();
     }
   }, [chatMessages, uploadedFiles]);
 
