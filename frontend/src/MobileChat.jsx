@@ -1049,6 +1049,7 @@
 
 
 
+
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -1059,7 +1060,7 @@ import DarkMode from "./DarkMode";
 import { IoSettings } from "react-icons/io5";
 import { IoMdArrowBack, IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
-import { useSwipeable } from "react-swipeable";
+import { useSwipeable } from "react-swipeable"; 
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -1067,9 +1068,9 @@ const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
 
 function MobileChat() {
   const navigate = useNavigate();
-  const [previewImageUrl, setPreviewImageUrl] = useState(null);
-  const [previewFileName, setPreviewFileName] = useState(null);
-  const [zoom, setZoom] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState(null); // Moved inside component
+  const [previewFileName, setPreviewFileName] = useState(null); // Moved inside component
+  const [zoom, setZoom] = useState(false); // Moved inside component
   const [profile, setProfile] = useState(null);
   const [all, setAll] = useState([]);
   const [groupChats, setGroupChats] = useState([]);
@@ -1173,17 +1174,7 @@ function MobileChat() {
     setZoom(false); // Reset zoom when opening preview
   };
 
-  // Swipe handlers - Only applied when selectedChat exists
-  const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (selectedChat) {
-        handleBack(); // Trigger back only if in chat view
-      }
-      // Do nothing if on contacts page (!selectedChat)
-    },
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true, // Allow mouse swiping for testing
-  });
+
 
   // Data fetching (unchanged)
   useEffect(() => {
@@ -1462,8 +1453,8 @@ function MobileChat() {
         setMessage("You are not a participant in this subject group chat");
         return;
       }
-      if (messageRef.current) {
-        messageRef.current.focus();
+      if(message.current){
+      messageRef.current.focus();
       }
     }
 
@@ -1491,18 +1482,21 @@ function MobileChat() {
     }
   };
 
-  const handleBack = () => {
-    if (selectedChat) {
-      // If in a chat, just clear the selected chat to show contacts
-      setSelectedChat(null);
-      localStorage.removeItem("selectedChatId");
-      localStorage.removeItem("selectedChatType");
-      navigate(-1);
+    // Swipe handlers
+    const handlers = useSwipeable({
+      onSwipedLeft: () => {
+        if (!selectedChat) {
+          handleBack(); // Only trigger back if in chat view
+        }
+      },
+      preventDefaultTouchmoveEvent: true,
+      trackMouse: true, // Allow mouse swiping for testing
+    });
 
-    } else {
-      // If not in a chat (shouldn't happen with swipe here), navigate back
-      navigate(1);
-    }
+  const handleBack = () => {
+    setSelectedChat(null);
+    localStorage.removeItem("selectedChatId");
+    localStorage.removeItem("selectedChatType");
   };
 
   const sendMessage = async () => {
@@ -1582,7 +1576,7 @@ function MobileChat() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if(e.key === "Enter") {
       setInput((prev) => prev + "\n");
       newMessage.current.scrollIntoView({ behavior: "auto" });
     }
@@ -1607,16 +1601,16 @@ function MobileChat() {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       {!selectedChat ? (
-        // Contacts Page (no swipe handlers applied here)
+        // Contacts Page (no swipe)
         <div className="flex flex-col h-full w-screen">
-          <div className="grid grid-cols-3 items-center p-2 bg-cyan-500 text-white">
+          <div className="grid grid-cols-3 items-center p-2 bg-cyan-500 text-white ">
             <img
               src={Logo}
               className="size-10 cursor-pointer justify-self-start ml-0"
               alt="Logo"
               onClick={() => navigate("/")}
             />
-            <p className="justify-self-center text-2xl font-semibold">Ecanent</p>
+            <p className="justify-self-center text-2xl font-semibold ">Ecanent</p>
             <button onClick={() => navigate("/profile")} className="justify-self-end mr-0">
               <IoSettings className="text-2xl" />
             </button>
@@ -1667,8 +1661,8 @@ function MobileChat() {
               <>
                 {groupChats.map((group) =>
                   group.chat ? (
-                    <details key={group._id} className="flex flex-col border-b">
-                      <summary className="cursor-pointer p-4 bg-gray-100 hover:bg-gray-200 grid grid-cols-[5fr_1fr] w-full items-center">
+                    <details key={group._id} className=" flex flex-col border-b">
+                      <summary className="cursor-pointer p-4 bg-gray-100 hover:bg-gray-200  grid grid-cols-[5fr_1fr] w-full items-center">
                         <span className="text-sm font-semibold">{group.className}</span>
                         <button
                           onClick={(e) => {
@@ -1723,7 +1717,7 @@ function MobileChat() {
           </ul>
         </div>
       ) : (
-        // Chat Page (with swipe handlers)
+        // Chat Page (with swipe)
         <div {...handlers} className="flex flex-col h-full w-full">
           <div className="fixed w-full top-0 bg-cyan-500 text-white p-4 grid grid-cols-2 justify-between items-center z-10">
             <div className="flex items-center justify-self-start">
@@ -1770,7 +1764,7 @@ function MobileChat() {
                   return (
                     <div
                       key={index}
-                      className={`p-2 my-2 rounded-md w-fit max-w-[80%] break-words ${
+                      className={`p-2 my-2 rounded-md w-fit max-w-[80%]  break-words ${
                         msg.senderId === profile._id
                           ? "sent bg-blue-500 text-white self-end ml-auto"
                           : "received bg-white text-black"
@@ -1940,10 +1934,8 @@ function MobileChat() {
                   src={previewImageUrl}
                   alt={previewFileName}
                   onClick={() => setZoom(!zoom)}
-                  className={`max-w-full max-h-[70vh] rounded-md cursor-zoom-in transition-transform duration-300 ease-in-out ${
-                    zoom ? "scale-150 z-[100] cursor-zoom-out" : "scale-100"
-                  }`}
-                  style={{ transformOrigin: "center center" }}
+                  className={`max-w-full max-h-[70vh] rounded-md cursor-zoom-in transition-transform duration-300 ease-in-out ${zoom ? 'scale-150 z-[100] cursor-zoom-out' : 'scale-100'}`}
+                  style={{ transformOrigin: 'center center' }}
                   onError={(e) => {
                     console.error("Error loading image preview:", e);
                     closePreview();
@@ -2063,7 +2055,7 @@ function MobileChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  rows="1"
+                  rows="1" 
                   ref={messageRef}
                   style={{ minHeight: "38px", maxHeight: "120px", lineHeight: "12px", paddingTop: "12px" }}
                 />
@@ -2117,3 +2109,4 @@ function MobileChat() {
 }
 
 export default MobileChat;
+
