@@ -1048,6 +1048,7 @@
 // export default MobileChat;
 
 
+
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -1178,6 +1179,7 @@ function MobileChat() {
       if (selectedChat) {
         handleBack(); // Trigger back only if in chat view
       }
+      // Do nothing if on contacts page (!selectedChat)
     },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true, // Allow mouse swiping for testing
@@ -1490,12 +1492,14 @@ function MobileChat() {
   };
 
   const handleBack = () => {
-    setSelectedChat(null); // Show contacts page
-    localStorage.removeItem("selectedChatId");
-    localStorage.removeItem("selectedChatType");
-    // Ensure we stay on the MobileChat route showing contacts
-    if (window.location.pathname !== "/mobile-chat") {
-      navigate("/mobile-chat", { replace: true });
+    if (selectedChat) {
+      // If in a chat, just clear the selected chat to show contacts
+      setSelectedChat(null);
+      localStorage.removeItem("selectedChatId");
+      localStorage.removeItem("selectedChatType");
+    } else {
+      // If not in a chat (shouldn't happen with swipe here), navigate back
+      navigate(-1);
     }
   };
 
