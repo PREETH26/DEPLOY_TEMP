@@ -8,9 +8,7 @@ import DarkMode from "./DarkMode";
 import { IoSettings } from "react-icons/io5";
 import { IoMdArrowBack, IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
-const [previewImageUrl, setPreviewImageUrl] = useState(null); 
-const [previewFileName, setPreviewFileName] = useState(null); 
-const [zoom,SetZoom] = useState(false);
+
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -39,7 +37,9 @@ function MobileChat() {
   const fileInputRef = useRef(null);
   const isDarkMode = DarkMode();
   const messageRef = useRef(null);
-
+  const [previewImageUrl, setPreviewImageUrl] = useState(null); 
+  const [previewFileName, setPreviewFileName] = useState(null); 
+  const [zoom,SetZoom] = useState(false);
 
   // Utility functions (unchanged)
   const getUserColor = (userId) => {
