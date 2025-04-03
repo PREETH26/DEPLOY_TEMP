@@ -408,7 +408,9 @@ function MobileChat() {
         setMessage("You are not a participant in this subject group chat");
         return;
       }
+      if(message.current){
       messageRef.current.focus();
+      }
     }
 
     setSelectedChat(newChat);
