@@ -1214,6 +1214,8 @@ function Chat() {
   const isDarkMode = DarkMode();
   const dragItem = useRef(null);
   const messageRef = useRef(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState(null);
+  const [previewFileName, setPreviewFileName] = useState(null); 
 
 
   const getUserColor = (userId) => {
@@ -1299,6 +1301,12 @@ function Chat() {
     if (chat.type === "group") return chat.data.chat._id;
     if (chat.type === "subject") return chat.data.chat[0]._id;
     return null;
+  };
+
+  const handleImageClick = (fileUrl, fileName) => {
+    setPreviewImageUrl(fileUrl);
+    setPreviewFileName(fileName);
+    setIsPreviewOpen(true);
   };
 
   useEffect(() => {
@@ -1830,6 +1838,12 @@ function Chat() {
     }
   };
 
+  const closePreview = () => {
+    setPreviewImageUrl(null);
+    setPreviewFileName(null);
+    setIsPreviewOpen(false);
+  };
+
   const combinedMessages = selectedChat
     ? [
         ...(chatMessages[getChatId(selectedChat)] || []).map((msg) => ({ type: "message", data: msg })),
@@ -2094,6 +2108,7 @@ function Chat() {
                                 console.error("Error loading image:", e);
                                 e.target.style.display = "none";
                               }}
+                              onClick={() => handleImageClick(file.fileUrl, file.fileName)}
                             />
                           )}
                           {isVideo && (
@@ -2162,6 +2177,39 @@ function Chat() {
                       <p className="text-sm sm:text-base">No messages between You and {selectedChat.data.name}</p>
                     )}
                 </div>
+
+                {isPreviewOpen && previewImageUrl && (
+                    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                        <div className="relative bg-white p-4 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold">Image Preview: {previewFileName}</h2>
+                            <button
+                            onClick={() => downloadFile(previewImageUrl, previewFileName)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition mr-10"
+                            >
+                            Download
+                            </button>
+                        </div>
+                        <button
+                            onClick={closePreview}
+                            className="absolute top-2 right-2 text-white bg-red-500 p-2 rounded-full hover:bg-red-600 transition"
+                        >
+                            <IoMdClose className="text-2xl" />
+                        </button>
+                        <img
+                            src={previewImageUrl}
+                            alt={previewFileName}
+                            onClick={()=>SetZoom(prev=>!prev)}
+                            className={`max-w-full max-h-[70vh] rounded-md flex justify-self-center cursor-zoom-in  transition-transform duration-500 ${zoom ? "z-[100] scale-150 cursor-zoom-out  " : "scale-100 cursor-zoom-in"}`}
+                            onError={(e) => {
+                            console.error("Error loading image preview:", e);
+                            closePreview();
+                            setMessage("Failed to load image preview");
+                            }}
+                        />
+                        </div>
+                    </div>
+                    )}
 
                 {isPreviewOpen && file && (
                   <div className="bg-white p-4 rounded-md border border-gray-300 mb-3">
