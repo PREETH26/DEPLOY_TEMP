@@ -8,7 +8,9 @@ import DarkMode from "./DarkMode";
 import { IoSettings } from "react-icons/io5";
 import { IoMdArrowBack } from "react-icons/io";
 import Logo from "./assets/Logo.png";
-// import "./Chat.css";
+const [previewImageUrl, setPreviewImageUrl] = useState(null); 
+const [previewFileName, setPreviewFileName] = useState(null); 
+const [zoom,SetZoom] = useState(false);
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -111,6 +113,12 @@ function MobileChat() {
         console.error("Error downloading file:", error);
         setMessage("Failed to download file");
       });
+  };
+
+  const handleImageClick = (fileUrl, fileName) => {
+    setPreviewImageUrl(fileUrl);
+    setPreviewFileName(fileName);
+    setIsPreviewOpen(true);
   };
 
   // Data fetching (unchanged)
@@ -526,6 +534,12 @@ function MobileChat() {
     }
   };
 
+  const closePreview = () => {
+    setPreviewImageUrl(null);
+    setPreviewFileName(null);
+    setIsPreviewOpen(false);
+  };
+
   const combinedMessages = [
     ...chatMessages.map((msg) => ({ type: "message", data: msg })),
     ...uploadedFiles.map((file) => ({ type: "file", data: file })),
@@ -784,6 +798,8 @@ function MobileChat() {
                           console.error("Error loading image:", e);
                           e.target.style.display = "none";
                         }}
+                        onClick={() => handleImageClick(file.fileUrl, file.fileName)}
+
                       />
                     )}
                     {isVideo && (
@@ -847,6 +863,41 @@ function MobileChat() {
               <p className="text-sm text-center">No messages yet</p>
             )}
           </div>
+
+          {isPreviewOpen && previewImageUrl && (
+            <div className="fixed inset-0 bg-black/20 bg-opacity-75 flex items-center justify-center z-50">
+                <div className="relative bg-white p-4 rounded-lg max-w-xl w-[90%] max-h-[90vh] ">
+                <div className="flex justify-between items-center mb-4 break-all text-center ">
+                    <h2 className="text-md font-semibold mr-10">Image Preview: {previewFileName}</h2>
+                
+                    <button
+                    onClick={() => downloadFile(previewImageUrl, previewFileName)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition "
+                    >
+                    Download
+                    </button>
+                </div>
+                <button
+                    onClick={closePreview}
+                    className="absolute top-2 right-2 text-white bg-red-500 p-2 rounded-full hover:bg-red-600 transition"
+                >
+                    <IoMdClose className="text-2xl" />
+                </button>
+                <img
+                    src={previewImageUrl}
+                    alt={previewFileName}
+                    onClick={()=>SetZoom(prev=>!prev)}
+                    className={`max-w-full max-h-[70vh] rounded-md flex justify-self-center cursor-zoom-in  transition-transform duration-500 ${zoom ? "z-[100] scale-120 cursor-zoom-out  max-w-[80%]" : "scale-100 cursor-zoom-in"}`}
+                    onError={(e) => {
+                    console.error("Error loading image preview:", e);
+                    closePreview();
+                    setMessage("Failed to load image preview");
+                    }}
+                />
+                </div>
+            </div>
+            )}
+
           {isPreviewOpen && file && (
             <div className="bg-white p-2 rounded-md border border-gray-300 mb-2">
               <div className="flex justify-between items-center mb-2">
