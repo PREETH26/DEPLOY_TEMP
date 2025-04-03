@@ -502,11 +502,7 @@ function MobileChat() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-      newMessage.current.scrollIntoView({ behavior: "auto" });
-    } else if (e.shiftKey && e.key === "Enter") {
+    if(e.key === "Enter") {
       setInput((prev) => prev + "\n");
       newMessage.current.scrollIntoView({ behavior: "auto" });
     }
