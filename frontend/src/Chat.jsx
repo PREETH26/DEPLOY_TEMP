@@ -1216,6 +1216,8 @@ function Chat() {
   const messageRef = useRef(null);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [previewFileName, setPreviewFileName] = useState(null); 
+  const [zoom,SetZoom] = useState(false);
+
 
 
   const getUserColor = (userId) => {
