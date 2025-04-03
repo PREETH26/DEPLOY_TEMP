@@ -340,21 +340,7 @@ function MobileChat() {
     }
   }, [all, groupChats, subjectGroups]);
 
-  useEffect(() => {
-    if (profile) {
-      const handleBackNavigation = (event) => {
-        event.preventDefault();
-        setMessage("You cannot go back to the login page after logging in.");
-        window.history.pushState(null, "", window.location.pathname);
-      };
-  
-      window.addEventListener("popstate", handleBackNavigation);
-  
-      return () => {
-        window.removeEventListener("popstate", handleBackNavigation);
-      };
-    }
-  }, [profile]);
+
 
   useEffect(() => {
     if (newMessage.current) {
