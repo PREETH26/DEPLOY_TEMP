@@ -1213,6 +1213,8 @@ function Chat() {
   const fileInputRef = useRef(null);
   const isDarkMode = DarkMode();
   const dragItem = useRef(null);
+  const messageRef = useRef(null);
+
 
   const getUserColor = (userId) => {
     let hash = 0;
@@ -1602,6 +1604,7 @@ function Chat() {
         setMessage("You are not a participant in this subject group chat");
         return;
       }
+      messageRef.current.focus();
     }
 
     setOpenChats((prev) => {
@@ -1614,7 +1617,7 @@ function Chat() {
     setFile(null);
     setFilePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
-
+    messageRef.current.focus();
     if (type === "single") {
       socket.emit("load-chat", { receiverId: chat._id });
       localStorage.setItem("selectedChatId", chat._id);
@@ -1654,7 +1657,7 @@ function Chat() {
       setFile(null);
       setFilePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
-
+      messageRef.current.focus();
       if (type === "single") {
         socket.emit("load-chat", { receiverId: chat.data._id });
         localStorage.setItem("selectedChatId", chat.data._id);
@@ -1689,6 +1692,7 @@ function Chat() {
     setFilePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     const chatId = getChatId(chat);
+    messageRef.current.focus();
     if (chat.type === "single") {
       socket.emit("load-chat", { receiverId: chat.data._id });
       localStorage.setItem("selectedChatId", chat.data._id);
