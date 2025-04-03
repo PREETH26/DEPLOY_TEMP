@@ -216,8 +216,8 @@ export const updateSubject = async(req,res)=>{
         console.log("subject" , subject.chat);
         const chat = await Chat.findById(subject.chat[0]._id);
 
-        const users = [...new Set([subject.createdBy, ...subject.students, ...subject.faculty])];
-
+        let users = [...new Set([subject.createdBy, ...subject.students, ...subject.faculty])];
+        users = users.filter(x=>x!==undefined)
         const completed = await Chat.findByIdAndUpdate(subject.chat[0]._id, { $set: { users: users } },{ new: true, runValidators: true })
         if (!subject || !completed) {
             return res.status(404).json({ success: false, message: "Subject group not found" });
