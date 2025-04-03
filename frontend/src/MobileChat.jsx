@@ -1060,16 +1060,15 @@ import { IoMdArrowBack, IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
 import { useSwipeable } from "react-swipeable"; // Import swipeable
 
-const [previewImageUrl, setPreviewImageUrl] = useState(null); 
-const [previewFileName, setPreviewFileName] = useState(null); 
-const [zoom, setZoom] = useState(false);
-
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
 });
 
 function MobileChat() {
   const navigate = useNavigate();
+  const [previewImageUrl, setPreviewImageUrl] = useState(null); // Moved inside component
+  const [previewFileName, setPreviewFileName] = useState(null); // Moved inside component
+  const [zoom, setZoom] = useState(false); // Moved inside component
   const [profile, setProfile] = useState(null);
   const [all, setAll] = useState([]);
   const [groupChats, setGroupChats] = useState([]);
