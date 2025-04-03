@@ -1497,9 +1497,11 @@ function MobileChat() {
       setSelectedChat(null);
       localStorage.removeItem("selectedChatId");
       localStorage.removeItem("selectedChatType");
+      navigate(-1);
+
     } else {
       // If not in a chat (shouldn't happen with swipe here), navigate back
-      navigate(-1);
+      navigate(1);
     }
   };
 
