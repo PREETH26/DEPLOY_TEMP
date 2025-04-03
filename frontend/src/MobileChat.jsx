@@ -36,6 +36,8 @@ function MobileChat() {
   const newMessage = useRef(null);
   const fileInputRef = useRef(null);
   const isDarkMode = DarkMode();
+  const messageRef = useRef(null);
+
 
   // Utility functions (unchanged)
   const getUserColor = (userId) => {
@@ -333,6 +335,7 @@ function MobileChat() {
   useEffect(() => {
     if (newMessage.current) {
       newMessage.current.scrollIntoView({ behavior: "auto" });
+      messageRef.current.focus();
     }
   }, [chatMessages, uploadedFiles]);
 
@@ -389,6 +392,7 @@ function MobileChat() {
         setMessage("You are not a participant in this subject group chat");
         return;
       }
+      messageRef.current.focus();
     }
 
     setSelectedChat(newChat);
@@ -938,7 +942,8 @@ function MobileChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  rows="1" // Start with fewer rows, expand as needed
+                  rows="1" 
+                  ref={messageRef}
                   style={{ minHeight: "38px", maxHeight: "120px", lineHeight: "12px", paddingTop: "12px" }}
                 />
               </div>
