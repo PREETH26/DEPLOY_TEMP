@@ -2794,7 +2794,7 @@ function Chat() {
       socket.off("receive-group-message");
       socket.off("error-message");
     };
-  }, [openChats, profile, navigate]);
+  }, [openChats, profile, navigate,socket,profile._id]);
 
   useEffect(() => {
     const restoreChat = () => {
