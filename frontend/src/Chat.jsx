@@ -332,7 +332,7 @@ function Chat() {
           new Notification('New Private Message', {
             body: `${message.sender}: ${message.content.substring(0, 100)}`,
             icon: Logo,
-            data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.senderId}` },
+            data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.receiverId}` },
           });
         }
       
