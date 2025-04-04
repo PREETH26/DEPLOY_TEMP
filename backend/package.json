@@ -30,6 +30,7 @@
     "passport-google-oauth20": "^2.0.0",
     "react-pdf": "^9.2.1",
     "react-responsive": "^10.0.1",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "web-push": "^3.6.7"
   }
 }
