@@ -829,8 +829,7 @@ export default function singleMessage(io) {
         }
 
         // Send to receiver
-        socket.emit("receive-message", messageData);
-
+        
         if (receiverSocketId) {
           io.to(receiverSocketId).emit("receive-message", messageData);
           console.log("📩 Sent to receiver:", receiverSocketId);
@@ -857,6 +856,8 @@ export default function singleMessage(io) {
             }).save();
           }
         }
+        socket.emit("receive-message", messageData);
+
       } catch (error) {
         console.error("Message Send Error:", error.message);
         socket.emit("error-message", "Failed to send message");
