@@ -471,42 +471,46 @@ export default function groupMessage(io) {
         // // Ensure the sender also receives the message
         // socket.emit("receive-group-message", messageData);
 
+        const recipients = chat.users
+      .map((user) => user._id.toString())
+      .filter(recipientId => recipientId !== sender);
+
         for (const recipientId of recipients) {
-            const recipientSocketId = onlineUsers.get(recipientId);
-            if (recipientSocketId) {
-              // Send via Socket.IO to online recipients
-              io.to(recipientSocketId).emit("receive-group-message", messageData);
-              console.log("📩 Sent group message to online recipient:", recipientId, "via socket:", recipientSocketId);
-            } else {
-              // Send push notification to offline recipients
-              console.log("User offline, sending push:", recipientId);
-              const subscription = subscriptions.get(recipientId);
-              if (subscription) {
-                await webpush.sendNotification(
-                  subscription,
-                  JSON.stringify({
-                    title: chat.name || "Group Chat",
-                    body: `${senderUser.name}: ${content.substring(0, 100)}`,
-                    icon: `${process.env.FRONTEND_URL}/Images/Logo.png`, // Use public URL
-                    data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chatId}` },
-                  })
-                ).catch(err => console.error("Push notification error for recipient", recipientId, ":", err));
-              }
-      
-              // Store notification in DB for offline recipients
-              await new Notification({
-                title: chat.name || "Group Chat",
-                content: `${senderUser.name}: ${content}`,
-                recipients: [recipientId], // Store only the recipient ID
-                classGroup: chat._id,
-                sentBy: sender,
-              }).save();
-            }
-          }
-      
-          // Ensure the sender sees the message in their UI (no notification, just UI update)
-          socket.emit("receive-group-message", messageData);
-          console.log("📩 Sent message to sender for UI consistency:", sender);
+      const recipientSocketId = onlineUsers.get(recipientId);
+      if (recipientSocketId) {
+        // Send via Socket.IO to online recipients
+        io.to(recipientSocketId).emit("receive-group-message", messageData);
+        console.log("📩 Sent group message to online recipient:", recipientId, "via socket:", recipientSocketId);
+      } else {
+        // Send push notification to offline recipients
+        console.log("User offline, sending push:", recipientId);
+        const subscription = subscriptions.get(recipientId);
+        if (subscription) {
+          await webpush.sendNotification(
+            subscription,
+            JSON.stringify({
+              title: chat.name || "Group Chat",
+              body: `${senderUser.name}: ${content.substring(0, 100)}`,
+              icon: `${process.env.FRONTEND_URL}/Images/Logo.png`, // Use public URL
+              data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chatId}` },
+            })
+          ).catch(err => console.error("Push notification error for recipient", recipientId, ":", err));
+        }
+
+        // Store notification in DB for offline recipients
+        await new Notification({
+          title: chat.name || "Group Chat",
+          content: `${senderUser.name}: ${content}`,
+          recipients: [recipientId], // Store only the recipient ID
+          classGroup: chat._id,
+          sentBy: sender,
+        }).save();
+      }
+    }
+
+    // Ensure the sender sees the message in their UI (no notification, just UI update)
+    socket.emit("receive-group-message", messageData);
+    console.log("📩 Sent message to sender for UI consistency:", sender);
       } catch (error) {
         console.error("Group Message Send Error:", error.message);
         socket.emit("error-message", "Failed to send group message");

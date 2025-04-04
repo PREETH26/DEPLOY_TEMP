@@ -2719,7 +2719,8 @@ function Chat() {
     });
 
     socket.on("receive-group-message", (messageData) => {
-        if ('Notification' in window) {
+      const isSender = messageData.senderId === profile._id;
+        if (!isSender && 'Notification' in window) {
           if (Notification.permission === 'granted') {
             let title = "New Group Message";
             if (selectedChat) {
