@@ -432,6 +432,7 @@ export default function groupMessage(io) {
           chatId: chat._id.toString(),
           content,
           timestamp: message.createdAt,
+          isSelf: true,
         };
 
         // const users = chat.users.map((user) => user.toString());
@@ -479,7 +480,7 @@ export default function groupMessage(io) {
       const recipientSocketId = onlineUsers.get(recipientId);
       if (recipientSocketId) {
         // Send via Socket.IO to online recipients
-        io.to(recipientSocketId).emit("receive-group-message", messageData);
+        io.to(recipientSocketId).emit("receive-group-message", {...messageData,isSelf: false});
         console.log("📩 Sent group message to online recipient:", recipientId, "via socket:", recipientSocketId);
       } else {
         // Send push notification to offline recipients
