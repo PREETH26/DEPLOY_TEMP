@@ -2691,6 +2691,7 @@ function Chat() {
           });
         }
       
+        console.log("🎯 RECEIVED:", message);
 
       const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
       setChatMessages((prev) => {
@@ -2794,7 +2795,7 @@ function Chat() {
       socket.off("receive-group-message");
       socket.off("error-message");
     };
-  }, [openChats, profile, navigate,socket,profile._id]);
+  }, [openChats, profile, navigate,socket]);
 
   useEffect(() => {
     const restoreChat = () => {
