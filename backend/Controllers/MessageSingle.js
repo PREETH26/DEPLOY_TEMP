@@ -365,6 +365,8 @@ export default function singleMessage(io) {
 
         socket.emit("receive-message", messageData);
         console.log("Online users map:", onlineUsers);
+        console.log("🔍 Getting socket for:", receiverId, "Online users:", Array.from(onlineUsers.entries()));
+
         const receiverSocketId = onlineUsers.get(receiverId);
         if (receiverSocketId) {
           io.to(receiverSocketId).emit("receive-message", messageData);
