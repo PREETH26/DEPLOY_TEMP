@@ -491,6 +491,7 @@ export default function groupMessage(io) {
             path: "messages",
             populate: { path: "sender", select: "name email" },
           });
+          console.log("Online users map:", onlineUsers);
 
         const users = updatedChat.users.map((user) => user._id.toString());
         users.forEach((userId) => {
