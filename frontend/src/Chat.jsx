@@ -2688,7 +2688,7 @@ function Chat() {
           new Notification('New Private Message', {
             body: `${message.sender}: ${message.content.substring(0, 100)}`,
             icon: Logo,
-            data: { url: `http://localhost:5173/chat?chatId=${message.senderId}` },
+            data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.senderId}` },
           });
         }
       }
@@ -2735,7 +2735,7 @@ function Chat() {
             new Notification(title, {
               body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
               icon: Logo,
-              data: { url: `http://localhost:5173/chat?chatId=${messageData.chatId}` },
+              data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
             }).onclick = (event) => {
               event.preventDefault();
               window.open(event.target.data.url, '_blank');
@@ -2755,7 +2755,7 @@ function Chat() {
                 new Notification(title, {
                   body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
                   icon: Logo,
-                  data: { url: `http://localhost:5173/chat?chatId=${messageData.chatId}` },
+                  data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
                 }).onclick = (event) => {
                   event.preventDefault();
                   window.open(event.target.data.url, '_blank');
