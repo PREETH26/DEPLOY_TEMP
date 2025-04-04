@@ -2719,9 +2719,8 @@ function Chat() {
     });
 
     socket.on("receive-group-message", (messageData) => {
-      const isSender = messageData.senderId === profile._id;
-      console.log(isSender)
-        if (!isSender && 'Notification' in window) {
+      
+        if ('Notification' in window) {
           if (Notification.permission === 'granted') {
             let title = "New Group Message";
             if (selectedChat) {
@@ -2765,6 +2764,8 @@ function Chat() {
           } else {
             console.warn('Notifications are blocked or denied.');
           }
+        } else {
+          console.error('This browser does not support notifications.');
         }
       }
 
