@@ -829,6 +829,8 @@ export default function singleMessage(io) {
         }
 
         // Send to receiver
+        socket.emit("receive-message", messageData);
+
         if (receiverSocketId) {
           io.to(receiverSocketId).emit("receive-message", messageData);
           console.log("📩 Sent to receiver:", receiverSocketId);
