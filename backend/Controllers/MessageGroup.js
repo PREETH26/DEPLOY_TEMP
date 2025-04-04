@@ -434,41 +434,79 @@ export default function groupMessage(io) {
           timestamp: message.createdAt,
         };
 
-        const users = chat.users.map((user) => user.toString());
-        users.forEach(async (userId) => {
+        // const users = chat.users.map((user) => user.toString());
+        // users.forEach(async (userId) => {
           
-          const userSocketId = onlineUsers.get(userId);
-          if (userSocketId) {
-            io.to(userSocketId).emit("receive-group-message", messageData);
-            console.log("📩 Sent group message to:", userId, "via socket:", userSocketId);
-          } else {
-            console.log("User offline, sending push:", userId);
-            const subscription = subscriptions.get(userId);
-            if (subscription) {
-              await webpush.sendNotification(
-                subscription,
-                JSON.stringify({
-                  title: chat.name,
-                  body: `${senderUser.name}: ${content.substring(0, 100)}`,
-                  icon: "../Images/Logo.png ",
-                  data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chatId}` },
-                })
-              ).catch(err => console.error("Push notification error:", err));
+        //   const userSocketId = onlineUsers.get(userId);
+          
+        //   if (userSocketId) {
+        //     io.to(userSocketId).emit("receive-group-message", messageData);
+        //     console.log("📩 Sent group message to:", userId, "via socket:", userSocketId);
+        //   } else {
+        //     console.log("User offline, sending push:", userId);
+        //     const subscription = subscriptions.get(userId);
+        //     if (subscription) {
+        //       await webpush.sendNotification(
+        //         subscription,
+        //         JSON.stringify({
+        //           title: chat.name,
+        //           body: `${senderUser.name}: ${content.substring(0, 100)}`,
+        //           icon: "../Images/Logo.png ",
+        //           data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chatId}` },
+        //         })
+        //       ).catch(err => console.error("Push notification error:", err));
+        //     }
+
+        //     // Store notification in DB
+        //     await new Notification({
+        //       title: chat.name,
+        //       content: `${senderUser.name}: ${content}`,
+        //       recipients: [userId],
+        //       classGroup: chat._id,
+        //       sentBy: sender,
+        //     }).save();
+        //   }
+        // });
+
+        // // Ensure the sender also receives the message
+        // socket.emit("receive-group-message", messageData);
+
+        for (const recipientId of recipients) {
+            const recipientSocketId = onlineUsers.get(recipientId);
+            if (recipientSocketId) {
+              // Send via Socket.IO to online recipients
+              io.to(recipientSocketId).emit("receive-group-message", messageData);
+              console.log("📩 Sent group message to online recipient:", recipientId, "via socket:", recipientSocketId);
+            } else {
+              // Send push notification to offline recipients
+              console.log("User offline, sending push:", recipientId);
+              const subscription = subscriptions.get(recipientId);
+              if (subscription) {
+                await webpush.sendNotification(
+                  subscription,
+                  JSON.stringify({
+                    title: chat.name || "Group Chat",
+                    body: `${senderUser.name}: ${content.substring(0, 100)}`,
+                    icon: `${process.env.FRONTEND_URL}/Images/Logo.png`, // Use public URL
+                    data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chatId}` },
+                  })
+                ).catch(err => console.error("Push notification error for recipient", recipientId, ":", err));
+              }
+      
+              // Store notification in DB for offline recipients
+              await new Notification({
+                title: chat.name || "Group Chat",
+                content: `${senderUser.name}: ${content}`,
+                recipients: [recipientId], // Store only the recipient ID
+                classGroup: chat._id,
+                sentBy: sender,
+              }).save();
             }
-
-            // Store notification in DB
-            await new Notification({
-              title: chat.name,
-              content: `${senderUser.name}: ${content}`,
-              recipients: [userId],
-              classGroup: chat._id,
-              sentBy: sender,
-            }).save();
           }
-        });
-
-        // Ensure the sender also receives the message
-        socket.emit("receive-group-message", messageData);
+      
+          // Ensure the sender sees the message in their UI (no notification, just UI update)
+          socket.emit("receive-group-message", messageData);
+          console.log("📩 Sent message to sender for UI consistency:", sender);
       } catch (error) {
         console.error("Group Message Send Error:", error.message);
         socket.emit("error-message", "Failed to send group message");
