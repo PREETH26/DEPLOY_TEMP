@@ -2720,7 +2720,7 @@ function Chat() {
     });
 
     socket.on("receive-group-message", (messageData) => {
-      
+        console.log(profile,messageData.sender,messageData)
         if ('Notification' in window) {
           if (Notification.permission === 'granted') {
             let title = "New Group Message";
