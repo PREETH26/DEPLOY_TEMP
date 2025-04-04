@@ -856,12 +856,13 @@ export default function singleMessage(io) {
             }).save();
           }
         }
-        socket.emit("receive-message", messageData);
 
       } catch (error) {
         console.error("Message Send Error:", error.message);
         socket.emit("error-message", "Failed to send message");
       }
+      socket.emit("receive-message", messageData);
+
     });
 
     socket.on("disconnect", (reason) => {
