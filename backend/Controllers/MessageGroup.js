@@ -451,7 +451,7 @@ export default function groupMessage(io) {
                   title: chat.name,
                   body: `${senderUser.name}: ${content.substring(0, 100)}`,
                   icon: "../Images/Logo.png ",
-                  data: { url: `http://localhost:5173/chat?chatId=${chatId}` },
+                  data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chatId}` },
                 })
               ).catch(err => console.error("Push notification error:", err));
             }

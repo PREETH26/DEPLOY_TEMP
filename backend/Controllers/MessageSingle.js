@@ -377,7 +377,7 @@ export default function singleMessage(io) {
                 title: "New Private Message",
                 body: `${messageData.sender}: ${content.substring(0, 100)}`,
                 icon: "../Images/Logo.png",
-                data: { url: `http://localhost:5173/chat?chatId=${chat._id}` },
+                data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chat._id}` },
               })
             ).catch(err => console.error("Push notification error:", err));
 
