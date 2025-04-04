@@ -2683,7 +2683,6 @@ function Chat() {
     });
 
     socket.on("receive-message", (message) => {
-      if (message.receiver === profile._id) {
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification('New Private Message', {
             body: `${message.sender}: ${message.content.substring(0, 100)}`,
@@ -2691,7 +2690,7 @@ function Chat() {
             data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.senderId}` },
           });
         }
-      }
+      
 
       const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
       setChatMessages((prev) => {
@@ -2720,7 +2719,6 @@ function Chat() {
     });
 
     socket.on("receive-group-message", (messageData) => {
-      if (messageData.senderId !== profile._id) {
         if ('Notification' in window) {
           if (Notification.permission === 'granted') {
             let title = "New Group Message";
@@ -2730,7 +2728,7 @@ function Chat() {
               } else if (selectedChat.type === 'subject') {
                 title = selectedChat.data.subjectName || "Subject Chat";
               }
-            }
+            
 
             new Notification(title, {
               body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
@@ -3015,7 +3013,9 @@ function Chat() {
     setFilePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     const chatId = getChatId(chat);
+    if(messageRef.current){
     messageRef.current.focus();
+    }
     if (chat.type === "single") {
       socket.emit("load-chat", { receiverId: chat.data._id });
       localStorage.setItem("selectedChatId", chat.data._id);

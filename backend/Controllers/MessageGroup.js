@@ -436,7 +436,7 @@ export default function groupMessage(io) {
 
         const users = chat.users.map((user) => user.toString());
         users.forEach(async (userId) => {
-          if (userId !== sender) {
+          
           const userSocketId = onlineUsers.get(userId);
           if (userSocketId) {
             io.to(userSocketId).emit("receive-group-message", messageData);
@@ -465,7 +465,6 @@ export default function groupMessage(io) {
               sentBy: sender,
             }).save();
           }
-        }
         });
 
         // Ensure the sender also receives the message
