@@ -879,6 +879,15 @@ function Chat() {
                     </button>
                   </div>
 
+                  <div className="relative w-[98%] justify-self-center">
+                        <input
+                            placeholder="Search"
+                            className="focus:outline-1 focus:outline-cyan-500"
+                            onChange={(e)=>search(e.target.value)}
+                        />
+                        <HiMiniMagnifyingGlass className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    </div>
+
                   <ul className="w-full pl-1 pr-1">
                   {activeSection === "single" && (
                       <>
