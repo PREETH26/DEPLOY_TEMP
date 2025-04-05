@@ -829,7 +829,7 @@ export default function singleMessage(io) {
           if(receiverSocketId){
             io.to(receiverSocketId).emit("receive-message", messageData);
           }
-            socket.emit("receive-message", messageData);
+            // socket.emit("receive-message", messageData);
 
         }
 
