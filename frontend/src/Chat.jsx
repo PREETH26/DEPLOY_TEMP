@@ -9,6 +9,8 @@ import { IoSettings } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
 import "./Chat.css";
+import { HiMiniMagnifyingGlass } from "react-icons/hi2";
+
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -53,6 +55,7 @@ function Chat() {
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [previewFileName, setPreviewFileName] = useState(null);
   const [zoom, SetZoom] = useState(false);
+  const [filtered,setFiltered] = useState(all);
 
   const getUserColor = (userId) => {
     let hash = 0;
@@ -810,6 +813,28 @@ function Chat() {
       ].sort((a, b) => new Date(a.data.timestamp || a.data.createdAt) - new Date(b.data.timestamp || b.data.createdAt))
     : [];
 
+  const search = (val)=>{
+      if(activeSection==="single"){
+          if (!val.trim()) {
+              setFiltered([]); 
+              return;
+            }
+          const filtered = all.filter(i=>i.name.toLowerCase().includes(val.toLowerCase()) || i.role.toLowerCase().includes(val.toLowerCase()) || ("you".includes(val.toLowerCase()) && i._id === profile._id))
+          setFiltered(filtered)
+      }
+      if(activeSection==="group"){
+          const subjectChats = Object.values(subjectGroups).flat();
+          const combined = [...groupChats, ...subjectChats];
+          if (!val.trim()) {
+              setFiltered([]); 
+              return;
+            }
+  
+          const filtered = combined.filter(i => (i.className && i.className.toLowerCase().includes(val.toLowerCase())) || (i.subjectName && i.subjectName.toLowerCase().includes(val.toLowerCase())));
+          setFiltered(filtered)
+      }
+  }
+
   return (
     <div className="min-h-screen overflow-clip bg-white">
       <div className="flex items-start w-full">
@@ -855,98 +880,129 @@ function Chat() {
                   </div>
 
                   <ul className="w-full pl-1 pr-1">
-                    {activeSection === "single" && (
+                  {activeSection === "single" && (
                       <>
                         <h3 className="font-bold text-sm sm:text-base mb-2">Single Chats</h3>
-                        {all.map((member) => (
-                          <li
+                        {(filtered.length ? filtered : all).map((member) => (
+                        <li
                             key={member._id}
                             className={`cursor-pointer hover:bg-gray-200 p-1 ${
-                              selectedChat?.type === "single" && selectedChat.data._id === member._id ? "bg-gray-300" : ""
+                            selectedChat?.type === "single" && selectedChat.data._id === member._id ? "bg-gray-300" : ""
                             }`}
                             onClick={() => handleChatSelect(member, "single")}
-                          >
+                        >
                             <div className="flex ml-3 gap-3 sm:gap-5 items-center">
-                              <img
+                            <img
                                 src={member.profilePic}
                                 className="w-8 h-8 sm:w-[47px] sm:h-[47px] rounded-full object-cover"
                                 alt="Profile"
-                              />
-                              <p className="text-sm sm:text-base truncate">
+                            />
+                            <p className="text-sm sm:text-base truncate">
                                 {member._id === profile._id ? "You" : member.name} ({member.role})
-                              </p>
+                            </p>
                             </div>
-                          </li>
+                        </li>
                         ))}
+
                       </>
                     )}
 
                     {activeSection === "group" && (
                       <>
                         <h3 className="font-bold text-sm sm:text-base mb-2">Group Chats</h3>
-                        {groupChats.map((group) =>
-                          group.chat ? (
-                            <details key={group._id} className="mb-2">
-                              <summary className="cursor-pointer p-1 bg-gray-100 hover:bg-gray-200 rounded-md">
-                                <div className="flex flex-row justify-between items-center">
-                                  <p className="text-sm sm:text-base truncate">{group.className}</p>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      navigate("/settings", { state: { classId: group._id } });
-                                    }}
-                                    className="text-blue-500 hover:underline"
-                                  >
-                                    <IoSettings className="text-lg sm:text-xl" />
-                                  </button>
-                                </div>
-                              </summary>
-                              <ul className="ml-4 mt-1">
-                                <li
-                                  className={`cursor-pointer p-1 rounded-md ${
-                                    selectedChat?.type === "group" && selectedChat.data.chat._id === group.chat._id
-                                      ? "bg-gray-300"
-                                      : "hover:bg-gray-200"
-                                  }`}
-                                  onClick={() => handleChatSelect(group, "group")}
-                                >
-                                  <span className="text-sm sm:text-base">General</span>
-                                </li>
-                                {(subjectGroups[group._id] || []).map((subject) => (
-                                  <li
-                                    key={subject._id}
-                                    className={`flex justify-between items-center p-1 rounded-md ${
-                                      selectedChat?.type === "subject" && selectedChat.data._id === subject._id
-                                        ? "bg-gray-300"
-                                        : "hover:bg-gray-200 text-black italic"
-                                    }`}
-                                  >
-                                    <span
-                                      className="cursor-pointer flex-1 text-sm sm:text-base truncate"
-                                      onClick={() => handleChatSelect(subject, "subject", group)}
-                                    >
-                                      {subject.subjectName}
-                                    </span>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate("/subjectSettings", {
-                                          state: { subjectId: subject._id, classId: group._id },
-                                        });
-                                      }}
-                                      className="text-blue-500 hover:underline text-xs sm:text-sm"
-                                    >
-                                      <IoSettings className="text-lg sm:text-xl" />
-                                    </button>
-                                  </li>
-                                ))}
-                                {(!subjectGroups[group._id] || subjectGroups[group._id].length === 0) && (
-                                  <li className="p-1 text-gray-500 italic text-sm sm:text-base">No subject groups</li>
-                                )}
-                              </ul>
-                            </details>
-                          ) : null
-                        )}
+                       
+                        {(filtered.length ? filtered : groupChats).map((group) =>
+  group.subjectName ? (
+    // This is a direct subject result
+    <li
+      key={group._id}
+      className={`flex justify-between items-center p-1 rounded-md ${
+        selectedChat?.type === "subject" && selectedChat.data._id === group._id
+          ? "bg-gray-300"
+          : "hover:bg-gray-200 text-black italic"
+      }`}
+    >
+      <span
+        className="cursor-pointer flex-1 text-sm sm:text-base truncate"
+        onClick={() => handleChatSelect(group, "subject")}
+      >
+        {group.subjectName}
+      </span>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate("/subjectSettings", {
+            state: { subjectId: group._id, classId: group.classGroup },
+          });
+        }}
+        className="text-blue-500 hover:underline text-xs sm:text-sm"
+      >
+        <IoSettings className="text-lg sm:text-xl" />
+      </button>
+    </li>
+  ) : group.chat ? (
+    <details key={group._id} className="mb-2">
+      <summary className="cursor-pointer p-1 bg-gray-100 hover:bg-gray-200 rounded-md">
+        <div className="flex flex-row justify-between items-center">
+          <p className="text-sm sm:text-base truncate">{group.className}</p>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate("/settings", { state: { classId: group._id } });
+            }}
+            className="text-blue-500 hover:underline"
+          >
+            <IoSettings className="text-lg sm:text-xl" />
+          </button>
+        </div>
+      </summary>
+      <ul className="ml-4 mt-1">
+        <li
+          className={`cursor-pointer p-1 rounded-md ${
+            selectedChat?.type === "group" && selectedChat.data.chat._id === group.chat._id
+              ? "bg-gray-300"
+              : "hover:bg-gray-200"
+          }`}
+          onClick={() => handleChatSelect(group, "group")}
+        >
+          <span className="text-sm sm:text-base">General</span>
+        </li>
+        {(subjectGroups[group._id] || []).map((subject) => (
+          <li
+            key={subject._id}
+            className={`flex justify-between items-center p-1 rounded-md ${
+              selectedChat?.type === "subject" && selectedChat.data._id === subject._id
+                ? "bg-gray-300"
+                : "hover:bg-gray-200 text-black italic"
+            }`}
+          >
+            <span
+              className="cursor-pointer flex-1 text-sm sm:text-base truncate"
+              onClick={() => handleChatSelect(subject, "subject", group)}
+            >
+              {subject.subjectName}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/subjectSettings", {
+                  state: { subjectId: subject._id, classId: group._id },
+                });
+              }}
+              className="text-blue-500 hover:underline text-xs sm:text-sm"
+            >
+              <IoSettings className="text-lg sm:text-xl" />
+            </button>
+          </li>
+        ))}
+        {(!subjectGroups[group._id] || subjectGroups[group._id].length === 0) && (
+          <li className="p-1 text-gray-500 italic text-sm sm:text-base">No subject groups</li>
+        )}
+      </ul>
+    </details>
+  ) : null
+)}
+
                       </>
                     )}
                   </ul>
