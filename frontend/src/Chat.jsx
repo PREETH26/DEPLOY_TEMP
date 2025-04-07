@@ -1686,6 +1686,25 @@ function Chat() {
   }, [selectedChat]);
 
   useEffect(() => {
+    const calculateInitialUnreadCounts = () => {
+      const newUnreadCounts = {};
+      Object.keys(chatMessages).forEach((chatId) => {
+        const messages = chatMessages[chatId] || [];
+        const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
+        const unread = messages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
+        if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
+          newUnreadCounts[chatId] = unread;
+        }
+      });
+      setUnreadCounts(newUnreadCounts);
+    };
+  
+    if (Object.keys(chatMessages).length > 0) {
+      calculateInitialUnreadCounts();
+    }
+  }, [chatMessages, lastViewed, selectedChat]);
+
+  useEffect(() => {
     const fetchChatData = () => {
       openChats.forEach((chat) => {
         const chatId = getChatId(chat);
