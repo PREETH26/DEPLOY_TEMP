@@ -2474,7 +2474,12 @@ function Chat() {
                                       }}
                                       className="text-blue-500 hover:underline"
                                     >
-                                      <IoSettings className="text-lg sm:text-xl" />
+                                      <motion.div
+                                            whileHover={{ rotate: 90 }}
+                                            transition={{ duration: 0.3 }}
+                                          >
+                                        <IoSettings className="text-lg sm:text-xl" />
+                                        </motion.div>
                                     </button>
                                     {unreadCounts[group.chat._id] > 0 && (
                                       <span className="bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ml-2">
@@ -2527,7 +2532,12 @@ function Chat() {
                                         }}
                                         className="text-blue-500 hover:underline text-xs sm:text-sm"
                                       >
+                                        <motion.div
+                                            whileHover={{ rotate: 90 }}
+                                            transition={{ duration: 0.3 }}
+                                          >
                                         <IoSettings className="text-lg sm:text-xl" />
+                                        </motion.div>
                                       </button>
                                       {unreadCounts[subject.chat?.[0]?._id] > 0 && (
                                         <span className="bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ml-2">
