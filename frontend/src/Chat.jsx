@@ -2353,7 +2353,7 @@ function Chat() {
           {isSidebarVisible && (
             <div className="flex flex-col h-[80vh] md:h-full md:min-w-[250px] md:max-w-[300px]">
               <div className="flex flex-col h-full bg-[#FFFFFF] border-2 shadow-md shadow-black p-2 rounded-sm">
-                <div className="flex-1 overflow-y-hidden">
+                <div className="flex-1 overflow-y-auto">
                   <div className="flex mb-4">
                     <button
                       onClick={() => setActiveSection("group")}
@@ -2400,23 +2400,24 @@ function Chat() {
                               }`}
                               onClick={() => handleChatSelect(member, "single")}
                             >
-                              <div className="flex items-center justify-between">
-                                <div className="flex ml-3 gap-3 sm:gap-5 items-center">
-                                  <img
-                                    src={member.profilePic}
-                                    className="w-8 h-8 sm:w-[47px] sm:h-[47px] rounded-full object-cover"
-                                    alt="Profile"
-                                  />
-                                  <p className="text-sm sm:text-base truncate">
-                                    {member._id === profile._id ? "You" : member.name} ({member.role})
-                                  </p>
-                                </div>
-                                {unread > 0 && (
-                                  <span className="bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center mr-2 p-1">
-                                    {unread}
-                                  </span>
-                                )}
+                            <div className="flex items-center justify-between">
+                              <div className="flex ml-3 gap-3 sm:gap-5 items-center w-0 flex-1">
+                                <img
+                                  src={member.profilePic}
+                                  className="w-8 h-8 sm:w-[47px] sm:h-[47px] rounded-full object-cover"
+                                  alt="Profile"
+                                />
+                                <p className="text-sm sm:text-base truncate w-0 flex-1">
+                                  {member._id === profile._id ? "You" : member.name} ({member.role})
+                                </p>
                               </div>
+                              {unread > 0 && (
+                                <span className="bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center mr-2 p-1">
+                                  {unread}
+                                </span>
+                              )}
+                            </div>
+
                             </li>
                           );
                         })}
