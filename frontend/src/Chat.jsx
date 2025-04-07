@@ -2353,7 +2353,7 @@ function Chat() {
           } md:grid-rows-[90vh] min-h-[80vh] md:min-h-[90vh] w-full ml-1 mr-2 sm:ml-2 gap-2 sm:gap-3 mt-6 sm:mt-10 md:mr-2 transition-all duration-800`}
         >
           {isSidebarVisible && (
-            <div className="flex flex-col h-[80vh] md:h-full md:min-w-[250px] md:max-w-[300px]">
+            <div className="flex flex-col h-[80vh] md:h-full md:min-w-[250px] md:max-w-[350px]">
               <div className="flex flex-col h-full bg-[#FFFFFF] border-2 shadow-md shadow-black p-2 rounded-sm">
                 <div className="flex-1 overflow-y-auto">
                   <div className="flex mb-4">
