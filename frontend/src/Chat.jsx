@@ -2905,12 +2905,14 @@ function Chat() {
           </div>
         </div>
       </div>
+      <button className="ml-3" onClick={() => navigate("/profile")}>
       <motion.div
         whileHover={{ rotate: 90 }}
         transition={{ duration: 0.3 }}
       >
         <IoSettings className="text-2xl md:text-3xl mb-1 hover:text-cyan-500" />
         </motion.div>
+      </button>
     </div>
   );
 }
