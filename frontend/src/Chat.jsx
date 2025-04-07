@@ -2353,7 +2353,7 @@ function Chat() {
           {isSidebarVisible && (
             <div className="flex flex-col h-[80vh] md:h-full md:min-w-[250px] md:max-w-[300px]">
               <div className="flex flex-col h-full bg-[#FFFFFF] border-2 shadow-md shadow-black p-2 rounded-sm">
-                <div className="flex-1 overflow-y-clip">
+                <div className="flex-1 overflow-y-hidden">
                   <div className="flex mb-4">
                     <button
                       onClick={() => setActiveSection("group")}
