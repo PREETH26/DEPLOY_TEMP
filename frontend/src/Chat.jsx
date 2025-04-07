@@ -1384,6 +1384,8 @@ import { IoMdClose } from "react-icons/io";
 import Logo from "./assets/Logo.png";
 import "./Chat.css";
 import { HiMiniMagnifyingGlass } from "react-icons/hi2";
+import { motion } from "framer-motion";
+
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -2903,9 +2905,12 @@ function Chat() {
           </div>
         </div>
       </div>
-      <button className="ml-3" onClick={() => navigate("/profile")}>
-        <IoSettings className="text-2xl md:text-3xl mb-1" />
-      </button>
+      <motion.div
+        whileHover={{ rotate: 90 }}
+        transition={{ duration: 0.3 }}
+      >
+        <IoSettings className="text-2xl md:text-3xl mb-1 hover:text-cyan-500" />
+        </motion.div>
     </div>
   );
 }
