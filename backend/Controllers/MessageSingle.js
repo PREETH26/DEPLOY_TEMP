@@ -905,9 +905,8 @@ import User from "../Models/UserSchema.js";
 import webpush from "web-push";
 import Notification from "../Models/NotificationSchema.js";
 
-// 🟢 Support multiple connections per user using Set
-const onlineUsers = new Map(); // Map<userId, Set<socketId>>
-const subscriptions = new Map(); // Store push subscriptions per user
+const onlineUsers = new Map(); 
+const subscriptions = new Map(); 
 
 webpush.setVapidDetails(
   'mailto:ecanent1connect@gmail.com',
@@ -928,18 +927,17 @@ export default function singleMessage(io) {
       if (!user) return next(new Error("User not found"));
 
       socket.userId = user._id.toString();
-      console.log("✅ User Authenticated:", socket.userId);
+      console.log("User Authenticated:", socket.userId);
       next();
     } catch (error) {
-      console.log("❌ Socket Auth Error:", error.message);
+      console.log("Socket Auth Error:", error.message);
       next(new Error("Authentication failed"));
     }
   });
 
   io.on("connection", (socket) => {
-    console.log("✅ A user connected:", socket.userId);
+    console.log("A user connected:", socket.userId);
 
-    // 🟢 Track multiple connections
     if (!onlineUsers.has(socket.userId)) {
       onlineUsers.set(socket.userId, new Set());
     }
@@ -973,7 +971,7 @@ export default function singleMessage(io) {
         }));
 
         socket.emit("chat-history", chatHistory);
-        console.log("📜 Sent chat history to:", socket.userId, "Chats:", chatHistory.length);
+        console.log("Sent chat history to:", socket.userId, "Chats:", chatHistory.length);
       } catch (error) {
         console.error("Error sending chat history:", error.message);
         socket.emit("error-message", "Failed to load chat history");
@@ -1019,7 +1017,7 @@ export default function singleMessage(io) {
         );
 
         socket.emit("chat-messages", { receiverId, messages: uniqueMessages });
-        console.log("📜 Sent chat messages for:", receiverId, "Count:", uniqueMessages.length);
+        console.log("Sent chat messages for:", receiverId, "Count:", uniqueMessages.length);
       } catch (error) {
         console.error("Error loading chat:", error.message);
         socket.emit("error-message", "Failed to load chat");
@@ -1028,7 +1026,7 @@ export default function singleMessage(io) {
 
     socket.on("send-message", async ({ receiver, content }) => {
       const sender = socket.userId;
-      console.log("📩 Send Message - Sender:", sender, "Receiver:", receiver, "Content:", content);
+      console.log("Send Message - Sender:", sender, "Receiver:", receiver, "Content:", content);
 
       if (!receiver || !content) {
         return socket.emit("error-message", "Receiver and content are required");
@@ -1053,7 +1051,7 @@ export default function singleMessage(io) {
             messages: [],
           });
           await chat.save();
-          console.log("✅ Chat created:", chat._id);
+          console.log("Chat created:", chat._id);
         }
 
         const message = new Message({
@@ -1066,7 +1064,7 @@ export default function singleMessage(io) {
         chat.messages = chat.messages || [];
         chat.messages.push(message._id);
         await chat.save();
-        console.log("✅ Message saved:", message._id);
+        console.log("Message saved:", message._id);
 
         const messageData = {
           senderId: sender,
@@ -1077,7 +1075,6 @@ export default function singleMessage(io) {
           timestamp: message.createdAt,
         };
 
-        // 🟢 Send to all sockets of sender and receiver
         const senderSockets = onlineUsers.get(sender);
         const receiverSockets = onlineUsers.get(receiverId);
 
@@ -1085,16 +1082,15 @@ export default function singleMessage(io) {
           senderSockets.forEach(socketId => {
             io.to(socketId).emit("receive-message", messageData);
           });
-          console.log("📩 Sent to sender sockets:", [...senderSockets]);
+          console.log("Sent to sender sockets:", [...senderSockets]);
         }
 
         if (receiverSockets) {
           receiverSockets.forEach(socketId => {
             io.to(socketId).emit("receive-message", messageData);
           });
-          console.log("📩 Sent to receiver sockets:", [...receiverSockets]);
+          console.log("Sent to receiver sockets:", [...receiverSockets]);
         } else {
-          // Receiver offline → push notification
           const subscription = subscriptions.get(receiverId);
           if (subscription) {
             await webpush.sendNotification(
@@ -1115,7 +1111,6 @@ export default function singleMessage(io) {
             }).save();
           }
 
-          // Emit to sender anyway
           if (senderSockets) {
             senderSockets.forEach(socketId => {
               io.to(socketId).emit("receive-message", messageData);
@@ -1129,9 +1124,8 @@ export default function singleMessage(io) {
       }
     });
 
-    // 🟢 Handle disconnection per socket
     socket.on("disconnect", (reason) => {
-      console.log("🔴 User disconnected:", socket.userId, "Reason:", reason);
+      console.log("User disconnected:", socket.userId, "Reason:", reason);
       const userSockets = onlineUsers.get(socket.userId);
       if (userSockets) {
         userSockets.delete(socket.id);

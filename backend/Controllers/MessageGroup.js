@@ -572,16 +572,16 @@ export default function groupMessage(io) {
       if (!user) return next(new Error("User not found"));
 
       socket.userId = user._id.toString();
-      console.log("✅ User Authenticated for Group Chat:", socket.userId);
+      console.log("User Authenticated for Group Chat:", socket.userId);
       next();
     } catch (error) {
-      console.log("❌ Socket Auth Error:", error.message);
+      console.log("Socket Auth Error:", error.message);
       next(new Error("Authentication failed"));
     }
   });
 
   io.on("connection", (socket) => {
-    console.log("✅ A user connected to group chat:", socket.userId);
+    console.log("A user connected to group chat:", socket.userId);
 
     // Track multiple sockets per user
     if (!onlineUsers.has(socket.userId)) {
@@ -623,7 +623,7 @@ export default function groupMessage(io) {
         }));
 
         socket.emit("group-chat-history", groupChatHistory);
-        console.log("📜 Sent group chat history to:", socket.userId);
+        console.log("Sent group chat history to:", socket.userId);
       } catch (error) {
         console.error("Error sending group chat history:", error.message);
         socket.emit("error-message", "Failed to load group chat history");
@@ -732,7 +732,6 @@ export default function groupMessage(io) {
           }
         }
 
-        // Echo to sender
         socket.emit("receive-group-message", messageData);
       } catch (error) {
         console.error("Group Message Send Error:", error.message);
