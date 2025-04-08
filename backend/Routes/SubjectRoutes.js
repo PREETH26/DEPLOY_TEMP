@@ -9,9 +9,9 @@ const subjectRouter = express.Router();
 
 subjectRouter.post("/:classId",AuthMiddle,createSubject);
 subjectRouter.get("/:classId",AuthMiddle,getAllSubjects);
-subjectRouter.get("/id/:subjectId",AuthMiddle,getSubjectsById);
-subjectRouter.put("/id/:subjectId",AuthMiddle,checkRole(["Admin","HOD"]),updateSubject);
-subjectRouter.delete("/id/:subjectId",AuthMiddle,checkRole(["Admin","HOD"]),deleteSubject);
+subjectRouter.get("/:classId/:subjectId",AuthMiddle,getSubjectsById);
+subjectRouter.put("/:classId/:subjectId",AuthMiddle,checkRole(["Admin","HOD"]),updateSubject);
+subjectRouter.delete("/:classId/:subjectId",AuthMiddle,checkRole(["Admin","HOD"]),deleteSubject);
 
 
 
