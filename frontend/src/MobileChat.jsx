@@ -2113,7 +2113,7 @@ function MobileChat() {
                             >
                               {subject.subjectName}
                             </span>
-                            <div className="flex items-center">
+                            <div className="flex items-center justify-self-center">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
