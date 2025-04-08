@@ -3266,25 +3266,24 @@ function Chat() {
 
   useEffect(() => {
     const fetchChatData = () => {
-      openChats.forEach((chat) => {
-        const chatId = getChatId(chat);
-        if (chat.type === "single" && !chatMessages[chatId]) {
-          socket.emit("load-chat", { receiverId: chat.data._id });
-        } else if ((chat.type === "group" || chat.type === "subject") && !chatMessages[chatId]) {
-          socket.emit("load-group-chat", { chatId });
-        }
-      });
+      if (!selectedChat) return;
+      const chatId = getChatId(selectedChat);
+      if (selectedChat.type === "single" && !chatMessages[chatId]?.length) {
+        socket.emit("load-chat", { receiverId: selectedChat.data._id });
+      } else if ((selectedChat.type === "group" || selectedChat.type === "subject") && !chatMessages[chatId]?.length) {
+        socket.emit("load-group-chat", { chatId });
+      }
     };
-
+  
     fetchChatData();
     const interval = setInterval(fetchChatData, 60 * 1000);
-
+  
     socket.on("chat-history", (history) => {
       const messages = history.flatMap((chat) => chat.messages);
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = history[0]?.receiverId || sortedMessages[0]?.receiver;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
       if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
         setUnreadCounts((prev) => ({
@@ -3292,15 +3291,15 @@ function Chat() {
           [chatId]: unread,
         }));
       }
-
+  
       setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
     });
-
+  
     socket.on("chat-messages", ({ receiverId, messages }) => {
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = receiverId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
       if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
         setUnreadCounts((prev) => ({
@@ -3308,39 +3307,33 @@ function Chat() {
           [chatId]: unread,
         }));
       }
-
+  
       setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
     });
-
+  
     socket.on("receive-message", (message) => {
-      // if ('Notification' in window && Notification.permission === 'granted') {
-      //   new Notification('New Private Message', {
-      //     body: `${message.sender}: ${message.content.substring(0, 100)}`,
-      //     icon: Logo,
-      //     data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.receiverId}` },
-      //   });
-      // }
       if ('Notification' in window && Notification.permission === 'granted') {
         const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
-        new Notification('New Private Message', {
+        const notification = new Notification('New Private Message', {
           body: `${message.sender}: ${message.content.substring(0, 100)}`,
           icon: Logo,
           data: { 
             url: `/chat?type=single&chatId=${chatId}`,
             chatType: "single",
-            chatData: { _id: chatId, name: message.sender } // Simulating chat data for consistency
+            chatData: { _id: chatId, name: message.sender }
           },
-        }).onclick = (event) => {
+        });
+  
+        notification.onclick = (event) => {
           event.preventDefault();
-          // Simulate clicking a chat tab to open it
-          handleChatSelect({ _id: chatId, name: message.sender }, "single");
-          window.focus(); // Bring the window into focus
+          handleChatSelect(event.target.data.chatData, event.target.data.chatType);
+          window.focus();
         };
       }
-
+  
       const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       if (
         new Date(message.timestamp) > new Date(lastViewedTime) &&
         (!selectedChat || getChatId(selectedChat) !== chatId)
@@ -3350,7 +3343,8 @@ function Chat() {
           [chatId]: (prev[chatId] || 0) + 1,
         }));
       }
-
+  
+      // Update messages for all chats, not just the selected one
       setChatMessages((prev) => {
         const existingMessages = prev[chatId] || [];
         const updated = existingMessages.some(
@@ -3359,14 +3353,14 @@ function Chat() {
         return { ...prev, [chatId]: updated.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) };
       });
     });
-
+  
     socket.on("group-chat-history", (groupChatHistory) => {
       groupChatHistory.forEach((history) => {
         const chatId = history.chatId;
         const messages = history.messages || [];
         const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
         const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
         if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
           setUnreadCounts((prev) => ({
@@ -3374,15 +3368,15 @@ function Chat() {
             [chatId]: unread,
           }));
         }
-
+  
         setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
       });
     });
-
+  
     socket.on("group-chat-messages", ({ chatId, messages }) => {
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
       if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
         setUnreadCounts((prev) => ({
@@ -3390,131 +3384,85 @@ function Chat() {
           [chatId]: unread,
         }));
       }
-
+  
       setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
     });
-
+  
     socket.on("receive-group-message", (messageData) => {
       if ('Notification' in window) {
-        if (Notification.permission === 'granted') {
-          let title = "New Group Message";
-          if (selectedChat) {
-            if (selectedChat.type === 'group') {
-              title = selectedChat.data.className || "Group Chat";
-            } else if (selectedChat.type === 'subject') {
-              title = selectedChat.data.subjectName || "Subject Chat";
-            }
-          }
-
-          new Notification(title, {
-            body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
-            icon: Logo,
-            data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
-          }).onclick = (event) => {
-            event.preventDefault();
-            window.open(event.target.data.url, '_blank');
-          };
-        } else if (Notification.permission === 'default') {
-          // Notification.requestPermission().then(permission => {
-          //   if (permission === 'granted') {
-          //     let title = "New Group Message";
-          //     if (selectedChat) {
-          //       if (selectedChat.type === 'group') {
-          //         title = selectedChat.data.className || "Group Chat";
-          //       } else if (selectedChat.type === 'subject') {
-          //         title = selectedChat.data.subjectName || "Subject Chat";
-          //       }
-          //     }
-
-          //     new Notification(title, {
-          //       body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
-          //       icon: Logo,
-          //       data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
-          //     }).onclick = (event) => {
-          //       event.preventDefault();
-          //       window.open(event.target.data.url, '_blank');
-          //     };
-          //   }
-          // });
-
-          if ('Notification' in window) {
-            const handleNotification = (permission) => {
-              if (permission === 'granted') {
-                let title = "New Group Message";
-                let chatType = "group"; // Default to group
-                let chatData = null;
-          
-                // Determine if this is a group or subject chat
-                const isSubjectChat = subjectGroups && Object.values(subjectGroups).some(subjects =>
-                  subjects.some(subject => subject.chat && subject.chat[0]?._id === messageData.chatId)
-                );
-          
-                if (isSubjectChat) {
-                  chatType = "subject";
-                  // Find the subject data
-                  for (const classId in subjectGroups) {
-                    const subject = subjectGroups[classId].find(s => s.chat && s.chat[0]?._id === messageData.chatId);
-                    if (subject) {
-                      chatData = subject;
-                      title = subject.subjectName || "Subject Chat";
-                      break;
-                    }
-                  }
-                } else {
-                  // Look for group chat
-                  const group = groupChats.find(g => g.chat && g.chat._id === messageData.chatId);
-                  if (group) {
-                    chatData = group;
-                    title = group.className || "Group Chat";
-                  }
+        const handleNotification = (permission) => {
+          if (permission === 'granted') {
+            let title = "New Group Message";
+            let chatType = "group"; // Default to group
+            let chatData = null;
+  
+            // Determine if this is a group or subject chat
+            const isSubjectChat = subjectGroups && Object.values(subjectGroups).some(subjects =>
+              subjects.some(subject => subject.chat && subject.chat[0]?._id === messageData.chatId)
+            );
+  
+            if (isSubjectChat) {
+              chatType = "subject";
+              for (const classId in subjectGroups) {
+                const subject = subjectGroups[classId].find(s => s.chat && s.chat[0]?._id === messageData.chatId);
+                if (subject) {
+                  chatData = subject;
+                  title = subject.subjectName || "Subject Chat";
+                  break;
                 }
-          
-                if (!chatData) {
-                  console.warn("Could not find chat data for notification");
-                  return;
-                }
-          
-                const notification = new Notification(title, {
-                  body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
-                  icon: Logo,
-                  data: { 
-                    url: `/chat?type=${chatType}&chatId=${messageData.chatId}`,
-                    chatType: chatType,
-                    chatData: chatData
-                  },
-                });
-          
-                notification.onclick = (event) => {
-                  event.preventDefault();
-                  // Use the existing chat selection logic
-                  handleChatSelect(chatData, chatType);
-                  window.focus(); // Bring the window into focus
-                };
               }
-            };
-          
-            if (Notification.permission === 'granted') {
-              handleNotification('granted');
-            } else if (Notification.permission === 'default') {
-              Notification.requestPermission().then(permission => handleNotification(permission));
+            } else {
+              const group = groupChats.find(g => g.chat && g.chat._id === messageData.chatId);
+              if (group) {
+                chatData = group;
+                title = group.className || "Group Chat";
+              }
             }
+  
+            if (!chatData) {
+              console.warn("Could not find chat data for notification");
+              return;
+            }
+  
+            const notification = new Notification(title, {
+              body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
+              icon: Logo,
+              data: { 
+                url: `/chat?type=${chatType}&chatId=${messageData.chatId}`,
+                chatType: chatType,
+                chatData: chatData
+              },
+            });
+  
+            notification.onclick = (event) => {
+              event.preventDefault();
+              handleChatSelect(event.target.data.chatData, event.target.data.chatType);
+              window.focus();
+            };
           }
+        };
+  
+        if (Notification.permission === 'granted') {
+          handleNotification('granted');
+        } else if (Notification.permission === 'default') {
+          Notification.requestPermission().then(permission => handleNotification(permission));
         }
       }
-
+  
       const chatId = messageData.chatId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       if (
         new Date(messageData.timestamp) > new Date(lastViewedTime) &&
-        (!selectedChat || getBones(selectedChat) !== chatId)
+        (!selectedChat || getChatId(selectedChat) !== chatId)
       ) {
         setUnreadCounts((prev) => ({
           ...prev,
           [chatId]: (prev[chatId] || 0) + 1,
         }));
       }
-
+  
+      // Update messages for all chats, not just the selected one
       setChatMessages((prev) => {
         const existingMessages = prev[chatId] || [];
         const updated = existingMessages.some(
@@ -3523,12 +3471,12 @@ function Chat() {
         return { ...prev, [chatId]: updated.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) };
       });
     });
-
+  
     socket.on("error-message", (err) => {
       console.error("Socket error:", err);
       setMessage(err);
     });
-
+  
     return () => {
       clearInterval(interval);
       socket.off("chat-history");
@@ -3539,7 +3487,7 @@ function Chat() {
       socket.off("receive-group-message");
       socket.off("error-message");
     };
-  }, [openChats, profile, navigate, selectedChat, lastViewed]);
+  }, [selectedChat, profile, navigate, lastViewed, subjectGroups, groupChats]);
 
   useEffect(() => {
     const restoreChat = () => {
