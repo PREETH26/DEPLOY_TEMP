@@ -1351,6 +1351,7 @@ function MobileChat() {
   useEffect(() => {
     const fetchFiles = async () => {
       if (!selectedChat) return;
+      const chatId = getChatId(selectedChat);
       try {
         let url = `${import.meta.env.VITE_BACKEND_URL}/api/files?`;
         const params = new URLSearchParams();
@@ -1368,15 +1369,26 @@ function MobileChat() {
         const validFiles = files.filter(
           (file) => file && file.fileName && typeof file.fileName === "string" && file.fileUrl && file.fileType
         );
-        setUploadedFiles(validFiles);
+        setUploadedFiles((prev) => ({
+          ...prev,
+          [chatId]: validFiles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),
+        }));
       } catch (error) {
         console.error("Error fetching files:", error);
         setMessage("Failed to load files");
       }
     };
-
+  
     fetchFiles();
   }, [selectedChat]);
+
+  useEffect(() => {
+    console.log("chatMessages updated:", chatMessages);
+    console.log("uploadedFiles updated:", uploadedFiles);
+    if (newMessage.current) {
+      newMessage.current.scrollIntoView({ behavior: "auto" });
+    }
+  }, [chatMessages, uploadedFiles]);
 
   useEffect(() => {
     const fetchChatData = () => {
@@ -1600,6 +1612,9 @@ function MobileChat() {
   
     return () => {
       clearInterval(interval);
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("connect_error");
       socket.off("chat-history");
       socket.off("chat-messages");
       socket.off("receive-message");
