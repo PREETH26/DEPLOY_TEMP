@@ -1380,14 +1380,13 @@ function MobileChat() {
 
   useEffect(() => {
     const fetchChatData = () => {
-      openChats.forEach((chat) => {
-        const chatId = getChatId(chat);
-        if (chat.type === "single" && !chatMessages[chatId]) {
-          socket.emit("load-chat", { receiverId: chat.data._id });
-        } else if ((chat.type === "group" || chat.type === "subject") && !chatMessages[chatId]) {
-          socket.emit("load-group-chat", { chatId });
-        }
-      });
+      if (!selectedChat) return;
+      const chatId = getChatId(selectedChat);
+      if (selectedChat.type === "single" && !chatMessages[chatId]?.length) {
+        socket.emit("load-chat", { receiverId: selectedChat.data._id });
+      } else if ((selectedChat.type === "group" || selectedChat.type === "subject") && !chatMessages[chatId]?.length) {
+        socket.emit("load-group-chat", { chatId });
+      }
     };
   
     fetchChatData();
@@ -1600,7 +1599,7 @@ function MobileChat() {
       socket.off("receive-group-message");
       socket.off("error-message");
     };
-  }, [openChats, profile, navigate, selectedChat, lastViewed, subjectGroups, groupChats]); 
+  }, [selectedChat, profile, navigate, lastViewed, subjectGroups, groupChats]);
 
   useEffect(() => {
     const restoreChat = () => {
