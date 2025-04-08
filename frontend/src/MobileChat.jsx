@@ -1085,12 +1085,12 @@ function MobileChat() {
   const [groupChats, setGroupChats] = useState([]);
   const [subjectGroups, setSubjectGroups] = useState({});
   const [selectedChat, setSelectedChat] = useState(null);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [chatMessages, setChatMessages] = useState({});
   const [input, setInput] = useState("");
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState({});
   const [isUploading, setIsUploading] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(() => {
@@ -1382,22 +1382,22 @@ function MobileChat() {
     const fetchChatData = () => {
       if (!selectedChat) return;
       const chatId = getChatId(selectedChat);
-      if (selectedChat.type === "single" && !chatMessages.length) {
+      if (selectedChat.type === "single" && !chatMessages[chatId]?.length) {
         socket.emit("load-chat", { receiverId: selectedChat.data._id });
-      } else if ((selectedChat.type === "group" || selectedChat.type === "subject") && !chatMessages.length) {
+      } else if ((selectedChat.type === "group" || selectedChat.type === "subject") && !chatMessages[chatId]?.length) {
         socket.emit("load-group-chat", { chatId });
       }
     };
-
+  
     fetchChatData();
     const interval = setInterval(fetchChatData, 60 * 1000);
-
+  
     socket.on("chat-history", (history) => {
       const messages = history.flatMap((chat) => chat.messages);
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = history[0]?.receiverId || sortedMessages[0]?.receiver;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
       if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
         setUnreadCounts((prev) => ({
@@ -1405,15 +1405,15 @@ function MobileChat() {
           [chatId]: unread,
         }));
       }
-
-      setChatMessages(sortedMessages);
+  
+      setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
     });
-
+  
     socket.on("chat-messages", ({ receiverId, messages }) => {
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = receiverId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
       if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
         setUnreadCounts((prev) => ({
@@ -1421,24 +1421,14 @@ function MobileChat() {
           [chatId]: unread,
         }));
       }
-
-      if (selectedChat?.type === "single" && selectedChat.data._id === receiverId) {
-        setChatMessages(sortedMessages);
-      }
+  
+      setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
     });
-
+  
     socket.on("receive-message", (message) => {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('New Private Message', {
-          body: `${message.sender}: ${message.content.substring(0, 100)}`,
-          icon: Logo,
-          data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.receiverId}` },
-        });
-      }
-
       const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       if (
         new Date(message.timestamp) > new Date(lastViewedTime) &&
         (!selectedChat || getChatId(selectedChat) !== chatId)
@@ -1448,27 +1438,23 @@ function MobileChat() {
           [chatId]: (prev[chatId] || 0) + 1,
         }));
       }
-
-      if (
-        selectedChat?.type === "single" &&
-        (message.senderId === selectedChat.data._id || message.receiver === selectedChat.data._id)
-      ) {
-        setChatMessages((prev) => {
-          const updated = prev.some(
-            (m) => m.timestamp === message.timestamp && m.content === message.content
-          ) ? prev : [...prev, message];
-          return updated.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        });
-      }
+  
+      setChatMessages((prev) => {
+        const existingMessages = prev[chatId] || [];
+        const updated = existingMessages.some(
+          (m) => m.timestamp === message.timestamp && m.content === message.content
+        ) ? existingMessages : [...existingMessages, message];
+        return { ...prev, [chatId]: updated.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) };
+      });
     });
-
+  
     socket.on("group-chat-history", (groupChatHistory) => {
       groupChatHistory.forEach((history) => {
         const chatId = history.chatId;
         const messages = history.messages || [];
         const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
         const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
         if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
           setUnreadCounts((prev) => ({
@@ -1476,20 +1462,15 @@ function MobileChat() {
             [chatId]: unread,
           }));
         }
-
-        if (
-          (selectedChat?.type === "group" && selectedChat.data.chat._id === chatId) ||
-          (selectedChat?.type === "subject" && selectedChat.data.chat[0]?._id === chatId)
-        ) {
-          setChatMessages(sortedMessages);
-        }
+  
+        setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
       });
     });
-
+  
     socket.on("group-chat-messages", ({ chatId, messages }) => {
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
       if (unread > 0 && (!selectedChat || getChatId(selectedChat) !== chatId)) {
         setUnreadCounts((prev) => ({
@@ -1497,63 +1478,14 @@ function MobileChat() {
           [chatId]: unread,
         }));
       }
-
-      if (
-        (selectedChat?.type === "group" && selectedChat.data.chat._id === chatId) ||
-        (selectedChat?.type === "subject" && selectedChat.data.chat[0]?._id === chatId)
-      ) {
-        setChatMessages(sortedMessages);
-      }
+  
+      setChatMessages((prev) => ({ ...prev, [chatId]: sortedMessages }));
     });
-
+  
     socket.on("receive-group-message", (messageData) => {
-      if ('Notification' in window) {
-        if (Notification.permission === 'granted') {
-          let title = "New Group Message";
-          if (selectedChat) {
-            if (selectedChat.type === 'group') {
-              title = selectedChat.data.className || "Group Chat";
-            } else if (selectedChat.type === 'subject') {
-              title = selectedChat.data.subjectName || "Subject Chat";
-            }
-          }
-
-          new Notification(title, {
-            body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
-            icon: Logo,
-            data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
-          }).onclick = (event) => {
-            event.preventDefault();
-            window.open(event.target.data.url, '_blank');
-          };
-        } else if (Notification.permission === 'default') {
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              let title = "New Group Message";
-              if (selectedChat) {
-                if (selectedChat.type === 'group') {
-                  title = selectedChat.data.className || "Group Chat";
-                } else if (selectedChat.type === 'subject') {
-                  title = selectedChat.data.subjectName || "Subject Chat";
-                }
-              }
-
-              new Notification(title, {
-                body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
-                icon: Logo,
-                data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
-              }).onclick = (event) => {
-                event.preventDefault();
-                window.open(event.target.data.url, '_blank');
-              };
-            }
-          });
-        }
-      }
-
       const chatId = messageData.chatId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
-
+  
       if (
         new Date(messageData.timestamp) > new Date(lastViewedTime) &&
         (!selectedChat || getChatId(selectedChat) !== chatId)
@@ -1563,25 +1495,21 @@ function MobileChat() {
           [chatId]: (prev[chatId] || 0) + 1,
         }));
       }
-
-      if (
-        (selectedChat?.type === "group" && selectedChat.data.chat._id === messageData.chatId) ||
-        (selectedChat?.type === "subject" && selectedChat.data.chat[0]?._id === messageData.chatId)
-      ) {
-        setChatMessages((prev) => {
-          const updated = prev.some(
-            (m) => m.timestamp === messageData.timestamp && m.content === messageData.content
-          ) ? prev : [...prev, messageData];
-          return updated.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        });
-      }
+  
+      setChatMessages((prev) => {
+        const existingMessages = prev[chatId] || [];
+        const updated = existingMessages.some(
+          (m) => m.timestamp === messageData.timestamp && m.content === messageData.content
+        ) ? existingMessages : [...existingMessages, messageData];
+        return { ...prev, [chatId]: updated.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) };
+      });
     });
-
+  
     socket.on("error-message", (err) => {
       console.error("Socket error:", err);
       setMessage(err);
     });
-
+  
     return () => {
       clearInterval(interval);
       socket.off("chat-history");
@@ -1661,14 +1589,14 @@ function MobileChat() {
   const handleChatSelect = (chat, type, classGroup = null) => {
     const newChat = { type, data: chat };
     const chatId = getChatId(newChat);
-
+  
     if (type === "group") {
       let userIsParticipant = false;
       const isStudent = chat.students?.find((s) => s._id === profile._id);
       const isFaculty = chat.faculty?.find((s) => s._id === profile._id);
       const isAdmin = chat.createdBy._id === profile._id;
       if (isStudent || isFaculty || isAdmin) userIsParticipant = true;
-
+  
       if (!userIsParticipant) {
         console.error("User is not a participant in this group chat");
         setMessage("You are not a participant in this group chat");
@@ -1680,27 +1608,25 @@ function MobileChat() {
         setMessage("This subject group chat is not available");
         return;
       }
-
+  
       let userIsParticipant = false;
       const isStudent = chat.students?.some((s) => s._id === profile._id);
       const isFaculty = chat.faculty?.some((f) => f._id === profile._id);
       const isAdmin = classGroup?.createdBy._id === profile._id;
       if (isStudent || isFaculty || isAdmin) userIsParticipant = true;
-
+  
       if (!userIsParticipant) {
         console.error("User is not a participant in this subject group chat");
         setMessage("You are not a participant in this subject group chat");
         return;
       }
     }
-
+  
     setSelectedChat(newChat);
-    setChatMessages([]);
-    setUploadedFiles([]);
     setFile(null);
     setFilePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
-
+  
     const now = new Date().toISOString();
     setLastViewed((prev) => ({
       ...prev,
@@ -1711,7 +1637,7 @@ function MobileChat() {
       [chatId]: 0,
     }));
     localStorage.setItem("lastViewed", JSON.stringify({ ...lastViewed, [chatId]: now }));
-
+  
     if (messageRef.current) messageRef.current.focus();
     if (type === "single") {
       socket.emit("load-chat", { receiverId: chat._id });
@@ -1739,16 +1665,16 @@ function MobileChat() {
       setMessage("Select a chat to send a message or file");
       return;
     }
-
+  
     const chatId = getChatId(selectedChat);
-
+  
     if (file) {
       setIsUploading(true);
       const formData = new FormData();
       formData.append("file", file);
       formData.append("chatType", selectedChat.type);
       formData.append("userId", profile._id);
-
+  
       if (selectedChat.type === "group") {
         formData.append("classGroup", selectedChat.data._id);
       } else if (selectedChat.type === "subject") {
@@ -1756,7 +1682,7 @@ function MobileChat() {
       } else if (selectedChat.type === "single") {
         formData.append("receiverId", selectedChat.data._id);
       }
-
+  
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/files/upload`, formData, {
           withCredentials: true,
@@ -1764,9 +1690,12 @@ function MobileChat() {
         });
         if (res.data.success) {
           const updatedFile = { ...res.data.file, uploadedBy: { _id: profile._id, name: profile.name } };
-          setUploadedFiles((prev) => [...prev, updatedFile].sort(
-            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-          ));
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [chatId]: [...(prev[chatId] || []), updatedFile].sort(
+              (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+            ),
+          }));
           setMessage("File uploaded successfully!");
           setTimeout(() => setMessage(""), 3000);
           setFile(null);
@@ -1785,7 +1714,7 @@ function MobileChat() {
         setIsUploading(false);
       }
     }
-
+  
     if (input.trim()) {
       if (selectedChat.type === "single") {
         socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
@@ -1796,7 +1725,7 @@ function MobileChat() {
       }
       setInput("");
     }
-
+  
     if (!file && !input.trim()) {
       setMessage("Type a message or select a file to send");
     }
@@ -1815,10 +1744,12 @@ function MobileChat() {
     setIsPreviewOpen(false);
   };
 
-  const combinedMessages = [
-    ...chatMessages.map((msg) => ({ type: "message", data: msg })),
-    ...uploadedFiles.map((file) => ({ type: "file", data: file })),
-  ].sort((a, b) => new Date(a.data.timestamp || a.data.createdAt) - new Date(b.data.timestamp || b.data.createdAt));
+  const combinedMessages = selectedChat
+  ? [
+      ...(chatMessages[getChatId(selectedChat)] || []).map((msg) => ({ type: "message", data: msg })),
+      ...(uploadedFiles[getChatId(selectedChat)] || []).map((file) => ({ type: "file", data: file })),
+    ].sort((a, b) => new Date(a.data.timestamp || a.data.createdAt) - new Date(b.data.timestamp || b.data.createdAt))
+  : [];
 
   const renderMessagesWithDates = () => {
     if (!combinedMessages.length) return <p className="text-sm text-center">No messages yet</p>;
