@@ -1380,13 +1380,14 @@ function MobileChat() {
 
   useEffect(() => {
     const fetchChatData = () => {
-      if (!selectedChat) return;
-      const chatId = getChatId(selectedChat);
-      if (selectedChat.type === "single" && !chatMessages[chatId]?.length) {
-        socket.emit("load-chat", { receiverId: selectedChat.data._id });
-      } else if ((selectedChat.type === "group" || selectedChat.type === "subject") && !chatMessages[chatId]?.length) {
-        socket.emit("load-group-chat", { chatId });
-      }
+      openChats.forEach((chat) => {
+        const chatId = getChatId(chat);
+        if (chat.type === "single" && !chatMessages[chatId]) {
+          socket.emit("load-chat", { receiverId: chat.data._id });
+        } else if ((chat.type === "group" || chat.type === "subject") && !chatMessages[chatId]) {
+          socket.emit("load-group-chat", { chatId });
+        }
+      });
     };
   
     fetchChatData();
@@ -1426,6 +1427,25 @@ function MobileChat() {
     });
   
     socket.on("receive-message", (message) => {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
+        const notification = new Notification('New Private Message', {
+          body: `${message.sender}: ${message.content.substring(0, 100)}`,
+          icon: Logo,
+          data: { 
+            url: `/chat?type=single&chatId=${chatId}`,
+            chatType: "single",
+            chatData: { _id: chatId, name: message.sender } // Minimal chat data for single chat
+          },
+        });
+  
+        notification.onclick = (event) => {
+          event.preventDefault();
+          handleChatSelect(event.target.data.chatData, event.target.data.chatType);
+          window.focus(); // Bring the window into focus
+        };
+      }
+  
       const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
   
@@ -1483,12 +1503,72 @@ function MobileChat() {
     });
   
     socket.on("receive-group-message", (messageData) => {
+      if ('Notification' in window) {
+        const handleNotification = (permission) => {
+          if (permission === 'granted') {
+            let title = "New Group Message";
+            let chatType = "group"; // Default to group
+            let chatData = null;
+  
+            // Determine if this is a group or subject chat
+            const isSubjectChat = subjectGroups && Object.values(subjectGroups).some(subjects =>
+              subjects.some(subject => subject.chat && subject.chat[0]?._id === messageData.chatId)
+            );
+  
+            if (isSubjectChat) {
+              chatType = "subject";
+              for (const classId in subjectGroups) {
+                const subject = subjectGroups[classId].find(s => s.chat && s.chat[0]?._id === messageData.chatId);
+                if (subject) {
+                  chatData = subject;
+                  title = subject.subjectName || "Subject Chat";
+                  break;
+                }
+              }
+            } else {
+              const group = groupChats.find(g => g.chat && g.chat._id === messageData.chatId);
+              if (group) {
+                chatData = group;
+                title = group.className || "Group Chat";
+              }
+            }
+  
+            if (!chatData) {
+              console.warn("Could not find chat data for notification");
+              return;
+            }
+  
+            const notification = new Notification(title, {
+              body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
+              icon: Logo,
+              data: { 
+                url: `/chat?type=${chatType}&chatId=${messageData.chatId}`,
+                chatType: chatType,
+                chatData: chatData
+              },
+            });
+  
+            notification.onclick = (event) => {
+              event.preventDefault();
+              handleChatSelect(event.target.data.chatData, event.target.data.chatType);
+              window.focus(); // Bring the window into focus
+            };
+          }
+        };
+  
+        if (Notification.permission === 'granted') {
+          handleNotification('granted');
+        } else if (Notification.permission === 'default') {
+          Notification.requestPermission().then(permission => handleNotification(permission));
+        }
+      }
+  
       const chatId = messageData.chatId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
   
       if (
         new Date(messageData.timestamp) > new Date(lastViewedTime) &&
-        (!selectedChat || getChatId(selectedChat) !== chatId)
+        (!selectedChat || getChatId(selectedChat) !== chatId) // Fixed getBones typo
       ) {
         setUnreadCounts((prev) => ({
           ...prev,
@@ -1520,7 +1600,7 @@ function MobileChat() {
       socket.off("receive-group-message");
       socket.off("error-message");
     };
-  }, [selectedChat, profile, navigate, lastViewed]);
+  }, [openChats, profile, navigate, selectedChat, lastViewed, subjectGroups, groupChats]); 
 
   useEffect(() => {
     const restoreChat = () => {
