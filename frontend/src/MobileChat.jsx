@@ -1824,14 +1824,15 @@ function MobileChat() {
 
   const renderMessagesWithDates = () => {
     if (!combinedMessages.length) return <p className="text-sm text-center">No messages yet</p>;
-
+  
     const messagesWithDates = [];
     let lastDate = null;
-
-    combinedMessages.slice().reverse().forEach((item, index) => {
+  
+    // Process messages in chronological order (oldest to newest)
+    combinedMessages.forEach((item, index) => {
       const timestamp = item.data.timestamp || item.data.createdAt;
       const currentDate = getaDate(timestamp);
-
+  
       if (lastDate !== currentDate) {
         messagesWithDates.push(
           <div key={`date-${index}`} className="text-center my-2 flex justify-center">
@@ -1842,14 +1843,14 @@ function MobileChat() {
         );
         lastDate = currentDate;
       }
-
+  
       if (item.type === "message") {
         const msg = item.data;
         if (selectedChat.type === "single") {
           const isSender = msg.senderId === profile._id && msg.receiver === selectedChat.data._id;
           const isReceiver = msg.senderId === selectedChat.data._id && msg.receiver === profile._id;
           if (!isSender && !isReceiver) return;
-
+  
           messagesWithDates.push(
             <div
               key={index}
@@ -1899,7 +1900,7 @@ function MobileChat() {
         const isImage = ["image"].includes(file.fileType.toLowerCase());
         const isVideo = ["video"].includes(file.fileType.toLowerCase());
         const isDownloadable = ["pdf", "doc", "pptx", "txt"].includes(file.fileType.toLowerCase());
-
+  
         messagesWithDates.push(
           <div
             key={index}
@@ -1973,7 +1974,10 @@ function MobileChat() {
         );
       }
     });
-
+  
+    // Reverse the entire array to display newest messages at the bottom
+    messagesWithDates.reverse();
+  
     if (
       selectedChat.type === "single" &&
       combinedMessages.length > 0 &&
@@ -1990,7 +1994,7 @@ function MobileChat() {
         <p key="no-messages" className="text-sm text-center">No messages between You and {selectedChat.data.name}</p>
       );
     }
-
+  
     return messagesWithDates;
   };
 
@@ -2043,7 +2047,7 @@ function MobileChat() {
                   return (
                     <li
                       key={member._id}
-                      className="cursor-pointer p-4 border-b hover:bg-gray-100 flex items-center justify-between"
+                      className="cursor-pointer p-4 border-b hover:bg-gray-100 flex items-center"
                       onClick={() => handleChatSelect(member, "single")}
                     >
                       <div className="flex items-center">
@@ -2088,7 +2092,7 @@ function MobileChat() {
                       </summary>
                       <ul className="flex flex-col">
                         <li
-                          className="p-4 cursor-pointer hover:bg-gray-100 flex justify-between items-center"
+                          className="p-4 cursor-pointer hover:bg-gray-100 flex items-center"
                           onClick={() => handleChatSelect(group, "group")}
                         >
                           <span>General</span>
