@@ -1393,6 +1393,7 @@ function MobileChat() {
     const interval = setInterval(fetchChatData, 60 * 1000);
   
     socket.on("chat-history", (history) => {
+      console.log("Received chat-history:", history);
       const messages = history.flatMap((chat) => chat.messages);
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = history[0]?.receiverId || sortedMessages[0]?.receiver;
@@ -1410,6 +1411,7 @@ function MobileChat() {
     });
   
     socket.on("chat-messages", ({ receiverId, messages }) => {
+      console.log("Received chat-messages:", receiverId, messages);
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = receiverId;
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
@@ -1426,6 +1428,7 @@ function MobileChat() {
     });
   
     socket.on("receive-message", (message) => {
+      console.log("Received receive-message:", message);
       if ('Notification' in window && Notification.permission === 'granted') {
         const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
         const notification = new Notification('New Private Message', {
@@ -1434,14 +1437,14 @@ function MobileChat() {
           data: { 
             url: `/chat?type=single&chatId=${chatId}`,
             chatType: "single",
-            chatData: { _id: chatId, name: message.sender } // Minimal chat data for single chat
+            chatData: { _id: chatId, name: message.sender }
           },
         });
   
         notification.onclick = (event) => {
           event.preventDefault();
           handleChatSelect(event.target.data.chatData, event.target.data.chatType);
-          window.focus(); // Bring the window into focus
+          window.focus();
         };
       }
   
@@ -1468,6 +1471,7 @@ function MobileChat() {
     });
   
     socket.on("group-chat-history", (groupChatHistory) => {
+      console.log("Received group-chat-history:", groupChatHistory);
       groupChatHistory.forEach((history) => {
         const chatId = history.chatId;
         const messages = history.messages || [];
@@ -1487,6 +1491,7 @@ function MobileChat() {
     });
   
     socket.on("group-chat-messages", ({ chatId, messages }) => {
+      console.log("Received group-chat-messages:", chatId, messages);
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
   
@@ -1502,14 +1507,14 @@ function MobileChat() {
     });
   
     socket.on("receive-group-message", (messageData) => {
+      console.log("Received receive-group-message:", messageData);
       if ('Notification' in window) {
         const handleNotification = (permission) => {
           if (permission === 'granted') {
             let title = "New Group Message";
-            let chatType = "group"; // Default to group
+            let chatType = "group";
             let chatData = null;
   
-            // Determine if this is a group or subject chat
             const isSubjectChat = subjectGroups && Object.values(subjectGroups).some(subjects =>
               subjects.some(subject => subject.chat && subject.chat[0]?._id === messageData.chatId)
             );
@@ -1550,7 +1555,7 @@ function MobileChat() {
             notification.onclick = (event) => {
               event.preventDefault();
               handleChatSelect(event.target.data.chatData, event.target.data.chatType);
-              window.focus(); // Bring the window into focus
+              window.focus();
             };
           }
         };
@@ -1567,7 +1572,7 @@ function MobileChat() {
   
       if (
         new Date(messageData.timestamp) > new Date(lastViewedTime) &&
-        (!selectedChat || getChatId(selectedChat) !== chatId) // Fixed getBones typo
+        (!selectedChat || getChatId(selectedChat) !== chatId)
       ) {
         setUnreadCounts((prev) => ({
           ...prev,
@@ -1739,6 +1744,77 @@ function MobileChat() {
     localStorage.removeItem("selectedChatType");
   };
 
+  // const sendMessage = async () => {
+  //   if (!selectedChat) {
+  //     setMessage("Select a chat to send a message or file");
+  //     return;
+  //   }
+  
+  //   const chatId = getChatId(selectedChat);
+  
+  //   if (file) {
+  //     setIsUploading(true);
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+  //     formData.append("chatType", selectedChat.type);
+  //     formData.append("userId", profile._id);
+  
+  //     if (selectedChat.type === "group") {
+  //       formData.append("classGroup", selectedChat.data._id);
+  //     } else if (selectedChat.type === "subject") {
+  //       formData.append("subjectGroup", selectedChat.data._id);
+  //     } else if (selectedChat.type === "single") {
+  //       formData.append("receiverId", selectedChat.data._id);
+  //     }
+  
+  //     try {
+  //       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/files/upload`, formData, {
+  //         withCredentials: true,
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       });
+  //       if (res.data.success) {
+  //         const updatedFile = { ...res.data.file, uploadedBy: { _id: profile._id, name: profile.name } };
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [chatId]: [...(prev[chatId] || []), updatedFile].sort(
+  //             (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  //           ),
+  //         }));
+  //         setMessage("File uploaded successfully!");
+  //         setTimeout(() => setMessage(""), 3000);
+  //         setFile(null);
+  //         setFilePreview(null);
+  //         setIsPreviewOpen(false);
+  //         if (fileInputRef.current) fileInputRef.current.value = "";
+  //       } else {
+  //         setMessage(res.data.message);
+  //         return;
+  //       }
+  //     } catch (error) {
+  //       console.error("Error uploading file:", error);
+  //       setMessage(error.response?.data?.message || "Failed to upload file");
+  //       return;
+  //     } finally {
+  //       setIsUploading(false);
+  //     }
+  //   }
+  
+  //   if (input.trim()) {
+  //     if (selectedChat.type === "single") {
+  //       socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
+  //     } else if (selectedChat.type === "group") {
+  //       socket.emit("send-group-message", { chatId: selectedChat.data.chat._id, content: input });
+  //     } else if (selectedChat.type === "subject") {
+  //       socket.emit("send-group-message", { chatId: selectedChat.data.chat[0]._id, content: input });
+  //     }
+  //     setInput("");
+  //   }
+  
+  //   if (!file && !input.trim()) {
+  //     setMessage("Type a message or select a file to send");
+  //   }
+  // };
+
   const sendMessage = async () => {
     if (!selectedChat) {
       setMessage("Select a chat to send a message or file");
@@ -1795,6 +1871,24 @@ function MobileChat() {
     }
   
     if (input.trim()) {
+      const messageData = {
+        senderId: profile._id,
+        sender: profile.name,
+        content: input,
+        timestamp: new Date().toISOString(),
+        receiver: selectedChat.type === "single" ? selectedChat.data._id : undefined,
+        chatId: selectedChat.type !== "single" ? chatId : undefined,
+      };
+  
+      // Optimistically update the UI
+      setChatMessages((prev) => {
+        const existingMessages = prev[chatId] || [];
+        return {
+          ...prev,
+          [chatId]: [...existingMessages, messageData].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+        };
+      });
+  
       if (selectedChat.type === "single") {
         socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
       } else if (selectedChat.type === "group") {
@@ -1809,6 +1903,7 @@ function MobileChat() {
       setMessage("Type a message or select a file to send");
     }
   };
+
 
   const handleKeyDown = (e) => {
     if(e.key === "Enter") {
