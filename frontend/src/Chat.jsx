@@ -3014,13 +3014,15 @@ function Chat() {
     const messageDay = new Date(messageDate.getFullYear(), messageDate.getMonth(), messageDate.getDate());
 
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 
     if (messageDay.getTime() === today.getTime()) {
       return "Today";
     } else if (messageDay.getTime() === yesterday.getTime()) {
       return "Yesterday";
     } else {
-      return `${days[messageDay.getDay()]} ${messageDay.getDate()}-${messageDay.getMonth() + 1}-${messageDay.getFullYear()}`;
+      return `${days[messageDay.getDay()]} ${messageDay.getDate()}-${months[messageDay.getMonth()]}-${messageDay.getFullYear()}`;
     }
   };
 
