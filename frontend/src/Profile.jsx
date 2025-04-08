@@ -763,6 +763,7 @@ function Profile() {
         const formData = new FormData();
         formData.append("profilePic", profilePicFile);
         formData.append("userId", profile._id);
+        console.log(profile)
 
         try {
             const response = await axios.put(
