@@ -3313,12 +3313,29 @@ function Chat() {
     });
 
     socket.on("receive-message", (message) => {
+      // if ('Notification' in window && Notification.permission === 'granted') {
+      //   new Notification('New Private Message', {
+      //     body: `${message.sender}: ${message.content.substring(0, 100)}`,
+      //     icon: Logo,
+      //     data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.receiverId}` },
+      //   });
+      // }
       if ('Notification' in window && Notification.permission === 'granted') {
+        const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
         new Notification('New Private Message', {
           body: `${message.sender}: ${message.content.substring(0, 100)}`,
           icon: Logo,
-          data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${message.receiverId}` },
-        });
+          data: { 
+            url: `/chat?type=single&chatId=${chatId}`,
+            chatType: "single",
+            chatData: { _id: chatId, name: message.sender } // Simulating chat data for consistency
+          },
+        }).onclick = (event) => {
+          event.preventDefault();
+          // Simulate clicking a chat tab to open it
+          handleChatSelect({ _id: chatId, name: message.sender }, "single");
+          window.focus(); // Bring the window into focus
+        };
       }
 
       const chatId = message.senderId === profile._id ? message.receiver : message.senderId;
@@ -3398,27 +3415,90 @@ function Chat() {
             window.open(event.target.data.url, '_blank');
           };
         } else if (Notification.permission === 'default') {
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              let title = "New Group Message";
-              if (selectedChat) {
-                if (selectedChat.type === 'group') {
-                  title = selectedChat.data.className || "Group Chat";
-                } else if (selectedChat.type === 'subject') {
-                  title = selectedChat.data.subjectName || "Subject Chat";
-                }
-              }
+          // Notification.requestPermission().then(permission => {
+          //   if (permission === 'granted') {
+          //     let title = "New Group Message";
+          //     if (selectedChat) {
+          //       if (selectedChat.type === 'group') {
+          //         title = selectedChat.data.className || "Group Chat";
+          //       } else if (selectedChat.type === 'subject') {
+          //         title = selectedChat.data.subjectName || "Subject Chat";
+          //       }
+          //     }
 
-              new Notification(title, {
-                body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
-                icon: Logo,
-                data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
-              }).onclick = (event) => {
-                event.preventDefault();
-                window.open(event.target.data.url, '_blank');
-              };
+          //     new Notification(title, {
+          //       body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
+          //       icon: Logo,
+          //       data: { url: `${import.meta.env.VITE_BACKEND_URL}/chat?chatId=${messageData.chatId}` },
+          //     }).onclick = (event) => {
+          //       event.preventDefault();
+          //       window.open(event.target.data.url, '_blank');
+          //     };
+          //   }
+          // });
+
+          if ('Notification' in window) {
+            const handleNotification = (permission) => {
+              if (permission === 'granted') {
+                let title = "New Group Message";
+                let chatType = "group"; // Default to group
+                let chatData = null;
+          
+                // Determine if this is a group or subject chat
+                const isSubjectChat = subjectGroups && Object.values(subjectGroups).some(subjects =>
+                  subjects.some(subject => subject.chat && subject.chat[0]?._id === messageData.chatId)
+                );
+          
+                if (isSubjectChat) {
+                  chatType = "subject";
+                  // Find the subject data
+                  for (const classId in subjectGroups) {
+                    const subject = subjectGroups[classId].find(s => s.chat && s.chat[0]?._id === messageData.chatId);
+                    if (subject) {
+                      chatData = subject;
+                      title = subject.subjectName || "Subject Chat";
+                      break;
+                    }
+                  }
+                } else {
+                  // Look for group chat
+                  const group = groupChats.find(g => g.chat && g.chat._id === messageData.chatId);
+                  if (group) {
+                    chatData = group;
+                    title = group.className || "Group Chat";
+                  }
+                }
+          
+                if (!chatData) {
+                  console.warn("Could not find chat data for notification");
+                  return;
+                }
+          
+                const notification = new Notification(title, {
+                  body: `${messageData.sender}: ${messageData.content.substring(0, 100)}`,
+                  icon: Logo,
+                  data: { 
+                    url: `/chat?type=${chatType}&chatId=${messageData.chatId}`,
+                    chatType: chatType,
+                    chatData: chatData
+                  },
+                });
+          
+                notification.onclick = (event) => {
+                  event.preventDefault();
+                  // Use the existing chat selection logic
+                  handleChatSelect(chatData, chatType);
+                  window.focus(); // Bring the window into focus
+                };
+              }
+            };
+          
+            if (Notification.permission === 'granted') {
+              handleNotification('granted');
+            } else if (Notification.permission === 'default') {
+              Notification.requestPermission().then(permission => handleNotification(permission));
             }
-          });
+          }
         }
       }
 
