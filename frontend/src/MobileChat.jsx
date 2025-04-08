@@ -1392,6 +1392,10 @@ function MobileChat() {
     fetchChatData();
     const interval = setInterval(fetchChatData, 60 * 1000);
   
+    socket.on("connect", () => console.log("Connected to WebSocket"));
+    socket.on("disconnect", () => console.log("Disconnected from WebSocket"));
+    socket.on("connect_error", (err) => console.error("WebSocket connection error:", err));
+  
     socket.on("chat-history", (history) => {
       console.log("Received chat-history:", history);
       const messages = history.flatMap((chat) => chat.messages);
@@ -1744,77 +1748,6 @@ function MobileChat() {
     localStorage.removeItem("selectedChatType");
   };
 
-  // const sendMessage = async () => {
-  //   if (!selectedChat) {
-  //     setMessage("Select a chat to send a message or file");
-  //     return;
-  //   }
-  
-  //   const chatId = getChatId(selectedChat);
-  
-  //   if (file) {
-  //     setIsUploading(true);
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-  //     formData.append("chatType", selectedChat.type);
-  //     formData.append("userId", profile._id);
-  
-  //     if (selectedChat.type === "group") {
-  //       formData.append("classGroup", selectedChat.data._id);
-  //     } else if (selectedChat.type === "subject") {
-  //       formData.append("subjectGroup", selectedChat.data._id);
-  //     } else if (selectedChat.type === "single") {
-  //       formData.append("receiverId", selectedChat.data._id);
-  //     }
-  
-  //     try {
-  //       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/files/upload`, formData, {
-  //         withCredentials: true,
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       });
-  //       if (res.data.success) {
-  //         const updatedFile = { ...res.data.file, uploadedBy: { _id: profile._id, name: profile.name } };
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [chatId]: [...(prev[chatId] || []), updatedFile].sort(
-  //             (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-  //           ),
-  //         }));
-  //         setMessage("File uploaded successfully!");
-  //         setTimeout(() => setMessage(""), 3000);
-  //         setFile(null);
-  //         setFilePreview(null);
-  //         setIsPreviewOpen(false);
-  //         if (fileInputRef.current) fileInputRef.current.value = "";
-  //       } else {
-  //         setMessage(res.data.message);
-  //         return;
-  //       }
-  //     } catch (error) {
-  //       console.error("Error uploading file:", error);
-  //       setMessage(error.response?.data?.message || "Failed to upload file");
-  //       return;
-  //     } finally {
-  //       setIsUploading(false);
-  //     }
-  //   }
-  
-  //   if (input.trim()) {
-  //     if (selectedChat.type === "single") {
-  //       socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
-  //     } else if (selectedChat.type === "group") {
-  //       socket.emit("send-group-message", { chatId: selectedChat.data.chat._id, content: input });
-  //     } else if (selectedChat.type === "subject") {
-  //       socket.emit("send-group-message", { chatId: selectedChat.data.chat[0]._id, content: input });
-  //     }
-  //     setInput("");
-  //   }
-  
-  //   if (!file && !input.trim()) {
-  //     setMessage("Type a message or select a file to send");
-  //   }
-  // };
-
   const sendMessage = async () => {
     if (!selectedChat) {
       setMessage("Select a chat to send a message or file");
@@ -1871,6 +1804,7 @@ function MobileChat() {
     }
   
     if (input.trim()) {
+      // Create message object for optimistic update
       const messageData = {
         senderId: profile._id,
         sender: profile.name,
@@ -1880,7 +1814,7 @@ function MobileChat() {
         chatId: selectedChat.type !== "single" ? chatId : undefined,
       };
   
-      // Optimistically update the UI
+      // Optimistically update chatMessages
       setChatMessages((prev) => {
         const existingMessages = prev[chatId] || [];
         return {
@@ -1889,6 +1823,7 @@ function MobileChat() {
         };
       });
   
+      // Emit the message
       if (selectedChat.type === "single") {
         socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
       } else if (selectedChat.type === "group") {
@@ -1896,6 +1831,7 @@ function MobileChat() {
       } else if (selectedChat.type === "subject") {
         socket.emit("send-group-message", { chatId: selectedChat.data.chat[0]._id, content: input });
       }
+  
       setInput("");
     }
   
@@ -1903,7 +1839,6 @@ function MobileChat() {
       setMessage("Type a message or select a file to send");
     }
   };
-
 
   const handleKeyDown = (e) => {
     if(e.key === "Enter") {
