@@ -4571,6 +4571,8 @@ import "./Chat.css";
 import { HiMiniMagnifyingGlass } from "react-icons/hi2";
 import { motion } from "framer-motion";
 import { toast } from 'react-toastify'
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { FaChevronDown } from "react-icons/fa6";
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -5639,19 +5641,36 @@ function Chat() {
             </div>
 
             {msg.senderId !== profile._id && (
-                <button className="invisible group-hover:visible text-sm text-black">
-                    <select defaultValue=""  onChange={(e) => {
-                            if (e.target.value === "copy") {
-                            handleCopy(msg.content);
-                            }
-                            e.target.value = "";
-                        }}>
-                        <option value="" disabled hidden></option>
-                        <option value="copy" className="group" >Copy Message</option>
-                        <option>Delete Message</option>
-                    </select>
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                <button className="invisible group-hover:visible text-sm text-black px-2 py-1">
+                    <FaChevronDown />
                 </button>
-        )}
+                </DropdownMenu.Trigger>
+
+                <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                    side="right"
+                    align="start"
+                    className="bg-white border rounded shadow-md text-sm z-50"
+                    sideOffset={4}
+                >
+                    <DropdownMenu.Item
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onSelect={() => handleCopy(msg.content)}
+                    >
+                    Copy Message
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                    Delete Message
+                    </DropdownMenu.Item>
+                </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+            )}
+
 
             </div>
           );
@@ -5703,19 +5722,36 @@ function Chat() {
         </div>
 
         {msg.senderId !== profile._id && (
-                <button className="invisible group-hover:visible text-sm text-black">
-                    <select defaultValue=""  onChange={(e) => {
-                            if (e.target.value === "copy") {
-                            handleCopy(msg.content);
-                            }
-                            e.target.value = "";
-                        }}>
-                        <option value="" disabled hidden></option>
-                        <option value="copy" className="group" >Copy Message</option>
-                        <option>Delete Message</option>
-                    </select>
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                <button className="invisible group-hover:visible text-sm text-black px-2 py-1">
+                    <FaChevronDown />
                 </button>
-        )}
+                </DropdownMenu.Trigger>
+
+                <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                    side="right"
+                    align="start"
+                    className="bg-white border rounded shadow-md text-sm z-50"
+                    sideOffset={4}
+                >
+                    <DropdownMenu.Item
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onSelect={() => handleCopy(msg.content)}
+                    >
+                    Copy Message
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                    Delete Message
+                    </DropdownMenu.Item>
+                </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+            )}
+
         </div>  
 
           )};
