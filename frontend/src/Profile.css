@@ -9,6 +9,39 @@ button{
     cursor: pointer;
 }
 
+/* Light mode styles */
+.light-input {
+    background-color: #ffffff;
+    color: #1f2937;
+    border-color: #d1d5db;
+}
+
+/* Dark mode styles */
+.dark-input {
+    background-color: #374151;
+    color: #ffffff;
+    border-color: #4b5563;
+}
+
+/* Ensure file input button matches dark mode */
+.dark-input[type="file"] {
+    background-color: #374151;
+    color: #ffffff;
+}
+
+/* Optional: Customize file input appearance */
+.dark-input[type="file"]::-webkit-file-upload-button {
+    background-color: #4b5563;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+}
+
+.dark-input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #6b7280;
+}
+
 
 
 /* Phones (≤ 640px) */
