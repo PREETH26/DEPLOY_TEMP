@@ -17,9 +17,9 @@
   color:white;
 }
 
-input{
+/* input{
   background: white;
-}
+} */
 
 input[type="checkbox"] {
     appearance: none;  /* Remove default styles */
