@@ -2337,7 +2337,7 @@ function Profile() {
                                 type="file"
                                 accept="image/jpeg,image/jpg,image/png"
                                 onChange={handleProfilePicChange}
-                                className={`mb-2 cursor-pointer text-sm sm:text-base ${isDarkMode ? "text-white bg-gray-700" : "text-gray-800 bg-white"} border ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}
+                                className={`mb-2 cursor-pointer text-sm sm:text-base ${isDarkMode ? "text-white bg-blue-700" : "text-gray-800 bg-white"} border ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}
                             />
                         </div>
                     )}
