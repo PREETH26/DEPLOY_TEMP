@@ -4570,6 +4570,7 @@ import Logo from "./assets/Logo.png";
 import "./Chat.css";
 import { HiMiniMagnifyingGlass } from "react-icons/hi2";
 import { motion } from "framer-motion";
+import { toast } from 'react-toastify'
 
 const socket = io(`${import.meta.env.VITE_WEBSOCKETS_URL}`, {
   withCredentials: true,
@@ -4617,6 +4618,7 @@ function Chat() {
   const [filtered, setFiltered] = useState(all);
   const [unreadCounts, setUnreadCounts] = useState({});
   const [lastViewed, setLastViewed] = useState({});
+  const [copied, setCopied] = useState(false);
 
   const getUserColor = (userId) => {
     let hash = 0;
@@ -5503,6 +5505,17 @@ function Chat() {
     }
   };
 
+  const handleCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success("Message copied");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   if (!profile) {
     return <div>Loading profile...</div>;
   }
@@ -5587,11 +5600,35 @@ function Chat() {
           if (!isSender && !isReceiver) return;
 
           messagesWithDates.push(
+
+            <div key={index}
+            className={`group flex items-start gap-2 my-2 ${
+                msg.senderId === profile._id ? "justify-end" : "justify-start"
+            }`}
+            >
+
+            {msg.senderId === profile._id && (
+                <button className="invisible group-hover:visible p-2 text-sm text-black">
+                    <select defaultValue=""  onChange={(e) => {
+                            if (e.target.value === "copy") {
+                                handleCopy(msg.content);
+                                }
+                                e.target.value = "";
+                            }}>
+                        <option value="" disabled hidden></option>
+                        <option value="copy" className="group">Copy Message</option>
+                        <option>Delete Message</option>
+                    </select>
+                </button>
+            )}
+
+
+
             <div
               key={index}
               className={`p-2 my-2 rounded-md w-fit max-w-[80%] sm:max-w-[50%] break-words whitespace-pre-wrap ${
                 msg.senderId === profile._id
-                  ? "sent bg-blue-500 text-white self-end ml-auto shadow-md"
+                  ? "sent bg-blue-500 text-white self-end  shadow-md"
                   : "received bg-gray-300 text-black shadow-md"
               }`}
             >
@@ -5600,28 +5637,89 @@ function Chat() {
                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>
+
+            {msg.senderId !== profile._id && (
+                <button className="invisible group-hover:visible text-sm text-black">
+                    <select defaultValue=""  onChange={(e) => {
+                            if (e.target.value === "copy") {
+                            handleCopy(msg.content);
+                            }
+                            e.target.value = "";
+                        }}>
+                        <option value="" disabled hidden></option>
+                        <option value="copy" className="group" >Copy Message</option>
+                        <option>Delete Message</option>
+                    </select>
+                </button>
+        )}
+
+            </div>
           );
         } else {
           messagesWithDates.push(
-            <div
-              key={index}
-              className={`p-2 my-2 rounded-md w-fit max-w-[80%] sm:max-w-[50%] break-words whitespace-pre-wrap ${
-                msg.senderId === profile._id
-                  ? "sent bg-blue-500 text-white self-end ml-auto shadow-md"
-                  : "received text-black self-start shadow-md"
-              }`}
-              style={msg.senderId !== profile._id ? { backgroundColor: getUserColor(msg.senderId) } : {}}
+            <div key={index}
+            className={`group flex items-start gap-2 my-2 ${
+                msg.senderId === profile._id ? "justify-end" : "justify-start"
+            }`}
             >
-              <p className="font-bold mb-1 text-sm sm:text-base">
+            {msg.senderId === profile._id && (
+                <button className="invisible group-hover:visible p-2 text-sm text-black">
+                    <select defaultValue=""  onChange={(e) => {
+                            if (e.target.value === "copy") {
+                                handleCopy(msg.content);
+                                }
+                                e.target.value = "";
+                            }}>
+                        <option value="" disabled hidden></option>
+                        <option value="copy" className="group">Copy Message</option>
+                        <option>Delete Message</option>
+                    </select>
+                </button>
+            )}
+
+            <div
+                key={index}
+                className={`p-2 my-2 rounded-md w-fit max-w-[80%] sm:max-w-[50%] break-words whitespace-pre-wrap ${
+                msg.senderId === profile._id
+                    ? "sent bg-blue-500 text-white self-end shadow-md"
+                    : "received text-black self-start shadow-md"
+                }`}
+                style={
+                msg.senderId !== profile._id
+                    ? { backgroundColor: getUserColor(msg.senderId) }
+                    : {}
+                }
+            >
+                <p className="font-bold mb-1 text-sm sm:text-base">
                 {msg.senderId === profile._id ? "You " : msg.sender}
-              </p>
-              <p className="leading-[20px] text-sm sm:text-base mb-1">{msg.content}</p>
-              <p className="p-1 text-[10px] md:text-[11px] font-light mt-1 justify-self-end">
-                {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </p>
-            </div>
-          );
-        }
+                </p>
+                <p className="leading-[20px] text-sm sm:text-base mb-1">{msg.content}</p>
+                <p className="p-1 text-[10px] md:text-[11px] font-light mt-1 justify-self-end">
+                {new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                })}
+            </p>
+        </div>
+
+        {msg.senderId !== profile._id && (
+                <button className="invisible group-hover:visible text-sm text-black">
+                    <select defaultValue=""  onChange={(e) => {
+                            if (e.target.value === "copy") {
+                            handleCopy(msg.content);
+                            }
+                            e.target.value = "";
+                        }}>
+                        <option value="" disabled hidden></option>
+                        <option value="copy" className="group" >Copy Message</option>
+                        <option>Delete Message</option>
+                    </select>
+                </button>
+        )}
+        </div>  
+
+          )};
+          
       } else if (item.type === "file") {
         const file = item.data;
         if (!file.fileName) {
