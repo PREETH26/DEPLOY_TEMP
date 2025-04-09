@@ -3974,9 +3974,7 @@ function Chat() {
                   : "received bg-gray-300 text-black shadow-md"
               }`}
             >
-              {msg.content.split("\n").map((line, i) => (
-                <p key={i} className="leading-[20px] text-sm sm:text-base">{line}</p>
-              ))}
+              <p className="leading-[20px] text-sm sm:text-base">{msg.content}</p>
               <p className="text-[10px] sm:text-[12px] font-light justify-self-end">
                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </p>
@@ -3996,9 +3994,7 @@ function Chat() {
               <p className="font-bold mb-1 text-sm sm:text-base">
                 {msg.senderId === profile._id ? "You " : msg.sender}
               </p>
-              {msg.content.split("\n").map((line, i) => (
-                <p key={i} className="leading-[20px] text-sm sm:text-base">{line}</p>
-              ))}
+              <p className="leading-[20px] text-sm sm:text-base">{msg.content}</p>
               <p className="text-[10px] sm:text-[12px] font-light mt-1 justify-self-end">
                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </p>
