@@ -5486,13 +5486,14 @@ function Chat() {
       }
     }
 
-    if (input) { // Remove trim() to preserve all whitespace
+    if (input) { 
+      const trimmedInput = input.replace(/\s+$/, '');
       if (selectedChat.type === "single") {
-        socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
+        socket.emit("send-message", { receiver: selectedChat.data._id, content: trimmedInput });
       } else if (selectedChat.type === "group") {
-        socket.emit("send-group-message", { chatId: selectedChat.data.chat._id, content: input });
+        socket.emit("send-group-message", { chatId: selectedChat.data.chat._id, content: trimmedInput });
       } else if (selectedChat.type === "subject") {
-        socket.emit("send-group-message", { chatId: selectedChat.data.chat[0]._id, content: input });
+        socket.emit("send-group-message", { chatId: selectedChat.data.chat[0]._id, content: trimmedInput });
       }
       setInput("");
     }
@@ -5510,8 +5511,6 @@ function Chat() {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
-    } else if (e.shiftKey && e.key === "Enter") {
-      setInput((prev) => prev + "\n");
     }
   };
 
@@ -5596,8 +5595,8 @@ function Chat() {
                   : "received bg-gray-300 text-black shadow-md"
               }`}
             >
-              <p className="leading-[12px] text-sm sm:text-base">{msg.content}</p>
-              <p className="text-[10px] sm:text-[12px] font-light justify-self-end">
+              <p className="leading-[20px] text-sm sm:text-base mb-1">{msg.content}</p>
+              <p className="p-1 text-[10px] md:text-[11px] font-light justify-self-end">
                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>
@@ -5616,8 +5615,8 @@ function Chat() {
               <p className="font-bold mb-1 text-sm sm:text-base">
                 {msg.senderId === profile._id ? "You " : msg.sender}
               </p>
-              <p className="leading-[12px] text-sm sm:text-base">{msg.content}</p>
-              <p className="text-[10px] sm:text-[12px] font-light mt-1 justify-self-end">
+              <p className="leading-[20px] text-sm sm:text-base mb-1">{msg.content}</p>
+              <p className="p-1 text-[10px] md:text-[11px] font-light mt-1 justify-self-end">
                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>
@@ -6104,7 +6103,7 @@ function Chat() {
                       onKeyDown={handleKeyDown}
                       rows="3"
                       ref={messageRef}
-                      style={{ minHeight: "40px", maxHeight: "40px", lineHeight: "12px", paddingTop: "12px" }}
+                      style={{ minHeight: "40px", maxHeight: "40px", lineHeight: "16px", paddingTop: "12px" }}
                     />
                   </div>
                   <div className="flex items-center mr-1 ml-2">
