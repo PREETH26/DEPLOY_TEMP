@@ -2401,7 +2401,7 @@ function Profile() {
                                     placeholder="Enter your Institution"
                                     value={institution}
                                     onChange={(e) => setInstitution(e.target.value)}
-                                    className={`border p-2 rounded text-sm sm:text-base ${isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
+                                    className={`border p-2 rounded text-sm sm:text-base ${isDarkMode ? "dark-input" : "light-input"}`}
                                 />
                                 <button className={`bg-green-400 p-2 rounded-md text-sm sm:text-base ${isDarkMode ? "hover:bg-green-300" : "hover:bg-green-500"}`}>Submit</button>
                             </form>
@@ -2438,7 +2438,7 @@ function Profile() {
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
                                             required
-                                            className={`border p-2 rounded text-sm sm:text-base ${isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
+                                            className={`border p-2 rounded text-sm sm:text-base ${isDarkMode ? "dark-input" : "light-input"}`}
                                         />
                                         <button className={`p-3 rounded-md bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-semibold text-sm sm:text-base ${isDarkMode ? "hover:shadow-gray-700" : "hover:shadow-gray-400"}`}>
                                             Submit
@@ -2487,7 +2487,7 @@ function Profile() {
                                 <input
                                     placeholder="Enter Class group name"
                                     value={group}
-                                    className={`border p-2 rounded text-sm sm:text-base ${isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
+                                    className={`border p-2 rounded text-sm sm:text-base ${isDarkMode ? "dark-input" : "light-input"}`}
                                     required
                                     onChange={(e) => setGroup(e.target.value)}
                                 />
