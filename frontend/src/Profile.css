@@ -11,16 +11,16 @@ button{
 
 /* Light mode styles */
 .light-input {
-    background-color: #ffffff;
-    color: #1f2937;
-    border-color: #d1d5db;
+    background-color: #ffffff !important;
+    color: #1f2937 !important;
+    border-color: #d1d5db !important;
 }
 
 /* Dark mode styles */
 .dark-input {
-    background-color: #374151;
-    color: #ffffff;
-    border-color: #4b5563;
+    background-color: #374151 !important;
+    color: #ffffff !important;
+    border-color: #4b5563 !important;
 }
 
 /* Ensure file input button matches dark mode */
