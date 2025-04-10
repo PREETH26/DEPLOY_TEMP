@@ -2285,6 +2285,7 @@ function Profile() {
 
     return (
         <div className={`min-h-screen p-4 lg:p-6 overflow-hidden ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"}`}>
+            <div className="flex justify-between items-center mb-4 lg:mb-2">
             <button
                 className={`rounded-full w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-teal-500 to-cyan-600 hover:shadow-lg flex justify-center items-center mb-4 lg:mb-2 ${isDarkMode ? "hover:shadow-gray-700" : "hover:shadow-gray-400"}`}
                 onClick={() => navigate("/chat")}
@@ -2297,6 +2298,7 @@ function Profile() {
                 >
                     {isDarkMode ? "Light Mode" : "Dark Mode"}
                 </button>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-2">
                 <div className="flex flex-col items-center lg:items-center gap-8 lg:gap-10">
                     <div className="group relative">
