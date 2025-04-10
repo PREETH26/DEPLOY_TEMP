@@ -123,7 +123,7 @@ function Signup() {
         <input className={`input validator ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} type="email" required placeholder="Email" onChange={(e)=>setEmail(e.target.value)}/>
         <div className="validator-hint hidden">Enter valid email address</div>
         
-        <select className="border p-2 rounded-md" value={role} onChange={(e) => setRole(e.target.value)} required>
+        <select className={`border p-2 rounded-md ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} value={role} onChange={(e) => setRole(e.target.value)} required>
           <option value="" disabled>
             Select your Role
           </option>
