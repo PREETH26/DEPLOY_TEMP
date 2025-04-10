@@ -2365,7 +2365,7 @@ function Profile() {
                 <div className={`box w-full ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
                     <div className="flex flex-col">
                         {isProfileVisible && (
-                            <div className={`bg-${isDarkMode ? "gray-800" : "white"} dark:bg-gray-800 rounded-xl shadow-md p-6 lg:p-8`}>
+                            <div className={`${isDarkMode ? "bg-gray-800" : "bg-white"}  rounded-xl shadow-md p-6 lg:p-8`}>
                                 <h2 className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"} pb-4`}>Profile</h2>
                                 <div className="space-y-6">
                                     <div className="grid gap-4">
