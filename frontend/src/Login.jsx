@@ -25,7 +25,7 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberedEmail") ? true : false);
 
 
-  const isDarkMode = DarkMode();
+  const {isDarkMode} = DarkMode();
 
   const onSubmit = async(e)=>{
     e.preventDefault();

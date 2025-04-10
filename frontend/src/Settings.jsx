@@ -600,7 +600,7 @@ import arrow from "./assets/arrow_back.png";
 import DarkMode from "./DarkMode";
 
 function ClassSettings() {
-    const isDarkMode = DarkMode();
+    const {isDarkMode} = DarkMode();
     const navigate = useNavigate();
     const { classId: classIdFromParams } = useParams();
     const [classData, setClassData] = useState(null);

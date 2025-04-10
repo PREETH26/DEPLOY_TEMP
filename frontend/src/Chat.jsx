@@ -4611,7 +4611,7 @@ function Chat() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const newMessage = useRef(null);
   const fileInputRef = useRef(null);
-  const isDarkMode = DarkMode();
+  const {isDarkMode} = DarkMode();
   const dragItem = useRef(null);
   const messageRef = useRef(null);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);

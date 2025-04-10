@@ -78,7 +78,7 @@ function Signup() {
   }
 
 
-  const isDarkMode = DarkMode();
+  const {isDarkMode} = DarkMode();
 
   const onSubmit = async(e)=>{
     e.preventDefault();

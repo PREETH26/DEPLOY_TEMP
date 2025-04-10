@@ -12,7 +12,7 @@ function VerifyOTP() {
   const [errorMessage,setErrorMessage] = useState("")
   const [resendMessage,setResendMessage] = useState("")
 
-  const isDarkMode = DarkMode();
+  const {isDarkMode} = DarkMode();
   const navigate = useNavigate()
 
   const inputRef = useRef([])

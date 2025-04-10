@@ -3754,7 +3754,7 @@ function MobileChat() {
   const [hasRestored, setHasRestored] = useState(false);
   const newMessage = useRef(null);
   const fileInputRef = useRef(null);
-  const isDarkMode = DarkMode();
+  const {isDarkMode} = DarkMode();
   const messageRef = useRef(null);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [previewFileName, setPreviewFileName] = useState(null);

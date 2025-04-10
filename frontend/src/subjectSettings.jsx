@@ -556,7 +556,7 @@ import arrow from "./assets/arrow_back.png"; // Adjust the path as needed
 import DarkMode from "./DarkMode";
 
 function SubjectSettings() {
-    const isDarkMode = DarkMode();
+    const {isDarkMode} = DarkMode();
     const navigate = useNavigate();
     const location = useLocation();
     const { subjectId, classId } = location.state || {};

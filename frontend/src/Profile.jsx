@@ -1918,7 +1918,7 @@ import { toast } from "react-toastify";
 import { MdVerified } from "react-icons/md";
 
 function Profile() {
-    const isDarkMode = DarkMode();
+    const { isDarkMode, toggleDarkMode } = DarkMode();
     const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [isProfileVisible, setIsProfileVisible] = useState(
@@ -2291,6 +2291,12 @@ function Profile() {
             >
                 <img src={arrow} className="w-6 h-6 lg:w-7 lg:h-7" alt="Back" />
             </button>
+            <button
+                    onClick={toggleDarkMode}
+                    className={`p-2 rounded-md text-sm sm:text-base font-semibold ${isDarkMode ? "bg-gray-600 text-white hover:bg-gray-500" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                >
+                    {isDarkMode ? "Light Mode" : "Dark Mode"}
+                </button>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-2">
                 <div className="flex flex-col items-center lg:items-center gap-8 lg:gap-10">
                     <div className="group relative">
