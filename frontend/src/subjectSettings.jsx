@@ -876,7 +876,7 @@ function SubjectSettings() {
                                     type="text"
                                     value={newSubjectName}
                                     onChange={(e) => setNewSubjectName(e.target.value)}
-                                    className={`border-2 border-gray-400 p-2 rounded-md ${isDarkMode ? "text-white" : "text-black"} focus:outline-none focus:ring-2 focus:ring-[#20AFC5]`}
+                                    className={`border-2 border-gray-400 p-2 rounded-md ${isDarkMode ? "!bg-gray-700 !text-white" : "!bg-white !text-black"} focus:outline-none focus:ring-2 focus:ring-[#20AFC5]`}
                                     placeholder="Enter new subject name"
                                     required
                                 />
