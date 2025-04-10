@@ -67,8 +67,8 @@ function Login() {
         <form className={isDarkMode? 'no-form flex flex-col gap-3 lg:w-500px lg:h-918px' : 'mform flex flex-col gap-3 lg:w-500px lg:h-918px bg-[#FFFFFF]'} onSubmit={onSubmit}>
         <h1 className='login  font-bold text-[#20AFC5]'>Log In</h1>
         <br/>
-        <input type='text' placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`}/>
-        <input type='password' placeholder='Password' onChange={(e)=>setPassword(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`}/>
+        <input type='text' placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
+        <input type='password' placeholder='Password' onChange={(e)=>setPassword(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
       
         <span><input type='checkbox' className={`check bg-[#423E3E] text-[#423E3E] ml-2 cursor-pointer ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} checked={rememberMe}
          onChange={() => setRememberMe(!rememberMe)} /><p>Remember Me</p>
