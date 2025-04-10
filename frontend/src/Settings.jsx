@@ -1001,7 +1001,7 @@ function ClassSettings() {
     return (
         <div
             className={`min-h-screen p-6 ${
-                isDarkMode ? "bg-[#423E3E] text-white" : "bg-#EDEDED text-black"
+                isDarkMode ? "bg-[#423E3E] text-white" : "bg-[#EDEDED] text-black"
             } overflow-hidden`}
         >
             {/* Back Button */}
