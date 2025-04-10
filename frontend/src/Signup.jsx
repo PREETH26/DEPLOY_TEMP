@@ -178,7 +178,7 @@ function Signup() {
         <input type='password' placeholder='Confirm Password' onChange={confirmation} className={`${validPass === null ? 'input' : validPass ? 'input input-success': 'input input-error' } ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
         {passMatchErr && <p className="text-red-500 text-sm">{passMatchErr}</p>}
 
-        <span ><input type='checkbox' className='check cursor-pointer bg-white' required/><p>I accept the terms and conditions</p></span>
+        <span ><input type='checkbox' className={`check cursor-pointer ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/><p>I accept the terms and conditions</p></span>
         <button type='submit' className='signup-btn bg-[#00DDFF]' >Sign up</button>
         {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
           <div className='hr flex gap-5'><hr className='justify-self-start w-[45%]'/><p className='justify-self-center'>OR</p><hr className='justify-self-end w-[45%]'/></div>
