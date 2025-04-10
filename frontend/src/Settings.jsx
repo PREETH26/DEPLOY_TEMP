@@ -1033,7 +1033,7 @@ function ClassSettings() {
                                     type="text"
                                     value={newClassName}
                                     onChange={(e) => setNewClassName(e.target.value)}
-                                    className={`border-2 border-gray-400 p-2 rounded-md ${isDarkMode ? "text-white" : "text-black"} focus:outline-none focus:ring-2 focus:ring-[#20AFC5]`}
+                                    className={`border-2 border-gray-400 p-2 rounded-md ${isDarkMode ? "!bg-gray-800 !text-white" : "!bg-white !text-black"} focus:outline-none focus:ring-2 focus:ring-[#20AFC5]`}
                                     placeholder="Enter new class name"
                                     required
                                 />
@@ -1214,7 +1214,7 @@ function ClassSettings() {
                                     type="text"
                                     value={subjectGroupName}
                                     onChange={(e) => setSubjectGroupName(e.target.value)}
-                                    className={`border-2 border-gray-400 p-2 rounded-md w-full text-black focus:outline-none focus:ring-2 focus:ring-[#20AFC5] ${isDarkMode ? "text-white" : "text-black"}`}
+                                    className={`border-2 border-gray-400 p-2 rounded-md w-full text-black focus:outline-none focus:ring-2 focus:ring-[#20AFC5] ${isDarkMode ? "!bg-gray-800 !text-white" : "!bg-white !text-black"}`}
                                     placeholder="Enter subject group name"
                                     required
                                 />
