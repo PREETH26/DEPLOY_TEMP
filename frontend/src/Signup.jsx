@@ -116,11 +116,11 @@ function Signup() {
     <div className={isDarkMode? 'not-main' : 'main'}>
       <form className={isDarkMode? 'not-form flex flex-col gap-3 lg:w-500px lg:h-918px ' : 'form flex flex-col gap-3 lg:w-500px lg:h-918px bg-[#FFFFFF]'} onSubmit={onSubmit}>
         <h1 className='signup  font-bold text-[#20AFC5]'>Sign up</h1>
-        <input type='text' placeholder='Name'  pattern="^[A-Za-z]+([ '\-][A-Za-z]+)*$" title='Only letters allowed' onChange={checkName} className={`${validName === null ? 'input' : validName ? 'input input-success' : 'input input-error'}`} required/>
+        <input type='text' placeholder='Name'  pattern="^[A-Za-z]+([ '\-][A-Za-z]+)*$" title='Only letters allowed' onChange={checkName} className={`${validName === null ? 'input' : validName ? 'input input-success' : 'input input-error'} ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
         {nameMatchErr && <p className="text-red-500 text-sm">{nameMatchErr}</p>}
 
 
-        <input className="input validator" type="email" required placeholder="Email" onChange={(e)=>setEmail(e.target.value)}/>
+        <input className={`input validator ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} type="email" required placeholder="Email" onChange={(e)=>setEmail(e.target.value)}/>
         <div className="validator-hint hidden">Enter valid email address</div>
         
         <select className="border p-2 rounded-md" value={role} onChange={(e) => setRole(e.target.value)} required>
@@ -165,7 +165,7 @@ function Signup() {
                 )}
 
 
-        <input type="password" className="input validator" required placeholder="Password" minLength="8" 
+        <input type="password" className={`input validator ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required placeholder="Password" minLength="8" 
           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
           title="Must be more than 8 characters, including number, lowercase letter, uppercase letter" onChange={(e)=>setPassword(e.target.value)}/>
         <p className="validator-hint hidden text-center">
@@ -175,7 +175,7 @@ function Signup() {
           <br/>* At least one uppercase letter
         </p>
 
-        <input type='password' placeholder='Confirm Password' onChange={confirmation} className={`${validPass === null ? 'input' : validPass ? 'input input-success': 'input input-error' }`} required/>
+        <input type='password' placeholder='Confirm Password' onChange={confirmation} className={`${validPass === null ? 'input' : validPass ? 'input input-success': 'input input-error' } ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
         {passMatchErr && <p className="text-red-500 text-sm">{passMatchErr}</p>}
 
         <span ><input type='checkbox' className='check cursor-pointer bg-white' required/><p>I accept the terms and conditions</p></span>
