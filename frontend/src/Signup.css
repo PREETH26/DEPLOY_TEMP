@@ -21,7 +21,6 @@
 
 input[type="checkbox"] {
     appearance: none;  /* Remove default styles */
-    background-color: white;  /* Set initial white background */
     border: 1px solid black;  /* Optional: Add a border */
     width: 16px;
     height: 16px;
