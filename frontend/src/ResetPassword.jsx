@@ -122,7 +122,7 @@ function ResetPassword() {
                 value={otp[index]}
                 onChange={(e) => handleInput(e, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className={isDarkMode ? 'bg-[#3B3636] w-12 h-10 text-white text-center text-lg rounded-md' : 'bg-[#FFFFFF] w-12 h-10 text-black text-center text-lg rounded-md'}
+                className={isDarkMode ? '!bg-[#3B3636] w-12 h-10 !text-white text-center text-lg rounded-md' : 'bg-[#FFFFFF] w-12 h-10 text-black text-center text-lg rounded-md'}
                 ref={e => inputRef.current[index] = e}
               />
             ))}
