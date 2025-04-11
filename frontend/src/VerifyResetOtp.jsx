@@ -50,7 +50,7 @@ function VerifyResetOTP() {
       const otp = otpArray.join("");
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/author/forgot-password`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/author/send-reset-password`,
         { email, otp }, // Include both email and OTP in body
         { headers: { 'Content-Type': 'application/json' } } // Ensure JSON content type
       );
