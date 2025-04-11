@@ -19,7 +19,7 @@ function ForgetPasswordMiddle() {
       );
 
       if (response.status === 200) {
-        navigate("/verify-reset-otp", { state: { email } }); // Pass email to next page if needed
+        navigate("/reset-otp", { state: { email } }); // Pass email to next page if needed
       }
     } catch (error) {
       console.error("Password reset initiation failed:", error);
