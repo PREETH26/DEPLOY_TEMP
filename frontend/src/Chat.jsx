@@ -4630,7 +4630,7 @@ function Chat() {
       hash = hash & hash;
     }
     const hue = Math.abs(hash % 360);
-    return `hsl(${hue}, 50%, 60%)`;
+    return `hsl(${hue}, 50%, ${isDarkMode ? "40%" : "60%"})`;
   };
 
   const getaDate = (timestamp) => {
@@ -5586,7 +5586,7 @@ function Chat() {
       if (lastDate !== currentDate) {
         messagesWithDates.push(
           <div key={`date-${index}`} className="text-center my-2 flex justify-center">
-            <span className="bg-white text-gray-700 text-xs sm:text-sm px-2 py-1 rounded-sm">
+            <span className={`${isDarkMode ? "!bg-gray-800" : "!bg-white"} ${isDarkMode ? "!text-gray-300" : "!text-gray-700"} text-xs sm:text-sm px-2 py-1 rounded-sm`}>
               {currentDate}
             </span>
           </div>
@@ -5617,9 +5617,9 @@ function Chat() {
                                 }
                                 e.target.value = "";
                             }}>
-                        <option value="" disabled hidden></option>
-                        <option value="copy" className="group">Copy Message</option>
-                        <option>Delete Message</option>
+                        <option value="" disabled hidden className={`${isDarkMode ? "!bg-gray-700 !!text-white" : "!bg-white !text-black"}`}></option>
+                        <option value="copy" className={`group ${isDarkMode ? "!bg-gray-700 !text-white" : "!bg-white !text-black"}`}>Copy Message</option>
+                        <option className={`${isDarkMode ? "!bg-gray-700 !text-white" : "!bg-white !text-black"}`}>Delete Message</option>
                     </select>
                 </button>
             )}
@@ -5656,13 +5656,13 @@ function Chat() {
                     sideOffset={4}
                 >
                     <DropdownMenu.Item
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}
                     onSelect={() => handleCopy(msg.content)}
                     >
                     Copy Message
                     </DropdownMenu.Item>
                     <DropdownMenu.Item
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}
                     >
                     Delete Message
                     </DropdownMenu.Item>
@@ -5689,9 +5689,9 @@ function Chat() {
                                 }
                                 e.target.value = "";
                             }}>
-                        <option value="" disabled hidden></option>
-                        <option value="copy" className="group">Copy Message</option>
-                        <option>Delete Message</option>
+                        <option value="" disabled hidden className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}></option>
+                        <option value="copy" className={`group *:${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}>Copy Message</option>
+                        <option className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}>Delete Message</option>
                     </select>
                 </button>
             )}
@@ -5733,11 +5733,11 @@ function Chat() {
                 <DropdownMenu.Content
                     side="right"
                     align="start"
-                    className="bg-white border rounded shadow-md text-sm z-50"
+                    className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}
                     sideOffset={4}
                 >
                     <DropdownMenu.Item
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}
                     onSelect={() => handleCopy(msg.content)}
                     >
                     Copy Message
@@ -5861,7 +5861,7 @@ function Chat() {
   };
 
   return (
-    <div className="min-h-screen overflow-clip bg-white">
+    <div className={`min-h-screen overflow-clip ${isDarkMode ? "!bg-[#3B3636] !text-white" : "!bg-[#EDEDED] !text-black"}`}>
       <div className="flex items-start w-full">
         <div className="group relative">
           <img
@@ -5870,7 +5870,7 @@ function Chat() {
             alt="Logo"
             onClick={toggleSidebar}
           />
-          <span className="absolute left-12 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className={`absolute left-12 top-1/2 transform -translate-y-1/2 ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-300 text-black"} text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity`}>
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
           </span>
         </div>
@@ -5881,13 +5881,13 @@ function Chat() {
         >
           {isSidebarVisible && (
             <div className="flex flex-col h-[80vh] md:h-full md:min-w-[250px] md:max-w-[300px]">
-              <div className="flex flex-col h-full bg-[#FFFFFF] border-2 shadow-md shadow-black p-2 rounded-sm">
+              <div className={`flex flex-col h-full ${isDarkMode ? "bg-[#464242] text-white border-2 border-gray-800" : "bg-white text-black border-2"} shadow-md shadow-black p-2 rounded-sm`}>
                 <div className="flex-1 overflow-y-auto">
                   <div className="flex mb-4">
                     <button
                       onClick={() => setActiveSection("group")}
                       className={`flex-1 py-2 text-sm sm:text-base font-semibold rounded-l-md ${
-                        activeSection === "group" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        activeSection === "group" ? "bg-blue-500 text-white" : `${isDarkMode ? "bg-[#3B3636] text-white hover:bg-gray-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`
                       }`}
                       aria-label="Show Group Chats"
                     >
@@ -5896,7 +5896,7 @@ function Chat() {
                     <button
                       onClick={() => setActiveSection("single")}
                       className={`flex-1 py-2 text-sm sm:text-base font-semibold rounded-r-md ${
-                        activeSection === "single" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        activeSection === "single" ? "bg-blue-500 text-white" : `${isDarkMode ? "bg-[#3B3636] text-white hover:bg-gray-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`
                       }`}
                       aria-label="Show Single Chats"
                     >
@@ -5924,8 +5924,8 @@ function Chat() {
                           return (
                             <li
                               key={member._id}
-                              className={`cursor-pointer hover:bg-gray-200 p-1 rounded-md ${
-                                selectedChat?.type === "single" && selectedChat.data._id === member._id ? "bg-gray-300" : ""
+                              className={`cursor-pointer ${isDarkMode ? " hover:bg-gray-800 " : "hover:bg-gray-300 "} p-1 rounded-md ${
+                                selectedChat?.type === "single" && selectedChat.data._id === member._id ? `${isDarkMode ? " hover:bg-gray-900 " : "hover:bg-gray-200 "}` : ""
                               }`}
                               onClick={() => handleChatSelect(member, "single")}
                             >
@@ -5961,8 +5961,8 @@ function Chat() {
                               key={group._id}
                               className={`flex justify-between items-center p-1 rounded-md ${
                                 selectedChat?.type === "subject" && selectedChat.data._id === group._id
-                                  ? "bg-gray-300"
-                                  : "hover:bg-gray-200 text-black italic"
+                                   ? `${isDarkMode ? "!bg-[#3B3636] !text-white " : "!bg-gray-300 !text-gray-700 "}`
+                                  : ` ${isDarkMode ? " !hover:bg-[#3B3636] !text-white" : "!hover:bg-gray-300 !text-black"}`
                               }`}
                             >
                               <span
@@ -5992,7 +5992,7 @@ function Chat() {
                             </li>
                           ) : group.chat ? (
                             <details key={group._id} className="mb-2">
-                              <summary className="cursor-pointer p-1 bg-gray-100 hover:bg-gray-200 rounded-md">
+                              <summary className={`cursor-pointer p-1 ${isDarkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300"} rounded-md`}>
                                 <div className="flex flex-row justify-between items-center">
                                   <p className="text-sm sm:text-base truncate">{group.className}</p>
                                   <div className="flex items-center">
@@ -6019,8 +6019,8 @@ function Chat() {
                                 <li
                                   className={`cursor-pointer p-1 rounded-md ${
                                     selectedChat?.type === "group" && selectedChat.data.chat._id === group.chat._id
-                                      ? "bg-gray-300"
-                                      : "hover:bg-gray-200"
+                                       ? `${isDarkMode ? "bg-gray-900 text-white " : "bg-gray-300 text-gray-700 "}`
+                                      : ` ${isDarkMode ? " hover:bg-gray-800 " : "hover:bg-gray-300 "}`
                                   }`}
                                   onClick={() => handleChatSelect(group, "group")}
                                 >
@@ -6038,8 +6038,8 @@ function Chat() {
                                     key={subject._id}
                                     className={`flex justify-between items-center p-1 rounded-md ${
                                       selectedChat?.type === "subject" && selectedChat.data._id === subject._id
-                                        ? "bg-gray-300"
-                                        : "hover:bg-gray-200 text-black italic"
+                                         ? `${isDarkMode ? "bg-gray-900 text-white " : "bg-gray-300 text-gray-700 "}`
+                                        : ` ${isDarkMode ? " hover:bg-gray-800 " : "hover:bg-gray-300 "}`
                                     }`}
                                   >
                                     <span
@@ -6085,7 +6085,7 @@ function Chat() {
             </div>
           )}
 
-          <div className="flex flex-col h-[80vh] md:h-full bg-[#FFFFFF] border-2 border-black overflow-y-hidden shadow-sm shadow-black">
+          <div className={`flex flex-col h-[80vh] md:h-full ${isDarkMode ? "!bg-[#464242] text-white" : "!bg-gray-100 text-black"} border-2 border-black overflow-y-hidden shadow-sm shadow-black`}>
             <div className="tab-bar">
               {openChats.map((chat, index) => {
                 const chatId = getChatId(chat);
@@ -6126,14 +6126,14 @@ function Chat() {
 
             {selectedChat ? (
               <>
-                <div className="flex-1 overflow-y-auto bg-gray-100 p-3 rounded-md">
+                <div className={`flex-1 overflow-y-auto  p-3 rounded-md ${isDarkMode ? "bg-[#423E3E] text-white" : "bg-gray-200 text-black"}`}>
                   {renderMessagesWithDates()}
                   <div ref={newMessage} />
                 </div>
 
                 {isPreviewOpen && previewImageUrl && (
                   <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="relative bg-white p-4 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto">
+                    <div className={`relative ${isDarkMode ? "bg-[#423E3E] text-white" : "bg-gray-300 text-black"} p-4 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto`}>
                       <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Image Preview: {previewFileName}</h2>
                         <button
@@ -6210,7 +6210,7 @@ function Chat() {
                 <div className="flex mt-3 pb-2 pl-2 pr-2">
                   <div className="flex-1 flex flex-col">
                     {file && getFileType(file) !== "image" && getFileType(file) !== "video" && (
-                      <div className="bg-gray-200 p-2 rounded-md mb-2 flex items-center justify-between">
+                      <div className={`${isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"} p-2 rounded-md mb-2 flex items-center justify-between`}>
                         <div className="flex items-center">
                           {getFileIcon(getFileType(file), file.name)}
                           <span className="text-xs sm:text-sm text-gray-800">{file.name}</span>
@@ -6268,7 +6268,7 @@ function Chat() {
                     />
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className={`${isDarkMode ? "bg-black" : "bg-white"} z-0 border-1 border-black text-black px-2 sm:px-4 py-1 rounded-md`}
+                      className={`${isDarkMode ? "bg-[#423E3E] hover:bg-gray-800" : "bg-white hover:bg-gray-100"} z-0 border-1 border-black text-black px-2 sm:px-4 py-1 rounded-md`}
                       style={{ minHeight: "40px", maxHeight: "40px" }}
                     >
                       <GiSafetyPin className="z-1 text-cyan-500 text-2xl sm:text-3xl" />
