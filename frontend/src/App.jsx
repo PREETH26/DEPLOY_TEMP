@@ -15,7 +15,7 @@ import LandingPage from './LandingPage'
 import MobileChat from './MobileChat'
 import ForgetPasswordMiddle from './ForgetPasswordMiddle';
 import ResetPassword from './ResetPassword';
-import VerifyResetOTP from './VerifyResetOtp';
+// import VerifyResetOTP from './VerifyResetOtp';
 
 
 
@@ -39,7 +39,7 @@ function App() {
         <Route path='/' element={<LandingPage/>}/>
         <Route path='/forget-middle' element={<ForgetPasswordMiddle/>}/>
         <Route path='/reset-password' element={<ResetPassword/>}/>
-        <Route path='/verify-reset-otp' element={<VerifyResetOTP/>}/>
+        {/* <Route path='/verify-reset-otp' element={<VerifyResetOTP/>}/> */}
 
 
 
