@@ -9,7 +9,7 @@ function ForgetPasswordMiddle() {
     const initiatePasswordReset = async () => {
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/api/author/forgot-password`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/author/send-reset-otp`,
           {},
           { withCredentials: true }
         );
