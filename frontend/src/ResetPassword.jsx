@@ -75,7 +75,7 @@ function ResetPassword() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/author/reset-password`,
-        { email: email, otp: otpString, newPassword: password }, // Send OTP and new password in one request
+        { email: email, otp: otpString, newpassword: password }, // Send OTP and new password in one request
         { headers: { 'Content-Type': 'application/json' } }
       );
 
