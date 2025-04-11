@@ -64,12 +64,9 @@ function ResetPassword() {
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      if (response.data.success && response.data.action === 'verify') {
+      if (response.status === 200) {
         setStep('password'); // Move to password reset step
         toast.success("OTP Verified Successfully!");
-      } else {
-        setErrorMessage(response.data.message || "Failed to verify OTP.");
-        toast.error(response.data.message || "Failed to verify OTP.");
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -112,13 +109,10 @@ function ResetPassword() {
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      if (response.data.success && response.data.action === 'reset') {
+      if (response.status === 200) {
         setSuccessMessage("Password reset successfully!");
         toast.success("Password reset successfully!");
         setTimeout(() => navigate("/login"), 2000);
-      } else {
-        setErrorMessage(response.data.message || "Failed to reset password.");
-        toast.error(response.data.message || "Failed to reset password.");
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {

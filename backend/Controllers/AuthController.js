@@ -212,46 +212,37 @@ export const sendResetOtp = async(req,res)=>{
     }
 }
 
-export const resetPassword = async (req, res) => {
-    const { email, otp, newpassword } = req.body;
-  
-    if (!email || !otp) {
-      return res.json({ success: false, message: "Email and OTP are required." });
+export const resetPassword = async(req,res)=>{
+    const {email,otp,newpassword} = req.body;
+    if(!email||!otp||!newpassword){
+        return res.json({success:false,message:"Email, OTP and New Password are required."})
     }
-  
     try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.json({ success: false, message: "User not found!" });
-      }
-  
-      const userId = user._id;
-      const otpEntry = await OTP.findOne({ user: userId });
-  
-      if (!otpEntry) {
-        return res.json({ success: false, message: "OTP missing" });
-      }
-  
-      if (otpEntry.otp === "" || otpEntry.otp !== otp) {
-        return res.json({ success: false, message: "Invalid OTP" });
-      }
-  
-      if (otpEntry.expiresAt < Date.now()) {
-        return res.json({ success: false, message: "OTP Expired" });
-      }
-  
-      if (newpassword) { // Password reset step
-        const hashedPassword = await bcrypt.hash(newpassword, 12);
-        user.password = hashedPassword;
+        const user = await User.findOne({email});
+        if(!user){
+            return res.json({success:false,message:"User not found!"});
+        }
+        const userId = user._id;
+        const otpEntry = await OTP.findOne({ user: userId });
+        // console.log(otp)
+
+        if(!otpEntry){
+            return res.json({success:false,message:"OTP missing"})
+        }
+        if(otpEntry.otp===""|| otpEntry.otp !== otp){
+            return res.json({success:false,message:"Invalid OTP"})
+        }
+        if(otpEntry.expiresAt<Date.now()){
+            return res.json({success:false,message:"OTP Expired"})
+        }
+        const hashedpassword = await bcrypt.hash(newpassword,12);
+        user.password = hashedpassword;
         await user.save();
         await OTP.deleteOne({ _id: otpEntry._id });
-        return res.json({ success: true, message: 'Password has been reset successfully.', action: 'reset' });
-      } else { // OTP verification step
-        return res.json({ success: true, message: 'OTP verified successfully.', action: 'verify' });
-      }
-  
+        return res.json({success:true,message:'Password has been reset Successfully.'})
+        
     } catch (error) {
-      console.log(error.message);
-      res.json({ success: false, message: "Internal Server Error" });
+        console.log(error.message)
+        res.json({success:false,message:"Internal Server Error"})
     }
-  };
+}
