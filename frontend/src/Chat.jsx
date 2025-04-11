@@ -5907,7 +5907,7 @@ function Chat() {
                   <div className="relative w-[98%] justify-self-center">
                     <input
                       placeholder="Search"
-                      className="focus:outline-1 focus:outline-cyan-500 w-full p-2 border border-gray-300 rounded-md"
+                      className={`focus:outline-1 focus:outline-cyan-500 w-full p-2 border border-gray-300 rounded-md ${isDarkMode ? "bg-gray-700 text-white " : "bg-white text-black "}`}
                       onChange={(e) => search(e.target.value)}
                     />
                     <HiMiniMagnifyingGlass className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
