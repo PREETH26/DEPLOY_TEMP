@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import DarkMode from './DarkMode';
@@ -13,7 +13,8 @@ function ResetPassword() {
 
   const { isDarkMode } = DarkMode();
   const navigate = useNavigate();
-
+  const location = useLocation(); // Get the navigation state
+  const email = location.state?.email || '';
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const inputRef = useRef([]); // For OTP inputs
@@ -74,7 +75,7 @@ function ResetPassword() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/author/reset-password`,
-        { otp: otpString, newPassword: password }, // Send OTP and new password in one request
+        { email: email, otp: otpString, newPassword: password }, // Send OTP and new password in one request
         { headers: { 'Content-Type': 'application/json' } }
       );
 
