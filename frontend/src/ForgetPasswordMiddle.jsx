@@ -1,125 +1,70 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import DarkMode from './DarkMode';
-import './ResetPassword.css';
 
-function ResetPassword() {
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { isDarkMode } = DarkMode();
+function ForgetPasswordMiddle() {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const location = useLocation(); // Get email and OTP from navigation state
-  const email = location.state?.email || '';
-  const otp = location.state?.otp || '';
-
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage("");
-    setSuccessMessage("");
-
-    const password = passwordRef.current.value;
-    const confirmPassword = confirmPasswordRef.current.value;
-
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      toast.error("Passwords do not match.");
-      setIsLoading(false);
-      return;
-    }
+    setError('');
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/author/reset-password`,
-        { email, otp, newPassword: password }, // Include email, OTP, and new password
-        { headers: { 'Content-Type': 'application/json' } } // Ensure JSON content type
+        `${import.meta.env.VITE_BACKEND_URL}/api/author/send-reset-otp`,
+        { email }, // Send email in the request body
+        { headers: { 'Content-Type': 'application/json' } } // Optional: Ensure JSON content type
       );
 
       if (response.status === 200) {
-        setSuccessMessage("Password reset successfully!");
-        toast.success("Password reset successfully!");
-        setTimeout(() => navigate("/login"), 2000);
+        navigate("/verify-reset-otp", { state: { email } }); // Pass email to next page if needed
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrorMessage("Invalid reset request.");
-        toast.error("Invalid reset request.");
-      } else if (error.response) {
-        setErrorMessage("An error occurred. Please try again.");
-        toast.error("An error occurred. Please try again.");
+      console.error("Password reset initiation failed:", error);
+      if (error.response) {
+        setError(error.response.data.message || "Failed to initiate password reset. Please try again.");
       } else {
-        console.error("Server error:", error.message);
-        setErrorMessage("Server error. Please try again later.");
-        toast.error("Server error. Please try again later.");
+        setError("Network or server error. Please check your connection and try again.");
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <div className={isDarkMode ? 'dark-bg' : 'light-bg min-h-screen flex items-center justify-center'}>
-      <div className={isDarkMode ? 'dark-card' : 'light-card p-8 rounded-lg shadow-lg w-full max-w-md'}>
-        <h1 className={isDarkMode ? 'text-blue-400' : 'text-blue-600 text-3xl font-bold text-center mb-4'}>
-          Reset Password
-        </h1>
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600 text-center mb-6'}>
-          Enter your new password below.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Forget Password</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="password" className={isDarkMode ? 'text-gray-200' : 'text-gray-700'}>New Password</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email Address
+            </label>
             <input
-              type="password"
-              id="password"
-              ref={passwordRef}
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              placeholder="Enter your email"
               required
-              className={isDarkMode ? 'dark-input' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
-              placeholder="Enter new password"
             />
           </div>
 
-          <div>
-            <label htmlFor="confirmPassword" className={isDarkMode ? 'text-gray-200' : 'text-gray-700'}>Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              ref={confirmPasswordRef}
-              required
-              className={isDarkMode ? 'dark-input' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
-              placeholder="Confirm new password"
-            />
-          </div>
-
-          {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
-          {successMessage && <p className="text-green-500 text-sm text-center">{successMessage}</p>}
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
 
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition duration-300 disabled:bg-gray-400"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {isLoading ? "Resetting..." : "Reset Password"}
+            Send Reset OTP
           </button>
         </form>
-
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600 text-center mt-4'}>
-          Remember your password?{' '}
-          <Link to="/login" className={isDarkMode ? 'text-blue-400 hover:underline' : 'text-blue-600 hover:underline'}>
-            Sign in
-          </Link>
-        </p>
       </div>
     </div>
   );
 }
 
-export default ResetPassword;
+export default ForgetPasswordMiddle;
