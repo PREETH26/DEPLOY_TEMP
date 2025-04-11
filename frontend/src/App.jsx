@@ -13,6 +13,8 @@ import SubjectSettings from './subjectSettings'
 import FilePreviewPage from './FilePreviewPage'
 import LandingPage from './LandingPage'
 import MobileChat from './MobileChat'
+import ForgetPasswordMiddle from './ForgetPasswordMiddle';
+import ResetPassword from './ResetPassword';
 
 
 
@@ -34,6 +36,9 @@ function App() {
         <Route path='/settings' element={<Settings/>}></Route>
         <Route path='/preview' element={<FilePreviewPage/>}></Route>
         <Route path='/' element={<LandingPage/>}/>
+        <Route path='/forget-middle' element={<ForgetPasswordMiddle/>}/>
+        <Route path='/reset-password' element={<ResetPassword/>}/>
+
 
 
 

@@ -72,7 +72,7 @@ function Login() {
       
         <span><input type='checkbox' className={`check bg-[#423E3E] text-[#423E3E] ml-2 cursor-pointer ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} checked={rememberMe}
          onChange={() => setRememberMe(!rememberMe)} /><p>Remember Me</p>
-        <Link to="/" className='text-center text-[#20AFC5] font-bold text-[12px]  self-end ml-8'>Forgot Password?</Link>
+        <Link to="/forget-middle" className='text-center text-[#20AFC5] font-bold text-[12px]  self-end ml-8'>Forgot Password?</Link>
         </span>
         <button type='submit' className='login-btn bg-[#00DDFF] '>Log in</button>
         {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
