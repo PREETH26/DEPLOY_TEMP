@@ -102,8 +102,8 @@ function ResetPassword() {
   };
 
   return (
-    <div className={isDarkMode ? 'dark-bg min-h-screen flex items-center justify-center' : 'light-bg min-h-screen flex items-center justify-center'}>
-      <div className={isDarkMode ? 'dark-card p-8 rounded-lg shadow-lg w-full max-w-md': 'light-card p-8 rounded-lg shadow-lg w-full max-w-md'}>
+    <div className={isDarkMode ? 'dark-bg !min-h-screen !flex !items-center !justify-center' : 'light-bg min-h-screen flex items-center justify-center'}>
+      <div className={isDarkMode ? 'dark-card !p-8 !rounded-lg !shadow-lg !w-full !max-w-md': 'light-card p-8 rounded-lg shadow-lg w-full max-w-md'}>
         <h1 className={isDarkMode ? 'text-blue-400 text-3xl font-bold text-center mb-4' : 'text-blue-600 text-3xl font-bold text-center mb-4'}>
           Reset Password
         </h1>
