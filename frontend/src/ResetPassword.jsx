@@ -102,12 +102,12 @@ function ResetPassword() {
   };
 
   return (
-    <div className={isDarkMode ? 'dark-bg' : 'light-bg min-h-screen flex items-center justify-center'}>
-      <div className={isDarkMode ? 'dark-card' : 'light-card p-8 rounded-lg shadow-lg w-full max-w-md'}>
-        <h1 className={isDarkMode ? 'text-blue-400' : 'text-blue-600 text-3xl font-bold text-center mb-4'}>
+    <div className={isDarkMode ? 'dark-bg min-h-screen flex items-center justify-center' : 'light-bg min-h-screen flex items-center justify-center'}>
+      <div className={isDarkMode ? 'dark-card p-8 rounded-lg shadow-lg w-full max-w-md': 'light-card p-8 rounded-lg shadow-lg w-full max-w-md'}>
+        <h1 className={isDarkMode ? 'text-blue-400 text-3xl font-bold text-center mb-4' : 'text-blue-600 text-3xl font-bold text-center mb-4'}>
           Reset Password
         </h1>
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600 text-center mb-6'}>
+        <p className={isDarkMode ? 'text-gray-300 text-center mb-6' : 'text-gray-600 text-center mb-6'}>
           Enter your OTP and new password to reset your password.
         </p>
 
@@ -135,7 +135,7 @@ function ResetPassword() {
               id="password"
               ref={passwordRef}
               required
-              className={isDarkMode ? 'dark-input' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
+              className={isDarkMode ? 'dark-input  w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
               placeholder="Enter new password"
             />
           </div>
@@ -147,7 +147,7 @@ function ResetPassword() {
               id="confirmPassword"
               ref={confirmPasswordRef}
               required
-              className={isDarkMode ? 'dark-input' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
+              className={isDarkMode ? 'dark-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
               placeholder="Confirm new password"
             />
           </div>
@@ -164,7 +164,7 @@ function ResetPassword() {
           </button>
         </form>
 
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600 text-center mt-4'}>
+        <p className={isDarkMode ? 'text-gray-300 text-center mt-4' : 'text-gray-600 text-center mt-4'}>
           Remember your password?{' '}
           <Link to="/login" className={isDarkMode ? 'text-blue-400 hover:underline' : 'text-blue-600 hover:underline'}>
             Sign in
