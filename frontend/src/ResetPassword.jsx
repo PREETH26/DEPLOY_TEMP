@@ -2,9 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import DarkMode from './DarkMode'; 
-import './ResetPassword.css'; 
-
+import DarkMode from './DarkMode';
+import './ResetPassword.css';
 
 function ResetPassword() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -43,12 +42,12 @@ function ResetPassword() {
       if (response.status === 200) {
         setSuccessMessage("Password reset successfully!");
         toast.success("Password reset successfully!");
-        setTimeout(() => navigate("/login"), 2000); // Redirect to login after 2 seconds
+        setTimeout(() => navigate("/login"), 2000);
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        setErrorMessage("Invalid or expired reset link.");
-        toast.error("Invalid or expired reset link.");
+        setErrorMessage("Invalid reset request.");
+        toast.error("Invalid reset request.");
       } else if (error.response) {
         setErrorMessage("An error occurred. Please try again.");
         toast.error("An error occurred. Please try again.");

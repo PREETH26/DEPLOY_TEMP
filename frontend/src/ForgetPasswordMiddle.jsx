@@ -15,7 +15,7 @@ function ForgetPasswordMiddle() {
         );
         
         if (response.status === 200) {
-          navigate("/reset-password");
+          navigate("/verify-reset-otp");
         }
       } catch (error) {
         console.error("Password reset initiation failed:", error);
