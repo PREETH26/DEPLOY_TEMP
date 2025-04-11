@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
 import DarkMode from './DarkMode';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-import "./VerifyOTP.css"; // Reuse your existing CSS
+import "./VerifyOTP.css"; 
 
 function VerifyResetOTP() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -13,6 +13,8 @@ function VerifyResetOTP() {
 
   const { isDarkMode } = DarkMode();
   const navigate = useNavigate();
+  const location = useLocation(); // Get email from navigation state
+  const email = location.state?.email || ''; // Safely access email from state
 
   const inputRef = useRef([]);
 
@@ -49,13 +51,13 @@ function VerifyResetOTP() {
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/author/forgot-password`,
-        { otp }, // Include OTP in body to trigger verification
-        { withCredentials: true }
+        { email, otp }, // Include both email and OTP in body
+        { headers: { 'Content-Type': 'application/json' } } // Ensure JSON content type
       );
 
       if (response.status === 200) {
         toast.success("OTP Verified Successfully!");
-        navigate("/reset-password"); // Proceed to reset password
+        navigate("/reset-password", { state: { email, otp } }); // Pass email and OTP to next page
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -80,9 +82,9 @@ function VerifyResetOTP() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/author/forgot-password`,
-        {}, // Empty body to trigger resend
-        { withCredentials: true }
+        `${import.meta.env.VITE_BACKEND_URL}/api/author/send-reset-otp`,
+        { email }, // Resend OTP for the same email
+        { headers: { 'Content-Type': 'application/json' } }
       );
 
       if (response.status === 200) {
