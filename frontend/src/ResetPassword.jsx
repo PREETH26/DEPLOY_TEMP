@@ -9,7 +9,6 @@ function ResetPassword() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState(''); // State for email
   const [otp, setOtp] = useState(['', '', '', '', '', '']); // State for OTP digits
 
   const { isDarkMode } = DarkMode();
@@ -65,9 +64,9 @@ function ResetPassword() {
       return;
     }
 
-    if (!email || !otpString || !password) {
-      setErrorMessage("All fields are required.");
-      toast.error("All fields are required.");
+    if (!otpString || !password) {
+      setErrorMessage("OTP and password are required.");
+      toast.error("OTP and password are required.");
       setIsLoading(false);
       return;
     }
@@ -75,7 +74,7 @@ function ResetPassword() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/author/reset-password`,
-        { email, otp: otpString, newPassword: password }, // Send all data in one request
+        { otp: otpString, newPassword: password }, // Send OTP and new password in one request
         { headers: { 'Content-Type': 'application/json' } }
       );
 
@@ -108,23 +107,10 @@ function ResetPassword() {
           Reset Password
         </h1>
         <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600 text-center mb-6'}>
-          Enter your email, OTP, and new password to reset your password.
+          Enter your OTP and new password to reset your password.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className={isDarkMode ? 'text-gray-200' : 'text-gray-700'}>Email Address</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={isDarkMode ? 'dark-input' : 'light-input w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}
-              placeholder="Enter your email"
-            />
-          </div>
-
           <div className='flex justify-between mb-8 mt-5 gap-1' onPaste={handlePaste}>
             {Array(6).fill(0).map((_, index) => (
               <input
