@@ -4570,6 +4570,7 @@ import Logo from "./assets/Logo.png";
 import "./Chat.css";
 import { HiMiniMagnifyingGlass } from "react-icons/hi2";
 import { motion } from "framer-motion";
+import { SendHorizonal } from "lucide-react";
 import { toast } from 'react-toastify'
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { FaChevronDown } from "react-icons/fa6";
@@ -5526,6 +5527,7 @@ function Chat() {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
+      handleClick();
     }
   };
 
@@ -5859,6 +5861,18 @@ function Chat() {
 
     return messagesWithDates;
   };
+
+
+  const handleClick = () => {
+    if (!isUploading) {
+      setAnimateRocket(true);
+      setTimeout(() => {
+        setAnimateRocket(false);
+        sendMessage();
+      }, 2000);
+    }
+  };
+
 
   return (
     <div className={`min-h-screen overflow-clip ${isDarkMode ? "!bg-[#3B3636] !text-white" : "!bg-[#EDEDED] !text-black"}`}>
@@ -6275,11 +6289,39 @@ function Chat() {
                     </button>
                   </div>
                   <button
-                    className="bg-blue-500 text-white px-6 sm:px-10 py-2 rounded-r-md ml-1 text-sm sm:text-base"
-                    onClick={sendMessage}
+                    className="bg-blue-500 text-white px-6 sm:px-10 py-2 rounded-r-md ml-1 text-sm sm:text-base relative overflow-hidden"
+                    onClick={handleClick}
                     disabled={isUploading}
                   >
-                    {isUploading ? "Uploading..." : "Send"}
+                    {isUploading ? (
+                      // 3 dots loading
+                      <div className="flex space-x-1">
+                        <motion.div
+                          animate={{ y: [0, -4, 0] }}
+                          transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
+                          className="w-1.5 h-1.5 bg-white rounded-full"
+                        />
+                        <motion.div
+                          animate={{ y: [0, -4, 0] }}
+                          transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
+                          className="w-1.5 h-1.5 bg-white rounded-full"
+                        />
+                        <motion.div
+                          animate={{ y: [0, -4, 0] }}
+                          transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }}
+                          className="w-1.5 h-1.5 bg-white rounded-full"
+                        />
+                      </div>
+                    ) : (
+                      <motion.div
+                        initial={{ x: 0, opacity: 1 }}
+                        animate={animateRocket ? {x: [0, 100, -100, 0], opacity: [1, 0, 0, 1], } : {x: 0, opacity: 1 }}
+                        transition={{ duration: 2, times: [0, 0.25, 0.75, 1], ease: "easeInOut" }}
+                        className="flex items-center justify-center"
+                      >
+                        <SendHorizonal className="w-4 h-4" />
+                      </motion.div>
+                    )}
                   </button>
                 </div>
               </>
