@@ -1269,102 +1269,66 @@ export default function singleMessage(io) {
       }
     });
 
-    socket.on("send-message", async ({ receiver, content }) => {
-      const sender = socket.userId;
-      console.log("Send Message - Sender:", sender, "Receiver:", receiver, "Content:", content);
-
-      if (!receiver || !content) {
-        return socket.emit("error-message", "Receiver and content are required");
-      }
-
+    socket.on("send-message", async (messageData) => {
       try {
-        const receiverId = receiver.toString();
-        const receiverUser = await User.findById(receiverId);
-        if (!receiverUser) {
-          return socket.emit("error-message", "Receiver not found");
-        }
-
-        let chat = await Chat.findOne({
-          isGroupChat: false,
-          participants: { $all: [sender, receiverId], $size: 2 },
-        });
-
-        if (!chat) {
-          chat = new Chat({
-            isGroupChat: false,
-            participants: [sender, receiverId],
-            messages: [],
-          });
-          await chat.save();
-          console.log("Chat created:", chat._id);
-        }
-
-        const message = new Message({
-          sender: sender,
-          receiver: receiverId,
-          content,
-          chat: chat._id,
-        });
-        await message.save();
-        chat.messages = chat.messages || [];
-        chat.messages.push(message._id);
-        await chat.save();
-        console.log("Message saved:", message._id);
-
-        const messageData = {
-          senderId: sender,
-          sender: (await User.findById(sender)).name,
-          receiver: receiverId,
-          content,
-          chatId: chat._id.toString(),
-          timestamp: message.createdAt,
-        };
-
+        const { chat, content } = messageData;
+        const sender = messageData.senderId;
+        const receiverId = chat.members.find(id => id !== sender);
+    
         const senderSockets = onlineUsers.get(sender);
         const receiverSockets = onlineUsers.get(receiverId);
-
-        // ✅ Always send to sender sockets
+    
+        // ✅ Send message to sender
         if (senderSockets) {
           senderSockets.forEach(socketId => {
             io.to(socketId).emit("receive-message", messageData);
           });
           console.log("Sent to sender sockets:", [...senderSockets]);
         }
-
-        // ✅ Send to receiver sockets if online
+    
+        // ✅ Send message to receiver if online
         if (receiverSockets) {
           receiverSockets.forEach(socketId => {
             io.to(socketId).emit("receive-message", messageData);
           });
           console.log("Sent to receiver sockets:", [...receiverSockets]);
         } else {
-          // ✅ Send push notification and store notification if offline
+          // ✅ Receiver is offline — send push notification and save in DB
+    
           const subscription = subscriptions.get(receiverId);
           if (subscription) {
-            await webpush.sendNotification(
-              subscription,
-              JSON.stringify({
-                title: "New Private Message",
-                body: `${messageData.sender}: ${content.substring(0, 100)}`,
-                icon: "../Images/Logo.png",
-                data: { url: `${process.env.FRONTEND_URL}/chat?chatId=${chat._id}` },
-              })
-            ).catch(err => console.error("Push notification error:", err));
-
+            try {
+              await webpush.sendNotification(
+                subscription,
+                JSON.stringify({
+                  title: "New Private Message",
+                  body: `${messageData.sender}: ${content.substring(0, 100)}`,
+                  icon: "../Images/Logo.png",
+                  data: {
+                    url: `${process.env.FRONTEND_URL}/chat?chatId=${chat._id}`,
+                  },
+                })
+              );
+              console.log("Push notification sent to offline user");
+            } catch (err) {
+              console.error("Push notification error:", err);
+            }
+    
+            // ✅ Save notification to DB for offline user
             await new Notification({
               title: "New Private Message",
               content: `${messageData.sender}: ${content}`,
               recipients: [receiverId],
               sentBy: sender,
             }).save();
+            console.log("Notification saved for offline user");
           }
         }
-
       } catch (error) {
-        console.error("Message Send Error:", error.message);
-        socket.emit("error-message", "Failed to send message");
+        console.error("Error in send-message:", error);
       }
     });
+    
 
     socket.on("disconnect", (reason) => {
       console.log("User disconnected:", socket.userId, "Reason:", reason);
