@@ -4622,6 +4622,8 @@ function Chat() {
   const [unreadCounts, setUnreadCounts] = useState({});
   const [lastViewed, setLastViewed] = useState({});
   const [copied, setCopied] = useState(false);
+  const [animateRocket, setAnimateRocket] = useState(false);
+
 
   const getUserColor = (userId) => {
     let hash = 0;
