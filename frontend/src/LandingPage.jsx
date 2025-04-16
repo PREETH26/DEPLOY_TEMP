@@ -28,7 +28,7 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-white overflow-x-hidden relative">
       <motion.nav 
-  className="fixed top-0 w-screen bg-gradient-to-br from-teal-400 to-cyan-900 backdrop-blur-sm z-50 py-4 shadow-md"
+  className="fixed top-0 w-screen bg-gradient-to-br from-teal-400 to-cyan-900 backdrop-blur-sm z-50 py-2 md:py-4 shadow-md"
   initial={{ y: -100 }}
   animate={{ y: 0 }}
   transition={{ duration: 0.5 }}
