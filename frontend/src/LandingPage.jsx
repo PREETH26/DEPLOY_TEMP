@@ -126,6 +126,10 @@ function LandingPage() {
   ref={videoRef}
   className="relative py-24 bg-gradient-to-b from-white to-cyan-50 px-0 overflow-hidden"
 >
+  
+<h2 className="text-3xl font-bold mb-8 text-transparent bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-center">
+            Live Preview
+          </h2>
   <div className="w-screen h-screen flex items-center justify-center">
     <motion.video
       style={{
