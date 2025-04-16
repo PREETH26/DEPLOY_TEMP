@@ -61,7 +61,12 @@ function Login() {
     
     <div className={isDarkMode? 'no-main' : 'mmain'}>
       <div className='contain'>
-        <span className='span'><h1 className='font-extrabold text-[48px] pl-10 py-10' id='welcome'>WELCOME<br/> BACK!</h1></span>
+      <span className="span">
+            <div className="gradient-overlay"></div>
+            <h1 className="font-extrabold text-[48px] pl-10 py-10 relative z-10" id="welcome">
+              WELCOME<br /> BACK!
+            </h1>
+          </span>
         
 
         <form className={isDarkMode? 'no-form flex flex-col gap-3 lg:w-500px lg:h-918px' : 'mform flex flex-col gap-3 lg:w-500px lg:h-918px bg-[#FFFFFF]'} onSubmit={onSubmit}>

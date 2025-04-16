@@ -29,11 +29,26 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     
   }
-  .span{
+  /* .span{
     flex: 1; 
     background: url("./assets/back.jpg") no-repeat center center;
     background-size: cover;
     position: relative; 
+  } */
+
+
+  .span {
+    flex: 1;
+    background: url('./assets/back.jpg') no-repeat center center;
+    background-size: cover;
+    position: relative;
+  }
+  
+  .gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, #00d2c3cc, #005e72cc); 
+    z-index: 1;
   }
 
   #welcome{
