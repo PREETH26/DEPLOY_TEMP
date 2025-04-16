@@ -76,12 +76,12 @@ function LandingPage() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl text-center"
         >
-          <h1 className="text-7xl font-extrabold mb-6 tracking-tight">
-            <span className="bg-gradient-to-br from-teal-400  to-cyan-900 bg-clip-text text-transparent">
-              Ecanent
+          <h1 className="md:text-7xl text-5xl font-extrabold mb-6 tracking-tight">
+          <span className="bg-gradient-to-br from-teal-400  to-cyan-900 bg-clip-text text-transparent md:justify-self-start justify-self-center">
+            Ecanent
             </span>
           </h1>
-          <p className="text-3xl font-medium text-cyan-500 mb-10">
+          <p className="md:text-3xl text-xl font-medium text-cyan-500 mb-10">
             Revolutionize School and College Communication
           </p>
           <p className="text-lg text-white max-w-2xl mx-auto bg-gradient-to-br from-teal-400  to-cyan-900   backdrop-blur-sm p-8 rounded-xl shadow-lg">
