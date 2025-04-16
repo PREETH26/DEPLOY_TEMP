@@ -4478,13 +4478,13 @@ function MobileChat() {
         chatId: selectedChat.type !== "single" ? chatId : undefined,
       };
 
-      setChatMessages((prev) => {
-        const existingMessages = prev[chatId] || [];
-        return {
-          ...prev,
-          [chatId]: [...existingMessages, messageData].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
-        };
-      });
+      // setChatMessages((prev) => {
+      //   const existingMessages = prev[chatId] || [];
+      //   return {
+      //     ...prev,
+      //     [chatId]: [...existingMessages, messageData].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+      //   };
+      // });
 
       if (selectedChat.type === "single") {
         socket.emit("send-message", { receiver: selectedChat.data._id, content: input });
