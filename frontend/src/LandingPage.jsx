@@ -1,15 +1,16 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import { motion, useScroll, useTransform, } from 'framer-motion';
 import Logo from "./assets/Logo.png"
 import { Link } from 'react-router-dom';
 import { Bell, ShieldCheck, Users, RefreshCw } from 'lucide-react';
 import m1 from "./assets/m1.mp4"
-import m2 from "./assets/m2.mp4"
+import m3 from "./assets/m3.mp4"
 import { Menu } from "lucide-react"; 
 
 function LandingPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const videoRef = useRef(null);
+  const mobileRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: videoRef,
     offset: ["start end", "end start"], 
@@ -24,6 +25,12 @@ function LandingPage() {
     { title: 'Group Collaboration', icon: <Users className="text-cyan-500" />, description: 'Effortlessly manage class groups for projects and discussions.' },
     { title: 'Real-Time Updates', icon: <RefreshCw className="text-cyan-500" />, description: 'Stay updated with live changes in schedules and assignments.' },
   ];
+
+  useEffect(() => {
+    if (isMobile && mobileRef.current) {
+      videoRef.current.playbackRate = 1.5; 
+    }
+  }, [isMobile]);
 
   return (
     <div className="min-h-screen bg-white text-white overflow-x-hidden relative">
@@ -147,7 +154,7 @@ function LandingPage() {
 <h2 className="text-3xl font-bold mb-8 text-transparent bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-center">
             Live Preview
           </h2>
-  <div className="w-screen h-screen flex items-center justify-center">
+  <div className="w-screen h-screen flex items-center justify-center" ref={mobileRef}>
     <motion.video
       style={{
         scale: videoScale, 
@@ -160,7 +167,7 @@ function LandingPage() {
       playsInline
       className="object-contain rounded-xl shadow-xl w-auto h-auto"
     >
-      <source src={m1} type="video/mp4" />
+      <source src={`${isMobile? m3 : m1}`} type="video/mp4" />
     </motion.video>
   </div>
 </section>
