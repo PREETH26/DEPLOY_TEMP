@@ -2301,7 +2301,7 @@ function Profile() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-2">
                 <div className="flex flex-col items-center lg:items-center gap-8 lg:gap-10">
-                    <div className="group relative">
+                    <div className= "group relative">
                         <div className={`border-2 ${isDarkMode ? "border-gray-700" : "border-gray-200"} rounded-full w-[150px] h-[150px] lg:w-[200px] lg:h-[200px] xl:w-[247px] xl:h-[247px] flex items-center justify-center ${isDarkMode ? "bg-gray-800" : "bg-white"} overflow-hidden shadow-md hover:shadow-lg transition-shadow`}>
                             <img
                                 src={preview || (profile.profilePic ? profile.profilePic : user)}
