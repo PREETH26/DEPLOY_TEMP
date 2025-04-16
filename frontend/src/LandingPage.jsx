@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { Bell, ShieldCheck, Users, RefreshCw } from 'lucide-react';
 import m1 from "./assets/m1.mp4"
 import m2 from "./assets/m2.mp4"
+import { Menu } from "lucide-react"; 
 
 function LandingPage() {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const videoRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: videoRef,
@@ -26,29 +28,44 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-white overflow-x-hidden relative">
       <motion.nav 
-        className="fixed top-0 w-screen bg-gradient-to-br from-teal-400  to-cyan-900 backdrop-blur-sm z-50 py-4 shadow-md"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-6xl mx-auto px-1 flex flex-row gap-5 md:justify-between items-center">
-          
-          <motion.h2 
-            className="text-2xl font-bold bg-cyan-500 bg-clip-text text-transparent"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className='flex flex-row md:justify-between gap-3 bg-white p-1 rounded-full mr-2'>
-              <img src={Logo} className='w-10 h-10'/>
-              <h2 className='bg-cyan-600 bg-clip-text text-transparent mr-2'>Ecanent</h2>
-            </div>
-            
-          </motion.h2>
-          <div className="space-x-6 ml-2">
-            <motion.a href="#features" className="text-white hover:text-cyan-200 transition-colors" whileHover={{ x: 5 }}>Features</motion.a>
-            <Link to="/signup"><motion.a className="text-white  hover:bg-white p-2 pt-2 rounded-full hover:text-cyan-500 transition-colors" whileHover={{ x: 5 }}>Signup</motion.a></Link>
-            <Link to="/login"><motion.a className="text-white hover:bg-white hover:text-cyan-500 p-2 rounded-full transition-colors " whileHover={{ x: 5 }}>Login</motion.a></Link>
-          </div>
-        </div>
+  className="fixed top-0 w-screen bg-gradient-to-br from-teal-400 to-cyan-900 backdrop-blur-sm z-50 py-4 shadow-md"
+  initial={{ y: -100 }}
+  animate={{ y: 0 }}
+  transition={{ duration: 0.5 }}
+>
+  <div className="md:max-w-6xl md:mx-auto md:px-1 md:flex md:flex-row grid grid-cols-2 md:justify-between  items-center">
+    {/* Logo */}
+    <motion.h2 
+      className="md:text-2xl text-lg font-bold bg-cyan-500 bg-clip-text text-transparent"
+      whileHover={{ scale: 1.05 }}
+    >
+      <div className='flex flex-row gap-3 bg-white p-1 rounded-full mr-2 ml-2 md:items-start items-center justify-self-start'>
+        <img src={Logo} className='w-10 h-10'/>
+        <h2 className='bg-cyan-600 bg-clip-text text-transparent md:mr-2'>Ecanent</h2>
+      </div>
+    </motion.h2>
+
+    {/* Desktop Menu */}
+    <div className="space-x-6 ml-2 hidden md:flex">
+      <motion.a href="#features" className="text-white hover:text-cyan-200 p-2 transition-colors" whileHover={{ x: 5 }}>Features</motion.a>
+      <Link to="/signup"><h1 className="text-white hover:bg-white p-2 pt-2 rounded-full hover:text-cyan-500 transition-colors">Signup</h1></Link>
+      <Link to="/login"><h1 className="text-white hover:bg-white hover:text-cyan-500 p-2 rounded-full transition-colors">Login</h1></Link>
+    </div>
+
+    {/* Mobile Menu Toggle */}
+    <div className="md:hidden">
+      <Menu className="justify-self-end mr-3 text-white w-7 h-7 cursor-pointer" onClick={() => setShowMobileMenu(prev => !prev)} />
+    </div>
+  </div>
+
+  {/* Mobile Dropdown */}
+  {showMobileMenu && (
+    <div className="md:hidden flex flex-col items-center bg-cyan-800 text-white w-full py-4 space-y-4">
+      <a href="#features" className="hover:text-cyan-200">Features</a>
+      <Link to="/signup"><span className="hover:text-cyan-200">Signup</span></Link>
+      <Link to="/login"><span className="hover:text-cyan-200">Login</span></Link>
+    </div>
+  )}
       </motion.nav>
 
       <section className="min-h-screen flex items-center justify-center py-24 px-6">
