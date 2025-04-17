@@ -186,7 +186,7 @@ function Signup() {
         <div>
         <button className='google border rounded-[5px]' onClick={googleMove}><img src={isDarkMode ? dgoogle : google} className={`${isDarkMode  ? "max-w-[40px] p-1.5" : "max-w-[35px]"}`}/><p className='ml-0.5 font-semibold'>Continue with Google</p></button>
         </div>
-        <p className='text-center font-bold text-sm'>Already have an account?</p>
+        <p className='text-center font-light text-sm'>Already have an account?</p>
         <Link to="/login" className='text-center text-[#20AFC5] font-bold'>Log In</Link>
       </form>
     </div>
