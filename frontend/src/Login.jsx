@@ -12,7 +12,8 @@ import { useState,useEffect } from 'react'
 import DarkMode from "./DarkMode";
 import axios from 'axios'
 import { toast } from 'react-toastify'
-
+import { FaEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 
 
@@ -23,6 +24,7 @@ function Login() {
   const navigate = useNavigate();
   const [errorMessage,setErrorMessage] = useState("")
   const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberedEmail") ? true : false);
+  const [showPassword, setShowPassword] = useState(false);
 
 
   const {isDarkMode} = DarkMode();
@@ -73,8 +75,16 @@ function Login() {
         <h1 className={`login  font-bold ${isDarkMode ? "!text-[#0adeff] " : "!text-[#20AFC5] "} `}>Log In</h1>
         <br/>
         <input type='text' placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
-        <input type='password' placeholder='Password' onChange={(e)=>setPassword(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
-      
+        <div>
+            <input type={showPassword ? "text" : "password"} placeholder='Password' onChange={(e)=>setPassword(e.target.value)} />
+            <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-7 translate-y-2 text-gray-500 hover:text-cyan-600"
+          >
+        {showPassword ? <FaEye size={20}/> : <FaRegEyeSlash size={20} />}
+      </button>
+      </div>      
         <span><input type='checkbox' className={`check bg-[#423E3E] text-[#423E3E] ml-2 cursor-pointer ${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} checked={rememberMe}
          onChange={() => setRememberMe(!rememberMe)} /><p>Remember Me</p>
         <Link to="/forget-middle" className='text-center text-[#20AFC5] font-bold text-[12px]  self-end ml-8'>Forgot Password?</Link>
