@@ -76,7 +76,7 @@ function Login() {
         <br/>
         <input type='text' placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`} required/>
         <div>
-            <input type={showPassword ? "text" : "password"} placeholder='Password' onChange={(e)=>setPassword(e.target.value)} />
+            <input type={showPassword ? "text" : "password"} placeholder='Password' onChange={(e)=>setPassword(e.target.value)} className={`${isDarkMode? '!text-white !bg-[#3B3636]' : '!text-black !bg-white'}`}/>
             <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
