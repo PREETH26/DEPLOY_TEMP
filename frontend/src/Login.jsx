@@ -79,7 +79,7 @@ function Login() {
          onChange={() => setRememberMe(!rememberMe)} /><p>Remember Me</p>
         <Link to="/forget-middle" className='text-center text-[#20AFC5] font-bold text-[12px]  self-end ml-8'>Forgot Password?</Link>
         </span>
-        <button type='submit' className={`login-btn bg-gradient-to-r from-teal-500 to-cyan-600 ${isDarkMode ? "text-white " : "text-white "} `}>Log in</button>
+        <button type='submit' className={`login-btn bg-gradient-to-r from-teal-500 to-cyan-600 ${isDarkMode ? "!text-white " : "!text-white "} `}>Log in</button>
         {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
         <div className='hr flex gap-5'><hr className='justify-self-start w-[45%]'/><p className='justify-self-center'>OR</p><hr className='justify-self-end w-[45%]'/></div>
 
