@@ -5154,32 +5154,31 @@ function Chat() {
   // }, [navigate, all, profile]);
 
   useEffect(() => {
-    let isMounted = true;
-  
     const getProfile = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, { withCredentials: true });
         const userData = res.data.userData || res.data;
-        if (isMounted) setProfile(userData);
+        setProfile(userData);
+        return userData;
       } catch (error) {
         console.error("Error fetching profile:", error);
-        if (isMounted) {
-          setMessage("Failed to load profile");
-          navigate("/login");
-        }
+        setMessage("Failed to load profile");
+        navigate("/login");
+        throw error;
       }
     };
   
     const getAll = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, { withCredentials: true });
-        if (isMounted) setAll(res.data.members || []);
+        const members = res.data.members || [];
+        setAll(members);
+        return members;
       } catch (error) {
         console.error("Error fetching members:", error);
-        if (isMounted) {
-          setMessage("Failed to load members");
-          navigate("/login");
-        }
+        setMessage("Failed to load members");
+        navigate("/login");
+        throw error;
       }
     };
   
@@ -5187,34 +5186,45 @@ function Chat() {
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, { withCredentials: true });
         const classes = res.data.classes || res.data || [];
-        if (isMounted) setGroupChats(classes);
+        setGroupChats(classes);
   
-        const subjectGroupsData = {};
-        // Batch subject requests to reduce sequential calls
+        // Fetch subjects in parallel
         const subjectPromises = classes.map(group =>
           axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/subject/${group._id}`, { withCredentials: true })
-            .then(subjectRes => ({ groupId: group._id, subjects: subjectRes.data.subjects || [] }))
-            .catch(() => ({ groupId: group._id, subjects: [] }))
+            .then(subjectRes => ({ id: group._id, subjects: subjectRes.data.subjects || [] }))
+            .catch(() => ({ id: group._id, subjects: [] }))
         );
+  
         const subjectResults = await Promise.all(subjectPromises);
-        subjectResults.forEach(({ groupId, subjects }) => {
-          subjectGroupsData[groupId] = subjects;
-        });
-        if (isMounted) setSubjectGroups(subjectGroupsData);
+        const subjectGroupsData = subjectResults.reduce((acc, { id, subjects }) => {
+          acc[id] = subjects;
+          return acc;
+        }, {});
+        setSubjectGroups(subjectGroupsData);
+        return classes;
       } catch (error) {
         console.error("Error fetching group chats:", error);
-        if (isMounted) {
-          setMessage("Failed to load group chats");
-          navigate("/login");
-        }
+        setMessage("Failed to load group chats");
+        navigate("/login");
+        throw error;
       }
     };
   
     const fetchData = async () => {
       try {
-        await Promise.all([getProfile(), getAll(), getGroupChats()]);
-        if (isMounted) setIsDataLoaded(true);
-        console.log("Data fetching complete:", { all, groupChats, subjectGroups });
+        const [userData, members, classes] = await Promise.all([getProfile(), getAll(), getGroupChats()]);
+        setIsDataLoaded(true);
+        console.log("Data fetching complete:", { members, classes, subjectGroups });
+  
+        // Load chat histories only for a subset of members to reduce initial load
+        if (members.length > 0 && userData) {
+          const membersToLoad = members
+            .filter(member => member._id !== userData._id)
+            .slice(0, 5); // Load only first 5 chats initially
+          membersToLoad.forEach(member => {
+            socket.emit("load-chat", { receiverId: member._id });
+          });
+        }
       } catch (error) {
         console.error("Error in fetchData:", error);
       }
@@ -5223,109 +5233,65 @@ function Chat() {
     fetchData();
   
     const storedLastViewed = JSON.parse(localStorage.getItem("lastViewed") || "{}");
-    if (isMounted) setLastViewed(storedLastViewed);
+    setLastViewed(storedLastViewed);
   
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
         .then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
+          console.log("Service Worker registered with scope:", registration.scope);
         })
-        .catch(err => console.error('Service Worker registration failed:', err));
+        .catch(err => console.error("Service Worker registration failed:", err));
     }
   
     const registerPush = async () => {
-      if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
-        console.error('Push notifications not supported in this browser.');
+      if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+        console.error("Push notifications not supported in this browser.");
         return;
       }
-  
-      console.log('Current Notification permission:', Notification.permission);
-      console.log('VITE_VAPID_PUBLIC_KEY:', import.meta.env.VITE_VAPID_PUBLIC_KEY);
   
       if (!import.meta.env.VITE_VAPID_PUBLIC_KEY) {
-        console.error('VITE_VAPID_PUBLIC_KEY is not defined in .env');
+        console.error("VITE_VAPID_PUBLIC_KEY is not defined in .env");
         return;
       }
   
-      if (Notification.permission === 'default') {
-        console.log('Requesting notification permission...');
-        try {
+      try {
+        if (Notification.permission === "default") {
           const permission = await Notification.requestPermission();
-          console.log('Notification permission result:', permission);
-  
-          if (permission === 'granted') {
-            console.log('Permission granted, subscribing to push...');
-            const registration = await navigator.serviceWorker.ready;
-            let subscription = await registration.pushManager.getSubscription();
-  
-            if (!subscription) {
-              subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
-              });
-              console.log('Push subscription successful:', subscription);
-              socket.emit('register-push', subscription);
-            } else {
-              console.log('Existing subscription found:', subscription);
-              socket.emit('register-push', subscription);
-            }
-          } else if (permission === 'denied') {
-            console.warn('Notification permission denied. Reset permissions in browser settings.');
+          if (permission === "granted") {
+            await subscribeToPush();
+          } else if (permission === "denied") {
+            console.warn("Notification permission denied. Reset permissions in browser settings.");
           }
-        } catch (error) {
-          console.error('Error requesting notification permission:', error);
-        }
-      } else if (Notification.permission === 'granted') {
-        console.log('Permission already granted, checking subscription...');
-        const registration = await navigator.serviceWorker.ready;
-        let subscription = await registration.pushManager.getSubscription();
-  
-        if (!subscription) {
-          subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
-          });
-          console.log('Push subscription successful:', subscription);
-          socket.emit('register-push', subscription);
+        } else if (Notification.permission === "granted") {
+          await subscribeToPush();
         } else {
-          console.log('Existing subscription found:', subscription);
-          socket.emit('register-push', subscription);
+          console.warn("Notification permission denied. Reset permissions in browser settings.");
         }
-      } else {
-        console.warn('Notification permission denied. Reset permissions in browser settings.');
+      } catch (error) {
+        console.error("Error handling push notifications:", error);
       }
     };
   
-    // Defer push registration to reduce initial load
-    setTimeout(registerPush, 1000);
+    const subscribeToPush = async () => {
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
   
-    // Throttle load-chat emissions
-    const loadChatHistories = () => {
-      if (!profile || !all.length) return;
-  
-      let index = 0;
-      const batchSize = 10; // Process 10 members at a time
-      const emitBatch = () => {
-        if (!isMounted) return;
-        const batch = all.slice(index, index + batchSize).filter(member => member._id !== profile._id);
-        batch.forEach(member => {
-          console.log("Emitting load-chat for:", member._id);
-          socket.emit("load-chat", { receiverId: member._id });
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
         });
-        index += batchSize;
-        if (index < all.length) {
-          setTimeout(emitBatch, 500); // Wait 500ms before next batch
-        }
-      };
-      emitBatch();
+        console.log("Push subscription successful:", subscription);
+      } else {
+        console.log("Existing subscription found:", subscription);
+      }
+      socket.emit("register-push", subscription);
     };
   
-    loadChatHistories();
+    registerPush();
   
-    return () => {
-      isMounted = false;
-    };
-  }, [navigate, profile, all]);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchFiles = async (chat) => {
