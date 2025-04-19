@@ -1,37 +1,42 @@
 import express from "express";
 import passport from "passport";
-import cors from "cors"
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
+router.get("/google", passport.authenticate("google", {
+  scope: ["profile", "email"],
+}));
 
-/**
- * GET /auth/google
- * Initiate Google OAuth login
- */
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/google/callback", (req, res, next) => {
+  passport.authenticate("google", { session: false }, (err, result, info) => {
+    if (err || !result || !result.user) {
+      const errorMessage = info?.message || "Authentication failed";
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(errorMessage)}`);
+    }
 
-/**
- * GET /auth/google/callback
- * Google calls this after the user grants permission
- */
-router.get(
-  "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/failure" }),
-  (req, res) => {
-    // Redirect to frontend after successful login
-    res.redirect(`http://localhost:5173/`);
-  }
-);
+    const { user, isNew } = result;
 
-// // Optional routes for success/failure
-// router.get("/", (req, res) => {
-//   // If using sessions, req.user is now the logged-in user
-//   res.status(200).json({ success: true, message: "Google login success", user: req.user });
-// });
+    const token = jwt.sign(
+      { id: user._id},
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-// router.get("/failure", (req, res) => {
-//   res.status(400).json({ success: false, message: "Google login failed" });
-// });
+    // Send token as secure HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure:process.env.NODE_ENV === 'production',
+      sameSite:process.env.NODE_ENV === 'production'? 'none':'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const redirectURL = isNew
+      ? `${process.env.FRONTEND_URL}/selection`
+      : `${process.env.FRONTEND_URL}/profile`;
+
+    return res.redirect(redirectURL);
+  })(req, res, next);
+});
 
 export default router;

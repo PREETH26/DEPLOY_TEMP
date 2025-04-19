@@ -10,51 +10,51 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:5000/api/auth/google/callback", // Make sure this matches your Google Console
+      callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`, // Make sure this matches your Google Console
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // 1. Extract email from Google profile
         const email = profile.emails[0].value.toLowerCase();
         const name = profile.displayName;
         const googleId = profile.id;
 
-        // 2. Look for existing user by email
         let user = await User.findOne({ email });
 
-        // 3. If no user found, create a new one
-        if (!user) {
-          const randomPass = generateRandomPass(8);
-          const hashedpassword = await bcrypt.hash(randomPass,12);
-          user = new User({
-            name,
-            email,
-            password: hashedpassword,  // or a random string
-            googleId,      // store for reference
-            isVerified:true
-          });
-          await user.save();
-        } else {
-          // If user found but no googleId yet, optionally set it
+        if (user) {
           if (!user.googleId) {
             user.googleId = googleId;
             await user.save();
           }
+          return done(null, { user, isNew: false });
         }
 
-        // 4. Done
-        return done(null, user);
+        const randomPass = generateRandomPass(8);
+        const hashedPassword = await bcrypt.hash(randomPass, 12);
+
+        const newUser = new User({
+          name,
+          email,
+          password: hashedPassword,
+          googleId,
+          role: "Student",
+          isVerified: true,
+        });
+
+        await newUser.save();
+        return done(null, { user: newUser, isNew: true });
+
       } catch (err) {
+        console.error("Google Auth Error:", err);
         return done(err, null);
       }
     }
   )
 );
 
-// If using sessions (optional):
-passport.serializeUser((user, done) => {
-  done(null, user._id);
+passport.serializeUser((obj, done) => {
+  done(null, obj.user._id);
 });
+
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
