@@ -4623,7 +4623,7 @@ function Chat() {
   const [lastViewed, setLastViewed] = useState({});
   const [copied, setCopied] = useState(false);
   const [animateRocket, setAnimateRocket] = useState(false);
-
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const getUserColor = (userId) => {
     let hash = 0;
@@ -4735,6 +4735,134 @@ function Chat() {
     setIsPreviewOpen(true);
   };
 
+  // useEffect(() => {
+  //   const getProfile = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, { withCredentials: true });
+  //       const userData = res.data.userData || res.data;
+  //       setProfile(userData);
+  //     } catch (error) {
+  //       console.error("Error fetching profile:", error);
+  //       setMessage("Failed to load profile");
+  //       navigate("/login");
+  //     }
+  //   };
+
+  //   const getAll = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, { withCredentials: true });
+  //       setAll(res.data.members || []);
+  //     } catch (error) {
+  //       console.error("Error fetching members:", error);
+  //       setMessage("Failed to load members");
+  //       navigate("/login");
+  //     }
+  //   };
+
+  //   const getGroupChats = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, { withCredentials: true });
+  //       const classes = res.data.classes || res.data || [];
+  //       setGroupChats(classes);
+
+  //       const subjectGroupsData = {};
+  //       for (const group of classes) {
+  //         try {
+  //           const subjectRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/subject/${group._id}`, { withCredentials: true });
+  //           subjectGroupsData[group._id] = subjectRes.data.subjects || [];
+  //         } catch (error) {
+  //           subjectGroupsData[group._id] = [];
+  //         }
+  //       }
+  //       setSubjectGroups(subjectGroupsData);
+  //     } catch (error) {
+  //       console.error("Error fetching group chats:", error);
+  //       setMessage("Failed to load group chats");
+  //       navigate("/login");
+  //     }
+  //   };
+
+  //   getProfile();
+  //   getAll();
+  //   getGroupChats();
+
+  //   const storedLastViewed = JSON.parse(localStorage.getItem("lastViewed") || "{}");
+  //   setLastViewed(storedLastViewed);
+
+  //   if ('serviceWorker' in navigator) {
+  //     navigator.serviceWorker.register('/service-worker.js')
+  //       .then(registration => {
+  //         console.log('Service Worker registered with scope:', registration.scope);
+  //       })
+  //       .catch(err => console.error('Service Worker registration failed:', err));
+  //   }
+
+  //   const registerPush = async () => {
+  //     if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+  //       console.error('Push notifications not supported in this browser.');
+  //       return;
+  //     }
+
+  //     console.log('Current Notification permission:', Notification.permission);
+  //     console.log('VITE_VAPID_PUBLIC_KEY:', import.meta.env.VITE_VAPID_PUBLIC_KEY);
+
+  //     if (!import.meta.env.VITE_VAPID_PUBLIC_KEY) {
+  //       console.error('VITE_VAPID_PUBLIC_KEY is not defined in .env');
+  //       return;
+  //     }
+
+  //     if (Notification.permission === 'default') {
+  //       console.log('Requesting notification permission...');
+  //       try {
+  //         const permission = await Notification.requestPermission();
+  //         console.log('Notification permission result:', permission);
+
+  //         if (permission === 'granted') {
+  //           console.log('Permission granted, subscribing to push...');
+  //           const registration = await navigator.serviceWorker.ready;
+  //           let subscription = await registration.pushManager.getSubscription();
+
+  //           if (!subscription) {
+  //             subscription = await registration.pushManager.subscribe({
+  //               userVisibleOnly: true,
+  //               applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
+  //             });
+  //             console.log('Push subscription successful:', subscription);
+  //             socket.emit('register-push', subscription);
+  //           } else {
+  //             console.log('Existing subscription found:', subscription);
+  //             socket.emit('register-push', subscription);
+  //           }
+  //         } else if (permission === 'denied') {
+  //           console.warn('Notification permission denied. Reset permissions in browser settings.');
+  //         }
+  //       } catch (error) {
+  //         console.error('Error requesting notification permission:', error);
+  //       }
+  //     } else if (Notification.permission === 'granted') {
+  //       console.log('Permission already granted, checking subscription...');
+  //       const registration = await navigator.serviceWorker.ready;
+  //       let subscription = await registration.pushManager.getSubscription();
+
+  //       if (!subscription) {
+  //         subscription = await registration.pushManager.subscribe({
+  //           userVisibleOnly: true,
+  //           applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
+  //         });
+  //         console.log('Push subscription successful:', subscription);
+  //         socket.emit('register-push', subscription);
+  //       } else {
+  //         console.log('Existing subscription found:', subscription);
+  //         socket.emit('register-push', subscription);
+  //       }
+  //     } else {
+  //       console.warn('Notification permission denied. Reset permissions in browser settings.');
+  //     }
+  //   };
+
+  //   registerPush();
+  // }, [navigate]);
+
   useEffect(() => {
     const getProfile = async () => {
       try {
@@ -4747,7 +4875,7 @@ function Chat() {
         navigate("/login");
       }
     };
-
+  
     const getAll = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, { withCredentials: true });
@@ -4758,13 +4886,13 @@ function Chat() {
         navigate("/login");
       }
     };
-
+  
     const getGroupChats = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, { withCredentials: true });
         const classes = res.data.classes || res.data || [];
         setGroupChats(classes);
-
+  
         const subjectGroupsData = {};
         for (const group of classes) {
           try {
@@ -4781,14 +4909,22 @@ function Chat() {
         navigate("/login");
       }
     };
-
-    getProfile();
-    getAll();
-    getGroupChats();
-
+  
+    // Run all fetches and set isDataLoaded when complete
+    const fetchData = async () => {
+      try {
+        await Promise.all([getProfile(), getAll(), getGroupChats()]);
+      } finally {
+        setIsDataLoaded(true); // Mark data loading as complete
+        console.log("Data fetching complete:", { all, groupChats, subjectGroups });
+      }
+    };
+  
+    fetchData();
+  
     const storedLastViewed = JSON.parse(localStorage.getItem("lastViewed") || "{}");
     setLastViewed(storedLastViewed);
-
+  
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
         .then(registration => {
@@ -4796,32 +4932,32 @@ function Chat() {
         })
         .catch(err => console.error('Service Worker registration failed:', err));
     }
-
+  
     const registerPush = async () => {
       if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
         console.error('Push notifications not supported in this browser.');
         return;
       }
-
+  
       console.log('Current Notification permission:', Notification.permission);
       console.log('VITE_VAPID_PUBLIC_KEY:', import.meta.env.VITE_VAPID_PUBLIC_KEY);
-
+  
       if (!import.meta.env.VITE_VAPID_PUBLIC_KEY) {
         console.error('VITE_VAPID_PUBLIC_KEY is not defined in .env');
         return;
       }
-
+  
       if (Notification.permission === 'default') {
         console.log('Requesting notification permission...');
         try {
           const permission = await Notification.requestPermission();
           console.log('Notification permission result:', permission);
-
+  
           if (permission === 'granted') {
             console.log('Permission granted, subscribing to push...');
             const registration = await navigator.serviceWorker.ready;
             let subscription = await registration.pushManager.getSubscription();
-
+  
             if (!subscription) {
               subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
@@ -4843,7 +4979,7 @@ function Chat() {
         console.log('Permission already granted, checking subscription...');
         const registration = await navigator.serviceWorker.ready;
         let subscription = await registration.pushManager.getSubscription();
-
+  
         if (!subscription) {
           subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
@@ -4859,9 +4995,10 @@ function Chat() {
         console.warn('Notification permission denied. Reset permissions in browser settings.');
       }
     };
-
+  
     registerPush();
   }, [navigate]);
+
 
   useEffect(() => {
     const fetchFiles = async (chat) => {
@@ -5121,56 +5258,149 @@ function Chat() {
     };
   }, [selectedChat, profile, navigate, lastViewed, subjectGroups, groupChats]);
 
+  // useEffect(() => {
+  //   const restoreChat = () => {
+  //     const storedChatId = localStorage.getItem("selectedChatId");
+  //     const storedChatType = localStorage.getItem("selectedChatType");
+  //     if (storedChatId && !selectedChat) {
+  //       if (storedChatType === "single") {
+  //         console.log(m._id,storedChatId)
+  //         const member = all.find((m) => m._id === storedChatId);
+  //         if (member) {
+  //           const newChat = { type: "single", data: member };
+  //           setOpenChats([newChat]);
+  //           setSelectedChat(newChat);
+  //           console.log(newChat);
+  //           socket.emit("load-chat", { receiverId: member._id });
+  //         }
+  //       } else if (storedChatType === "group") {
+  //         const group = groupChats.find((g) => g.chat && g.chat._id === storedChatId);
+  //         if (group) {
+  //           const newChat = { type: "group", data: group };
+  //           setOpenChats([newChat]);
+  //           setSelectedChat(newChat);
+  //           console.log(newChat);
+  //           socket.emit("load-group-chat", { chatId: group.chat._id });
+  //         }
+  //       } else if (storedChatType === "subject") {
+  //         let selectedSubject = null;
+  //         for (const classId in subjectGroups) {
+  //           const subject = subjectGroups[classId].find(
+  //             (s) => s.chat && s.chat[0]?._id === storedChatId
+  //           );
+  //           if (subject) {
+  //             selectedSubject = subject;
+  //             break;
+  //           }
+  //         }
+  //         if (selectedSubject) {
+  //           const newChat = { type: "subject", data: selectedSubject };
+  //           setOpenChats([newChat]);
+  //           setSelectedChat(newChat);
+  //           console.log(newChat);
+  //           socket.emit("load-group-chat", { chatId: selectedSubject.chat[0]._id });
+  //         }
+  //       }
+  //     }
+  //   };
+
+  //   if (all.length > 0 && groupChats.length > 0 && Object.keys(subjectGroups).length > 0 && !selectedChat) {
+  //     restoreChat();
+  //   }
+  // }, [all, groupChats, subjectGroups, selectedChat]);
+
   useEffect(() => {
-    const restoreChat = () => {
+    const restoreSingleChat = () => {
       const storedChatId = localStorage.getItem("selectedChatId");
       const storedChatType = localStorage.getItem("selectedChatType");
-      if (storedChatId && !selectedChat) {
-        if (storedChatType === "single") {
-          console.log(m._id,storedChatId)
-          const member = all.find((m) => m._id === storedChatId);
-          if (member) {
-            const newChat = { type: "single", data: member };
-            setOpenChats([newChat]);
-            setSelectedChat(newChat);
-            console.log(newChat);
-            socket.emit("load-chat", { receiverId: member._id });
-          }
-        } else if (storedChatType === "group") {
-          const group = groupChats.find((g) => g.chat && g.chat._id === storedChatId);
-          if (group) {
-            const newChat = { type: "group", data: group };
-            setOpenChats([newChat]);
-            setSelectedChat(newChat);
-            console.log(newChat);
-            socket.emit("load-group-chat", { chatId: group.chat._id });
-          }
-        } else if (storedChatType === "subject") {
-          let selectedSubject = null;
-          for (const classId in subjectGroups) {
-            const subject = subjectGroups[classId].find(
-              (s) => s.chat && s.chat[0]?._id === storedChatId
-            );
-            if (subject) {
-              selectedSubject = subject;
-              break;
-            }
-          }
-          if (selectedSubject) {
-            const newChat = { type: "subject", data: selectedSubject };
-            setOpenChats([newChat]);
-            setSelectedChat(newChat);
-            console.log(newChat);
-            socket.emit("load-group-chat", { chatId: selectedSubject.chat[0]._id });
-          }
+      console.log("Attempting to restore chat:", { storedChatType, storedChatId });
+  
+      if (!storedChatId || !storedChatType) {
+        console.log("No chat to restore: missing storedChatId or storedChatType");
+        setMessage("No chat selected to restore");
+        return;
+      }
+  
+      if (storedChatType === "single") {
+        const member = all.find((m) => m._id === storedChatId);
+        if (member) {
+          const newChat = { type: "single", data: member };
+          setOpenChats([newChat]);
+          setSelectedChat(newChat);
+          socket.emit("load-chat", { receiverId: member._id });
+          console.log("Restored single chat:", newChat);
+        } else {
+          console.log("Single chat restoration failed: member not found");
+          setMessage("Selected user not found");
+          localStorage.removeItem("selectedChatId");
+          localStorage.removeItem("selectedChatType");
         }
       }
     };
-
-    if (all.length > 0 && groupChats.length > 0 && Object.keys(subjectGroups).length > 0 && !selectedChat) {
-      restoreChat();
+  
+    if (isDataLoaded && all.length > 0 && !selectedChat) {
+      restoreSingleChat();
     }
-  }, [all, groupChats, subjectGroups, selectedChat]);
+  }, [isDataLoaded, all, selectedChat, socket, navigate]);
+  
+  // useEffect for group/subject chat restoration
+  useEffect(() => {
+    const restoreGroupOrSubjectChat = () => {
+      const storedChatId = localStorage.getItem("selectedChatId");
+      const storedChatType = localStorage.getItem("selectedChatType");
+      console.log("Attempting to restore group/subject chat:", { storedChatType, storedChatId });
+  
+      if (!storedChatId || !storedChatType) {
+        console.log("No chat to restore: missing storedChatId or storedChatType");
+        setMessage("No chat selected to restore");
+        return;
+      }
+  
+      if (storedChatType === "group") {
+        const group = groupChats.find((g) => g.chat && g.chat._id === storedChatId);
+        if (group) {
+          const newChat = { type: "group", data: group };
+          setOpenChats([newChat]);
+          setSelectedChat(newChat);
+          socket.emit("load-group-chat", { chatId: group.chat._id });
+          console.log("Restored group chat:", newChat);
+        } else {
+          console.log("Group chat restoration failed: group not found");
+          setMessage("Selected group chat not found");
+          localStorage.removeItem("selectedChatId");
+          localStorage.removeItem("selectedChatType");
+        }
+      } else if (storedChatType === "subject") {
+        let selectedSubject = null;
+        for (const classId in subjectGroups) {
+          const subject = subjectGroups[classId].find(
+            (s) => s.chat && s.chat[0]?._id === storedChatId
+          );
+          if (subject) {
+            selectedSubject = subject;
+            break;
+          }
+        }
+        if (selectedSubject) {
+          const newChat = { type: "subject", data: selectedSubject };
+          setOpenChats([newChat]);
+          setSelectedChat(newChat);
+          socket.emit("load-group-chat", { chatId: selectedSubject.chat[0]._id });
+          console.log("Restored subject chat:", newChat);
+        } else {
+          console.log("Subject chat restoration failed: subject not found");
+          setMessage("Selected subject chat not found");
+          localStorage.removeItem("selectedChatId");
+          localStorage.removeItem("selectedChatType");
+        }
+      }
+    };
+  
+    if (isDataLoaded && groupChats.length > 0 && Object.keys(subjectGroups).length > 0 && !selectedChat) {
+      restoreGroupOrSubjectChat();
+    }
+  }, [isDataLoaded, groupChats, subjectGroups, selectedChat, socket, navigate]);
+
 
   useEffect(() => {
     if (newMessage.current) {
