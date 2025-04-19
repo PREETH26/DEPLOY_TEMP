@@ -4755,6 +4755,7 @@ function Chat() {
       } catch (error) {
         console.error("Error fetching members:", error);
         setMessage("Failed to load members");
+        navigate("/login");
       }
     };
 
@@ -4777,6 +4778,7 @@ function Chat() {
       } catch (error) {
         console.error("Error fetching group chats:", error);
         setMessage("Failed to load group chats");
+        navigate("/login");
       }
     };
 
