@@ -3868,129 +3868,269 @@ function MobileChat() {
     return null;
   };
 
+  // useEffect(() => {
+  //   const getProfile = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
+  //         withCredentials: true,
+  //       });
+  //       const userData = res.data.userData || res.data;
+  //       setProfile(userData);
+  //     } catch (error) {
+  //       console.error("Error fetching profile:", error);
+  //       setMessage("Failed to load profile");
+  //       navigate("/login");
+  //     }
+  //   };
+
+  //   const getAll = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
+  //         withCredentials: true,
+  //       });
+  //       setAll(res.data.members || []);
+  //     } catch (error) {
+  //       console.error("Error fetching members:", error);
+  //       setMessage("Failed to load members");
+  //     }
+  //   };
+
+  //   const getGroupChats = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, {
+  //         withCredentials: true,
+  //       });
+  //       const classes = res.data.classes || res.data || [];
+  //       setGroupChats(classes);
+
+  //       const subjectGroupsData = {};
+  //       for (const group of classes) {
+  //         try {
+  //           const subjectRes = await axios.get(
+  //             `${import.meta.env.VITE_BACKEND_URL}/api/subject/${group._id}`,
+  //             { withCredentials: true }
+  //           );
+  //           subjectGroupsData[group._id] = subjectRes.data.subjects || [];
+  //         } catch (error) {
+  //           subjectGroupsData[group._id] = [];
+  //         }
+  //       }
+  //       setSubjectGroups(subjectGroupsData);
+  //     } catch (error) {
+  //       console.error("Error fetching group chats:", error);
+  //       setMessage("Failed to load group chats");
+  //     }
+  //   };
+
+  //   getProfile();
+  //   getAll();
+  //   getGroupChats();
+
+  //   const storedLastViewed = JSON.parse(localStorage.getItem("lastViewed") || "{}");
+  //   setLastViewed(storedLastViewed);
+
+  //   if ('serviceWorker' in navigator) {
+  //     navigator.serviceWorker.register('/service-worker.js')
+  //       .then(registration => {
+  //         console.log('Service Worker registered with scope:', registration.scope);
+  //       })
+  //       .catch(err => console.error('Service Worker registration failed:', err));
+  //   }
+
+  //   const registerPush = async () => {
+  //     if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+  //       console.error('Push notifications not supported in this browser.');
+  //       return;
+  //     }
+
+  //     if (!import.meta.env.VITE_VAPID_PUBLIC_KEY) {
+  //       console.error('VITE_VAPID_PUBLIC_KEY is not defined in .env');
+  //       return;
+  //     }
+
+  //     console.log('Initial Notification permission:', Notification.permission);
+
+  //     if (Notification.permission === 'default') {
+  //       try {
+  //         const permission = await Notification.requestPermission();
+  //         console.log('Notification permission result:', permission);
+  //         if (permission === 'granted') {
+  //           const registration = await navigator.serviceWorker.ready;
+  //           let subscription = await registration.pushManager.getSubscription();
+
+  //           if (!subscription) {
+  //             subscription = await registration.pushManager.subscribe({
+  //               userVisibleOnly: true,
+  //               applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
+  //             });
+  //             socket.emit('register-push', subscription);
+  //           } else {
+  //             socket.emit('register-push', subscription);
+  //           }
+  //         } else if (permission === 'denied') {
+  //           console.warn('Notification permission denied.');
+  //         }
+  //       } catch (error) {
+  //         console.error('Error registering push:', error);
+  //       }
+  //     } else if (Notification.permission === 'granted') {
+  //       const registration = await navigator.serviceWorker.ready;
+  //       let subscription = await registration.pushManager.getSubscription();
+
+  //       if (!subscription) {
+  //         subscription = await registration.pushManager.subscribe({
+  //           userVisibleOnly: true,
+  //           applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
+  //         });
+  //         socket.emit('register-push', subscription);
+  //       } else {
+  //         socket.emit('register-push', subscription);
+  //       }
+  //     }
+  //   };
+
+  //   registerPush();
+  // }, []);
+
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, { withCredentials: true });
         const userData = res.data.userData || res.data;
         setProfile(userData);
+        return userData;
       } catch (error) {
         console.error("Error fetching profile:", error);
         setMessage("Failed to load profile");
         navigate("/login");
+        throw error;
       }
     };
-
+  
     const getAll = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, {
-          withCredentials: true,
-        });
-        setAll(res.data.members || []);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/members`, { withCredentials: true });
+        const members = res.data.members || [];
+        setAll(members);
+        return members;
       } catch (error) {
         console.error("Error fetching members:", error);
         setMessage("Failed to load members");
+        navigate("/login");
+        throw error;
       }
     };
-
+  
     const getGroupChats = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/class`, { withCredentials: true });
         const classes = res.data.classes || res.data || [];
         setGroupChats(classes);
-
-        const subjectGroupsData = {};
-        for (const group of classes) {
-          try {
-            const subjectRes = await axios.get(
-              `${import.meta.env.VITE_BACKEND_URL}/api/subject/${group._id}`,
-              { withCredentials: true }
-            );
-            subjectGroupsData[group._id] = subjectRes.data.subjects || [];
-          } catch (error) {
-            subjectGroupsData[group._id] = [];
-          }
-        }
+  
+        // Fetch subjects in parallel
+        const subjectPromises = classes.map(group =>
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/subject/${group._id}`, { withCredentials: true })
+            .then(subjectRes => ({ id: group._id, subjects: subjectRes.data.subjects || [] }))
+            .catch(() => ({ id: group._id, subjects: [] }))
+        );
+  
+        const subjectResults = await Promise.all(subjectPromises);
+        const subjectGroupsData = subjectResults.reduce((acc, { id, subjects }) => {
+          acc[id] = subjects;
+          return acc;
+        }, {});
         setSubjectGroups(subjectGroupsData);
+        return classes;
       } catch (error) {
         console.error("Error fetching group chats:", error);
         setMessage("Failed to load group chats");
+        navigate("/login");
+        throw error;
       }
     };
-
-    getProfile();
-    getAll();
-    getGroupChats();
-
+  
+    const fetchData = async () => {
+      try {
+        const [userData, members, classes] = await Promise.all([getProfile(), getAll(), getGroupChats()]);
+        setIsDataLoaded(true);
+        console.log("Data fetching complete:", { members, classes, subjectGroups });
+  
+        // Load chat histories only for a subset of members to reduce initial load
+        if (members.length > 0 && userData) {
+          const membersToLoad = members
+            .filter(member => member._id !== userData._id)
+            .slice(0, 5); // Load only first 5 chats initially
+          membersToLoad.forEach(member => {
+            socket.emit("load-chat", { receiverId: member._id });
+          });
+        }
+      } catch (error) {
+        console.error("Error in fetchData:", error);
+      }
+    };
+  
+    fetchData();
+  
     const storedLastViewed = JSON.parse(localStorage.getItem("lastViewed") || "{}");
     setLastViewed(storedLastViewed);
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
+  
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
         .then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
+          console.log("Service Worker registered with scope:", registration.scope);
         })
-        .catch(err => console.error('Service Worker registration failed:', err));
+        .catch(err => console.error("Service Worker registration failed:", err));
     }
-
+  
     const registerPush = async () => {
-      if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
-        console.error('Push notifications not supported in this browser.');
+      if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+        console.error("Push notifications not supported in this browser.");
         return;
       }
-
+  
       if (!import.meta.env.VITE_VAPID_PUBLIC_KEY) {
-        console.error('VITE_VAPID_PUBLIC_KEY is not defined in .env');
+        console.error("VITE_VAPID_PUBLIC_KEY is not defined in .env");
         return;
       }
-
-      console.log('Initial Notification permission:', Notification.permission);
-
-      if (Notification.permission === 'default') {
-        try {
+  
+      try {
+        if (Notification.permission === "default") {
           const permission = await Notification.requestPermission();
-          console.log('Notification permission result:', permission);
-          if (permission === 'granted') {
-            const registration = await navigator.serviceWorker.ready;
-            let subscription = await registration.pushManager.getSubscription();
-
-            if (!subscription) {
-              subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
-              });
-              socket.emit('register-push', subscription);
-            } else {
-              socket.emit('register-push', subscription);
-            }
-          } else if (permission === 'denied') {
-            console.warn('Notification permission denied.');
+          if (permission === "granted") {
+            await subscribeToPush();
+          } else if (permission === "denied") {
+            console.warn("Notification permission denied. Reset permissions in browser settings.");
           }
-        } catch (error) {
-          console.error('Error registering push:', error);
-        }
-      } else if (Notification.permission === 'granted') {
-        const registration = await navigator.serviceWorker.ready;
-        let subscription = await registration.pushManager.getSubscription();
-
-        if (!subscription) {
-          subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
-          });
-          socket.emit('register-push', subscription);
+        } else if (Notification.permission === "granted") {
+          await subscribeToPush();
         } else {
-          socket.emit('register-push', subscription);
+          console.warn("Notification permission denied. Reset permissions in browser settings.");
         }
+      } catch (error) {
+        console.error("Error handling push notifications:", error);
       }
     };
-
+  
+    const subscribeToPush = async () => {
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+  
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
+        });
+        console.log("Push subscription successful:", subscription);
+      } else {
+        console.log("Existing subscription found:", subscription);
+      }
+      socket.emit("register-push", subscription);
+    };
+  
     registerPush();
-  }, []);
+  
+  }, [navigate]);
 
   useEffect(() => {
     const fetchFiles = async () => {
