@@ -6103,7 +6103,7 @@ function Chat() {
       setTimeout(() => {
         setAnimateRocket(false);
         sendMessage();
-      }, 2000);
+      }, 500);
     }
   };
 
