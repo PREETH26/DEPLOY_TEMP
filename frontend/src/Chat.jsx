@@ -4910,12 +4910,19 @@ function Chat() {
       }
     };
   
-    // Run all fetches and set isDataLoaded when complete
     const fetchData = async () => {
       try {
         await Promise.all([getProfile(), getAll(), getGroupChats()]);
+        // After all data is fetched, load histories for all single chats
+        if (all.length > 0) {
+          all.forEach((member) => {
+            if (member._id !== profile?._id) {
+              socket.emit("load-chat", { receiverId: member._id });
+            }
+          });
+        }
       } finally {
-        setIsDataLoaded(true); // Mark data loading as complete
+        setIsDataLoaded(true);
         console.log("Data fetching complete:", { all, groupChats, subjectGroups });
       }
     };
@@ -5050,7 +5057,11 @@ function Chat() {
     socket.on("chat-history", (history) => {
       const messages = history.flatMap((chat) => chat.messages);
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-      const chatId = history[0]?.receiverId || sortedMessages[0]?.receiver;
+      const chatId = history[0]?.receiverId;
+      if (!chatId) {
+        console.warn("Invalid chatId in chat-history:", history);
+        return;
+      }
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
   
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
@@ -5067,6 +5078,10 @@ function Chat() {
     socket.on("chat-messages", ({ receiverId, messages }) => {
       const sortedMessages = messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       const chatId = receiverId;
+      if (!chatId) {
+        console.warn("Invalid receiverId in chat-messages:", { receiverId, messages });
+        return;
+      }
       const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
   
       const unread = sortedMessages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
@@ -5313,7 +5328,7 @@ function Chat() {
     const restoreSingleChat = () => {
       const storedChatId = localStorage.getItem("selectedChatId");
       const storedChatType = localStorage.getItem("selectedChatType");
-      console.log("Attempting to restore chat:", { storedChatType, storedChatId });
+      console.log("Attempting to restore single chat:", { storedChatType, storedChatId });
   
       if (!storedChatId || !storedChatType) {
         console.log("No chat to restore: missing storedChatId or storedChatType");
@@ -5329,6 +5344,18 @@ function Chat() {
           setSelectedChat(newChat);
           socket.emit("load-chat", { receiverId: member._id });
           console.log("Restored single chat:", newChat);
+  
+          // Calculate unread count without resetting
+          const chatId = member._id;
+          const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
+          const messages = chatMessages[chatId] || [];
+          const unread = messages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
+          if (unread > 0) {
+            setUnreadCounts((prev) => ({
+              ...prev,
+              [chatId]: unread,
+            }));
+          }
         } else {
           console.log("Single chat restoration failed: member not found");
           setMessage("Selected user not found");
@@ -5341,9 +5368,9 @@ function Chat() {
     if (isDataLoaded && all.length > 0 && !selectedChat) {
       restoreSingleChat();
     }
-  }, [isDataLoaded, all, selectedChat, socket, navigate]);
+  }, [isDataLoaded, all, selectedChat, socket, navigate, lastViewed, chatMessages]);
   
-  // useEffect for group/subject chat restoration
+  // Keep the group/subject restoration useEffect as is, but add unread count calculation
   useEffect(() => {
     const restoreGroupOrSubjectChat = () => {
       const storedChatId = localStorage.getItem("selectedChatId");
@@ -5364,6 +5391,18 @@ function Chat() {
           setSelectedChat(newChat);
           socket.emit("load-group-chat", { chatId: group.chat._id });
           console.log("Restored group chat:", newChat);
+  
+          // Calculate unread count
+          const chatId = group.chat._id;
+          const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
+          const messages = chatMessages[chatId] || [];
+          const unread = messages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
+          if (unread > 0) {
+            setUnreadCounts((prev) => ({
+              ...prev,
+              [chatId]: unread,
+            }));
+          }
         } else {
           console.log("Group chat restoration failed: group not found");
           setMessage("Selected group chat not found");
@@ -5387,6 +5426,18 @@ function Chat() {
           setSelectedChat(newChat);
           socket.emit("load-group-chat", { chatId: selectedSubject.chat[0]._id });
           console.log("Restored subject chat:", newChat);
+  
+          // Calculate unread count
+          const chatId = selectedSubject.chat[0]._id;
+          const lastViewedTime = lastViewed[chatId] || "1970-01-01T00:00:00Z";
+          const messages = chatMessages[chatId] || [];
+          const unread = messages.filter((msg) => new Date(msg.timestamp) > new Date(lastViewedTime)).length;
+          if (unread > 0) {
+            setUnreadCounts((prev) => ({
+              ...prev,
+              [chatId]: unread,
+            }));
+          }
         } else {
           console.log("Subject chat restoration failed: subject not found");
           setMessage("Selected subject chat not found");
@@ -5399,7 +5450,7 @@ function Chat() {
     if (isDataLoaded && groupChats.length > 0 && Object.keys(subjectGroups).length > 0 && !selectedChat) {
       restoreGroupOrSubjectChat();
     }
-  }, [isDataLoaded, groupChats, subjectGroups, selectedChat, socket, navigate]);
+  }, [isDataLoaded, groupChats, subjectGroups, selectedChat, socket, navigate, lastViewed, chatMessages]);
 
 
   useEffect(() => {
