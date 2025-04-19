@@ -58,6 +58,9 @@ function Login() {
     }
   }
 
+  const googleMove = ()=>{
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
+  }
 
   return (
     
@@ -95,7 +98,7 @@ function Login() {
 
           
   
-        <Link to="/login"><button className='google-login border rounded-[5px]'><img src={isDarkMode ? dgoogle : google} className='max-w-[30px]'/><p className='ml-0.5 font-semibold'>Continue with Google</p></button></Link> 
+        <Link to="/login"><button className='google-login border rounded-[5px]'  onClick={googleMove}><img src={isDarkMode ? dgoogle : google} className='max-w-[30px]'/><p className='ml-0.5 font-semibold'>Continue with Google</p></button></Link> 
         <p className='text-center font-light text-sm'>Don't have an account?</p>
         <Link to="/signup" className='text-center text-[#20AFC5] font-bold'>Sign Up</Link>
       </form>
