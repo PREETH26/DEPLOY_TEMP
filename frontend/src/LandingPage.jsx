@@ -189,19 +189,19 @@ function LandingPage() {
               whileHover={{ scale: 1.02 }}
             >
               <p className="text-black italic">"Ecanent transformed how our school communicates—it's intuitive and efficient!"</p>
-              <p className="mt-4 text-cyan-500 font-semibold">- Jane Doe, School Administrator</p>
+              <p className="mt-4 text-cyan-500 font-semibold">- Bharath, School Administrator</p>
             </motion.div>
             <motion.div 
               className="bg-white backdrop-blur-sm p-6 rounded-xl shadow-md"
               whileHover={{ scale: 1.02 }}
             >
-              <p className="text-black italic">"Perfect for student projects and faculty updates. Highly recommend!"</p>
-              <p className="mt-4 text-cyan-500 font-semibold">- John Smith, Professor</p>
+              <p className="text-black italic">"Perfect for student and faculty updates. Highly recommended!"</p>
+              <p className="mt-4 text-cyan-500 font-semibold">- Chethan, Professor</p>
             </motion.div>
           </div>
           <div className="mt-12 text-2xl font-medium text-white/80">
-            <p>Over 10,000 users trust Ecanent for seamless communication.</p>
-            <p>95% satisfaction rate from schools and colleges worldwide.</p>
+            <p>Users trust Ecanent for seamless communication.</p>
+            <p>Highly rated from schools and colleges.</p>
           </div>
         </motion.div>
       </section>
