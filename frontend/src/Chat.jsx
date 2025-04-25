@@ -5153,6 +5153,16 @@ function Chat() {
   //   }
   // }, [navigate, all, profile]);
 
+
+  const canSendMessages = (chatType) => {
+    if (!profile) return false;
+    const role = profile.role.toLowerCase();
+    if (chatType === "group") {
+      return ["faculty", "hod", "admin"].includes(role);
+    }
+    return true;
+  };
+
   useEffect(() => {
     const getProfile = async () => {
       try {
@@ -6012,16 +6022,21 @@ function Chat() {
       setMessage("Select a chat to send a message or file");
       return;
     }
-
+  
+    if (!canSendMessages(selectedChat.type)) {
+      setMessage("You do not have permission to send messages in this general group chat.");
+      return;
+    }
+  
     const chatId = getChatId(selectedChat);
-
+  
     if (file) {
       setIsUploading(true);
       const formData = new FormData();
       formData.append("file", file);
       formData.append("chatType", selectedChat.type);
       formData.append("userId", profile._id);
-
+  
       if (selectedChat.type === "group") {
         formData.append("classGroup", selectedChat.data._id);
       } else if (selectedChat.type === "subject") {
@@ -6029,7 +6044,7 @@ function Chat() {
       } else if (selectedChat.type === "single") {
         formData.append("receiverId", selectedChat.data._id);
       }
-
+  
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/files/upload`, formData, {
           withCredentials: true,
@@ -6062,8 +6077,8 @@ function Chat() {
         setIsUploading(false);
       }
     }
-
-    if (input) { 
+  
+    if (input) {
       const trimmedInput = input.replace(/\s+$/, '');
       if (selectedChat.type === "single") {
         socket.emit("send-message", { receiver: selectedChat.data._id, content: trimmedInput });
@@ -6074,7 +6089,7 @@ function Chat() {
       }
       setInput("");
     }
-
+  
     if (!file && !input) {
       setMessage("Type a message or select a file to send");
     }
@@ -6435,12 +6450,12 @@ function Chat() {
 
 
   const handleClick = () => {
-    if (!isUploading) {
+    if (!isUploading && canSendMessages(selectedChat?.type)) {
       setAnimateRocket(true);
       setTimeout(() => {
         setAnimateRocket(false);
         sendMessage();
-      }, 500);
+      }, 500); 
     }
   };
 
@@ -6711,86 +6726,86 @@ function Chat() {
 
             {selectedChat ? (
               <>
-                <div className={`flex-1 overflow-y-auto  p-3 rounded-md ${isDarkMode ? "bg-[#423E3E] text-white" : "bg-gray-200 text-black"}`}>
+                <div className={`flex-1 overflow-y-auto p-3 rounded-md ${isDarkMode ? "bg-[#423E3E] text-white" : "bg-gray-200 text-black"}`}>
                   {renderMessagesWithDates()}
                   <div ref={newMessage} />
                 </div>
 
                 {isPreviewOpen && previewImageUrl && (
-                  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className={`relative ${isDarkMode ? "bg-[#423E3E] text-white" : "bg-gray-300 text-black"} p-4 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto`}>
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Image Preview: {previewFileName}</h2>
-                        <button
-                          onClick={() => downloadFile(previewImageUrl, previewFileName)}
-                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition mr-10"
-                        >
-                          Download
-                        </button>
-                      </div>
-                      <button
-                        onClick={closePreview}
-                        className="absolute top-2 right-2 text-white bg-red-500 p-2 rounded-full hover:bg-red-600 transition"
-                      >
-                        <IoMdClose className="text-2xl" />
-                      </button>
-                      <img
-                        src={previewImageUrl}
-                        alt={previewFileName}
-                        onClick={() => SetZoom((prev) => !prev)}
-                        className={`max-w-full max-h-[70vh] rounded-md flex justify-self-center cursor-zoom-in transition-transform duration-500 ${
-                          zoom ? "z-[100] scale-150 cursor-zoom-out" : "scale-100 cursor-zoom-in"
-                        }`}
-                        onError={(e) => {
-                          console.error("Error loading image preview:", e);
-                          closePreview();
-                          setMessage("Failed to load image preview");
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
+                              <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                                <div className={`relative ${isDarkMode ? "bg-[#423E3E] text-white" : "bg-gray-300 text-black"} p-4 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto`}>
+                                  <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-xl font-bold">Image Preview: {previewFileName}</h2>
+                                    <button
+                                      onClick={() => downloadFile(previewImageUrl, previewFileName)}
+                                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition mr-10"
+                                    >
+                                      Download
+                                    </button>
+                                  </div>
+                                  <button
+                                    onClick={closePreview}
+                                    className="absolute top-2 right-2 text-white bg-red-500 p-2 rounded-full hover:bg-red-600 transition"
+                                  >
+                                    <IoMdClose className="text-2xl" />
+                                  </button>
+                                  <img
+                                    src={previewImageUrl}
+                                    alt={previewFileName}
+                                    onClick={() => SetZoom((prev) => !prev)}
+                                    className={`max-w-full max-h-[70vh] rounded-md flex justify-self-center cursor-zoom-in transition-transform duration-500 ${
+                                      zoom ? "z-[100] scale-150 cursor-zoom-out" : "scale-100 cursor-zoom-in"
+                                    }`}
+                                    onError={(e) => {
+                                      console.error("Error loading image preview:", e);
+                                      closePreview();
+                                      setMessage("Failed to load image preview");
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            )}
 
-                {isPreviewOpen && file && (
-                  <div className="bg-white p-4 rounded-md border border-gray-300 mb-3">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-bold text-sm sm:text-base">File Preview</h3>
-                      <button
-                        onClick={() => {
-                          setIsPreviewOpen(false);
-                          setFilePreview(null);
-                        }}
-                        className="bg-red-500 text-white px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
-                      >
-                        Close
-                      </button>
-                    </div>
-                    {getFileType(file) === "image" && filePreview && (
-                      <img
-                        src={filePreview}
-                        alt="File preview"
-                        className="max-w-[200px] sm:max-w-[300px] max-h-[200px] sm:max-h-[300px] rounded-md"
-                        onError={(e) => {
-                          console.error("Error loading image preview:", e);
-                          setFilePreview(null);
-                          setIsPreviewOpen(false);
-                        }}
-                      />
-                    )}
-                    {getFileType(file) === "video" && filePreview && (
-                      <video
-                        src={filePreview}
-                        controls
-                        className="max-w-[200px] sm:max-w-[300px] max-h-[200px] sm:max-h-[300px] rounded-md"
-                        onError={(e) => {
-                          console.error("Error loading video preview:", e);
-                          setFilePreview(null);
-                          setIsPreviewOpen(false);
-                        }}
-                      />
-                    )}
-                  </div>
-                )}
+                            {isPreviewOpen && file && (
+                              <div className="bg-white p-4 rounded-md border border-gray-300 mb-3">
+                                <div className="flex justify-between items-center mb-4">
+                                  <h3 className="font-bold text-sm sm:text-base">File Preview</h3>
+                                  <button
+                                    onClick={() => {
+                                      setIsPreviewOpen(false);
+                                      setFilePreview(null);
+                                    }}
+                                    className="bg-red-500 text-white px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
+                                  >
+                                    Close
+                                  </button>
+                                </div>
+                                {getFileType(file) === "image" && filePreview && (
+                                  <img
+                                    src={filePreview}
+                                    alt="File preview"
+                                    className="max-w-[200px] sm:max-w-[300px] max-h-[200px] sm:max-h-[300px] rounded-md"
+                                    onError={(e) => {
+                                      console.error("Error loading image preview:", e);
+                                      setFilePreview(null);
+                                      setIsPreviewOpen(false);
+                                    }}
+                                  />
+                                )}
+                                {getFileType(file) === "video" && filePreview && (
+                                  <video
+                                    src={filePreview}
+                                    controls
+                                    className="max-w-[200px] sm:max-w-[300px] max-h-[200px] sm:max-h-[300px] rounded-md"
+                                    onError={(e) => {
+                                      console.error("Error loading video preview:", e);
+                                      setFilePreview(null);
+                                      setIsPreviewOpen(false);
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            )}
 
                 <div className="flex mt-3 pb-2 pl-2 pr-2">
                   <div className="flex-1 flex flex-col">
@@ -6813,17 +6828,23 @@ function Chat() {
                         </button>
                       </div>
                     )}
-                    <textarea
-                      type="text"
-                      className="border border-gray-400 p-2 rounded-l-md resize-none overflow-y-auto align-middle text-sm sm:text-base"
-                      placeholder="Type a message..."
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      rows="3"
-                      ref={messageRef}
-                      style={{ minHeight: "40px", maxHeight: "40px", lineHeight: "16px", paddingTop: "12px" }}
-                    />
+                    {canSendMessages(selectedChat.type) ? (
+                      <textarea
+                        type="text"
+                        className="border border-gray-400 p-2 rounded-l-md resize-none overflow-y-auto align-middle text-sm sm:text-base"
+                        placeholder="Type a message..."
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        rows="3"
+                        ref={messageRef}
+                        style={{ minHeight: "40px", maxHeight: "40px", lineHeight: "20px", paddingTop: "12px" }}
+                      />
+                    ) : (
+                      <div className="border border-gray-400 p-2 rounded-l-md bg-gray-300 text-gray-600 text-sm sm:text-base flex items-center justify-center h-[40px]">
+                        You cannot send messages in this general group chat.
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center mr-1 ml-2">
                     <input
@@ -6850,22 +6871,23 @@ function Chat() {
                       }}
                       className="hidden"
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.mov,.txt,.pptx"
+                      disabled={!canSendMessages(selectedChat.type)}
                     />
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className={`${isDarkMode ? "bg-[#423E3E] hover:bg-gray-800" : "bg-white hover:bg-gray-100"} z-0 border-1 border-black text-black px-2 sm:px-4 py-1 rounded-md`}
+                      className={`${isDarkMode ? "bg-[#423E3E] hover:bg-gray-800" : "bg-white hover:bg-gray-100"} z-0 border-1 border-black text-black px-2 sm:px-4 py-1 rounded-md ${!canSendMessages(selectedChat.type) ? "opacity-50 cursor-not-allowed" : ""}`}
                       style={{ minHeight: "40px", maxHeight: "40px" }}
+                      disabled={!canSendMessages(selectedChat.type)}
                     >
                       <GiSafetyPin className="z-1 text-cyan-500 text-2xl sm:text-3xl" />
                     </button>
                   </div>
                   <button
-                    className="bg-blue-500 text-white px-6 sm:px-10 py-2 rounded-r-md ml-1 text-sm sm:text-base relative overflow-hidden"
+                    className={`bg-blue-500 text-white px-6 sm:px-10 py-2 rounded-r-md ml-1 text-sm sm:text-base relative overflow-hidden ${!canSendMessages(selectedChat.type) ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={handleClick}
-                    disabled={isUploading}
+                    disabled={isUploading || !canSendMessages(selectedChat.type)}
                   >
                     {isUploading ? (
-                      // 3 dots loading
                       <div className="flex space-x-1">
                         <motion.div
                           animate={{ y: [0, -4, 0] }}
@@ -6886,7 +6908,7 @@ function Chat() {
                     ) : (
                       <motion.div
                         initial={{ x: 0, opacity: 1 }}
-                        animate={animateRocket ? {x: [0, 100, -100, 0], opacity: [1, 0, 0, 1], } : {x: 0, opacity: 1 }}
+                        animate={animateRocket ? { x: [0, 100, -100, 0], opacity: [1, 0, 0, 1] } : { x: 0, opacity: 1 }}
                         transition={{ duration: 2, times: [0, 0.25, 0.75, 1], ease: "easeInOut" }}
                         className="flex items-center justify-center"
                       >
