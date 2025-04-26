@@ -2226,10 +2226,13 @@ function Profile() {
     };
 
     const deleteAccount = async () => {
+        console.log(req.body)
+        console.log(Todelete)
         try {
             const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete`, {
                 withCredentials: true,
             });
+            console.log(req.body)
             localStorage.clear();
             navigate("/signup");
             setProfile(null);
