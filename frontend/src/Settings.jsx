@@ -1198,7 +1198,8 @@ function ClassSettings() {
                     )}
 
                     {/* Subject Groups */}
-                    <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black`}>
+                    {profile && (profile.role === "Admin" || profile.role === "HOD") && (
+                        <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black`}>
                         <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? "text-[#20AFC5]" : "text-black"}`}>
                             Subject Groups
                         </h2>
@@ -1246,7 +1247,7 @@ function ClassSettings() {
                                         </li>
                                     ))}
                                 </ul>
-                                {profile && (profile.role === "Admin" || profile.role === "HOD") && (
+                               
                                     <button
                                     type="submit"
                                     className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-all duration-300"
@@ -1254,10 +1255,12 @@ function ClassSettings() {
                                     >
                                         Create Subject Group
                                     </button> 
-                                )}
+                                
                             </form>
                         )}
                     </div>
+                    )}
+                    
 
                     {/* Delete Class Group (Admins Only) */}
                     {profile.role === "Admin" && (

@@ -5627,8 +5627,8 @@ function Chat() {
       console.log("Attempting to restore single chat:", { storedChatType, storedChatId });
   
       if (!storedChatId || !storedChatType) {
-        console.log("No chat to restore: missing storedChatId or storedChatType");
-        setMessage("No chat selected to restore");
+        // console.log("No chat to restore: missing storedChatId or storedChatType");
+        // setMessage("No chat selected to restore");
         return;
       }
   
