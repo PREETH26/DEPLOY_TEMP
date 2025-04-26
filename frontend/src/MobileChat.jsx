@@ -3761,6 +3761,7 @@ function MobileChat() {
   const [zoom, SetZoom] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState({});
   const [lastViewed, setLastViewed] = useState({});
+  const [isDataLoaded,setIsDataLoaded] = useState(false);
 
   const getUserColor = (userId) => {
     let hash = 0;
