@@ -2237,7 +2237,6 @@ function Profile() {
                     "Content-Type": "application/json",
                 },
             });
-            console.log(req.body)
             localStorage.clear();
             navigate("/signup");
             setProfile(null);
@@ -2534,8 +2533,12 @@ function Profile() {
                             <p className={`text-lg font-medium ${isDarkMode ? "text-white" : "text-gray-800"} mb-4`}>Are you sure you want to delete your account?</p>
                             <div className="flex gap-2 sm:gap-5">
                                 <button
+                                    type="button"
                                     className={`py-2 px-6 ${isDarkMode ? "bg-red-700 hover:bg-red-600" : "bg-red-500 hover:bg-red-600"} text-white rounded-lg transition-colors font-semibold`}
-                                    onClick={deleteAccount}
+                                    onClick={() => {
+                                        console.log("Yes button clicked");
+                                        deleteAccount();
+                                    }}
                                 >
                                     Yes
                                 </button>
