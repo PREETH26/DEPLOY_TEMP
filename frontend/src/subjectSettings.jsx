@@ -847,7 +847,6 @@ function SubjectSettings() {
                 isDarkMode ? "bg-[#423E3E] text-white" : "bg-[#EDEDED] text-black"
             } overflow-hidden`}
         >
-            {/* Back Button */}
             <button
                 className="rounded-full w-12 h-12 bg-[#20AFC5] flex justify-center items-center mb-6 shadow-lg hover:bg-[#1a8fa3] transition-all duration-300"
                 onClick={() => navigate(-1)}
@@ -855,20 +854,20 @@ function SubjectSettings() {
                 <img src={arrow} className="w-7 h-7" alt="Back" />
             </button>
 
-            {/* Page Title */}
             <h1 className="text-4xl font-bold text-center mb-8 text-[#20AFC5] drop-shadow-lg">
                 {subjectData.subjectName} (Class: {classData.className})
             </h1>
 
-            {/* Main Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Section: Subject Information */}
-                <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black`}>
+            <div className={`grid gap-6 ${
+                profile.role === "Admin" || profile.role === "HOD"
+                ? "grid-cols-1 lg:grid-cols-2"
+                : "grid-cols-1 place-items-center"
+            }  `}>  
+                <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black w-full max-w-3xl`}>
                     <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? "text-[#20AFC5]" : "text-black"}`}>
                         Subject Information
                     </h2>
 
-                    {/* Subject Name */}
                     <div className="mb-4">
                         {editSubjectName ? (
                             <form onSubmit={handleSubjectNameUpdate} className="flex flex-col gap-3">
@@ -913,7 +912,6 @@ function SubjectSettings() {
                         )}
                     </div>
 
-                    {/* Current Members */}
                     <div>
                         <h3 className="text-lg font-medium mb-2">Current Members</h3>
                         <ul className="max-h-60 overflow-y-auto border rounded-md p-2">
@@ -934,16 +932,13 @@ function SubjectSettings() {
                     </div>
                 </div>
 
-                {/* Right Section: Management Options */}
                 <div className="space-y-6">
-                    {/* Member Management (Admins, HODs, or Faculty) */}
                     {canEdit && (
                         <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black`}>
                             <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? "text-[#20AFC5]" : "text-black"}`}>
                                 Member Management
                             </h2>
 
-                            {/* Add Members */}
                             <div className="mb-4">
                                 <button
                                     onClick={() => setShowAddMembers((prev) => !prev)}
@@ -994,7 +989,6 @@ function SubjectSettings() {
                                 )}
                             </div>
 
-                            {/* Remove Members */}
                             <div>
                                 <button
                                     onClick={() => setShowRemoveMembers((prev) => !prev)}
@@ -1005,7 +999,6 @@ function SubjectSettings() {
                                 {showRemoveMembers && (
                                     <div className="mt-4">
                                         <ul className="max-h-40 overflow-y-auto border rounded-md p-2 mb-4">
-                                            {/* Filter out Admins from the list of members available for removal */}
                                             {subjectMembers
                                                 .filter((member) => member.role !== "Admin")
                                                 .map((member) => (
@@ -1031,7 +1024,6 @@ function SubjectSettings() {
                                                         </button>
                                                     </li>
                                                 ))}
-                                            {/* Update the "No members to remove" message to account for filtered members */}
                                             {subjectMembers.filter((member) => member.role !== "Admin").length === 0 && (
                                                 <li className="p-2 text-gray-500">No members available to remove</li>
                                             )}
@@ -1050,7 +1042,6 @@ function SubjectSettings() {
                         </div>
                     )}
 
-                    {/* Delete Subject Group (Admins, HODs, or Faculty) */}
                     {canEdit && (
                         <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black`}>
                             <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? "text-[#20AFC5]" : "text-black"}`}>
@@ -1088,7 +1079,6 @@ function SubjectSettings() {
                 </div>
             </div>
 
-            {/* Message Display */}
             {message && (
                 <div className="mt-6 p-4 w-[50%] bg-cyan-100 text-cyan-700 rounded-md border-2 border-cyan-500">
                     {message}

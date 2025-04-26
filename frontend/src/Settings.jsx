@@ -1017,15 +1017,16 @@ function ClassSettings() {
                 {classData.className}
             </h1>
 
-            {/* Main Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Section: Class Information */}
-                <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black`}>
+            <div className={`grid gap-6 ${
+                profile.role === "Admin" || profile.role === "HOD"
+                ? "grid-cols-1 lg:grid-cols-2"
+                : "grid-cols-1 place-items-center"
+            }  `}>  
+                <div className={`${isDarkMode ? "bg-[#423E3E]" : "bg-white"} rounded-lg shadow-xl p-6 border-2 border-black w-full max-w-3xl`}>
                     <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? "text-[#20AFC5]" : "text-black"}`}>
                         Class Information
                     </h2>
 
-                    {/* Class Name */}
                     <div className="mb-4">
                         {editClassName ? (
                             <form onSubmit={handleClassNameUpdate} className="flex flex-col gap-3">
