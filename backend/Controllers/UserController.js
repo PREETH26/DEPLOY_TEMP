@@ -133,7 +133,7 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     const { userId } = req.body;
-
+    console.log("user: ",userId)
     try {
         const deletedUser = await User.findByIdAndDelete(userId);
 
