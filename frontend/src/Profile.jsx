@@ -2226,8 +2226,8 @@ function Profile() {
     };
 
     const deleteAccount = async () => {
-        console.log(req.body)
-        console.log(Todelete)
+        // console.log(req.body)
+        console.log("to delete" , Todelete)
         try {
             const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete`, {
                 withCredentials: true,
