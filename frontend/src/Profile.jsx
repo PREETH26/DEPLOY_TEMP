@@ -2229,8 +2229,13 @@ function Profile() {
         // console.log(req.body)
         console.log("to delete" , Todelete)
         try {
+            const token = localStorage.getItem("token");
             const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete`, {
                 withCredentials: true,
+                headers: {
+                    Authorization: token ? `Bearer ${token}` : undefined,
+                    "Content-Type": "application/json",
+                },
             });
             console.log(req.body)
             localStorage.clear();
