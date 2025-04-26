@@ -1246,13 +1246,15 @@ function ClassSettings() {
                                         </li>
                                     ))}
                                 </ul>
-                                <button
+                                {(profile.role === "Admin" || profile.role === "HOD") &&
+                                    <button
                                     type="submit"
                                     className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-all duration-300"
                                     disabled={selectedSubjectGroupMembers.length === 0}
-                                >
-                                    Create Subject Group
-                                </button>
+                                    >
+                                        Create Subject Group
+                                    </button> 
+                                }
                             </form>
                         )}
                     </div>

@@ -6207,7 +6207,7 @@ function Chat() {
                             }}>
                         <option value="" disabled hidden className={`${isDarkMode ? "!bg-gray-700 !!text-white" : "!bg-white !text-black"}`}></option>
                         <option value="copy" className={`group ${isDarkMode ? "!bg-gray-700 !text-white" : "!bg-white !text-black"}`}>Copy Message</option>
-                        <option className={`${isDarkMode ? "!bg-gray-700 !text-white" : "!bg-white !text-black"}`}>Delete Message</option>
+                        {/* <option className={`${isDarkMode ? "!bg-gray-700 !text-white" : "!bg-white !text-black"}`}>Delete Message</option> */}
                     </select>
                 </button>
             )}
@@ -6249,11 +6249,11 @@ function Chat() {
                     >
                     Copy Message
                     </DropdownMenu.Item>
-                    <DropdownMenu.Item
+                    {/* <DropdownMenu.Item
                     className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}
                     >
                     Delete Message
-                    </DropdownMenu.Item>
+                    </DropdownMenu.Item> */}
                 </DropdownMenu.Content>
                 </DropdownMenu.Portal>
             </DropdownMenu.Root>
@@ -6279,7 +6279,7 @@ function Chat() {
                             }}>
                         <option value="" disabled hidden className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}></option>
                         <option value="copy" className={`group *:${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}>Copy Message</option>
-                        <option className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}>Delete Message</option>
+                        {/* <option className={`${isDarkMode ? "!bg-gray-700 !text-white hover:!bg-gray-600" : "!bg-white !text-black hover:!bg-gray-100"} px-4 py-2  cursor-pointer`}>Delete Message</option> */}
                     </select>
                 </button>
             )}
@@ -6330,11 +6330,11 @@ function Chat() {
                     >
                     Copy Message
                     </DropdownMenu.Item>
-                    <DropdownMenu.Item
+                    {/* <DropdownMenu.Item
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     >
                     Delete Message
-                    </DropdownMenu.Item>
+                    </DropdownMenu.Item> */}
                 </DropdownMenu.Content>
                 </DropdownMenu.Portal>
             </DropdownMenu.Root>
@@ -6625,7 +6625,7 @@ function Chat() {
                                   onClick={() => handleChatSelect(group, "group")}
                                 >
                                   <div className="flex justify-between items-center">
-                                    <span className="text-sm sm:text-base">General</span>
+                                    <span className="text-sm sm:text-base">Announcements</span>
                                     {unreadCounts[group.chat._id] > 0 && (
                                       <span className="bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                                         {unreadCounts[group.chat._id]}
