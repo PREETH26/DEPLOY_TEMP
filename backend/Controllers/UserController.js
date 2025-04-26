@@ -149,3 +149,67 @@ export const deleteUser = async (req, res) => {
     }
 };
 
+export const updateInstitutionGoogle = async (req, res) => {
+    try {
+      const { userId, institute, role } = req.body;
+      const user = await User.findById(userId);
+      if (!user || !userId) return res.json({ success: false, message: "User not found!" });
+  
+      const updatedUser = await User.findByIdAndUpdate(userId, { institute, role }, { new: true, runValidators: true });
+  
+      let institutes = await Institute.findOne({ name: updatedUser.institute });
+      if (!institutes) {
+        institutes = new Institute({ name: updatedUser.institute, createdBy: userId });
+        await institutes.save();
+      }
+  
+      return res.status(200).json({
+        success: true,
+        userData: {
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          institute: updatedUser.institute,
+          isVerified: updatedUser.isVerified,
+        },
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.json({ success: false, message: "Internal Server Error" });
+    }
+  };
+ 
+export const updateFacultyDetailsGoogle = async (req, res) => {
+    try {
+      const { userId, institute, department } = req.body;
+      const user = await User.findById(userId);
+      if (!user || !userId) return res.json({ success: false, message: "User not found!" });
+  
+      const updatedUser = await User.findByIdAndUpdate(userId, {
+        institute,
+        department,
+        role: "faculty",
+      }, { new: true, runValidators: true });
+  
+      let institutes = await Institute.findOne({ name: updatedUser.institute });
+      if (!institutes) {
+        institutes = new Institute({ name: updatedUser.institute, createdBy: userId });
+        await institutes.save();
+      }
+  
+      return res.status(200).json({
+        success: true,
+        userData: {
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          institute: updatedUser.institute,
+          department: updatedUser.department,
+          isVerified: updatedUser.isVerified,
+        },
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.json({ success: false, message: "Internal Server Error" });
+    }
+  };
