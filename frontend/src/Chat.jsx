@@ -6708,7 +6708,7 @@ function Chat() {
                       {chat.type === "single"
                         ? chat.data.name
                         : chat.type === "group"
-                        ? `${chat.data.className} (General)`
+                        ? `${chat.data.className} (Announcements)`
                         : `${chat.data.subjectName} (Subject)`}
                     </span>
                     {unread > 0 && (
